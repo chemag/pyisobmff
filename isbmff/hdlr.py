@@ -1,24 +1,29 @@
 # -*- coding: utf-8 -*-
-from .box import Box
+from .box import FullBox
+from .box import indent
+from .box import read_int
+from .box import read_string
 
 
-class Hdlr(Box):
+class HandlerReferenceBox(FullBox):
     """Handler Reference Box
     """
 
     def __init__(self, box):
-        super().__init__(box.size, box.box_type)
+        super().__init__(box, box.version, box.flags)
         self.pre_defined = None
         self.handler_type = None
         self.reserved = []
+        self.name = None
 
     def __repr__(self):
-        rep = super().__repr__()
-        return rep
+        rep = 'handler_type: ' + self.handler_type + '\n'
+        rep += 'name: ' + self.name
+        return super().__repr__() + indent(rep)
 
     def read(self, file):
-        self.pre_defined = int.from_bytes(file.read(4), 'big')
-        self.handler_type = int.from_bytes(file.read(4), 'big')
-        for _ in range(3):
-            self.reserved.append(int.from_bytes(file.read(4), 'big'))
-
+        self.pre_defined = read_int(file, 4)
+        self.handler_type = read_string(file, 4)
+        for _ in range(3): #3*4=12bytes
+            self.reserved.append(read_int(file, 4))
+        self.name = read_string(file)

@@ -1,19 +1,41 @@
 
 from .box import Box
-from .hdlr import Hdlr
-from .dinf import Dinf
+from .box import FullBox
+from .box import indent
+from .dinf import DataInformationBox
+from .hdlr import HandlerReferenceBox
+from .iinf import ItemInformationBox
+from .iloc import ItemLocationBox
+from .iprp import ItemPropertiesBox
+from .pitm import PrimaryItemBox
 
-class Meta(Box):
+
+class MetaBox(FullBox):
+    """Meta box
+    """
+
     def __init__(self, box):
-        super().__init__(box.size, box.box_type)
+        super().__init__(box, box.version, box.flags)
         self.hdlr = None
-        self.dinf = None        
+        self.dinf = None
+        self.pitm = None
+        self.iloc = None
+        self.iinf = None
+        self.iprp = None
+
+    def __repr__(self):
+        rep = self.hdlr.__repr__() + '\n'
+        rep += self.pitm.__repr__() + '\n'
+        rep += self.iloc.__repr__() + '\n'
+        rep += self.iinf.__repr__() + '\n'
+        rep += self.iprp.__repr__()
+        return super().__repr__() + indent(rep)
 
     def read(self, file):
-        read_size = self.size - 8
-        print(read_size)
-        print(file.read(read_size))
+        read_size = self.size - 12
+        #print(file.read(read_size))
         while read_size > 0:
+            print('read_size : ' + str(read_size))
             box = Box()
             box.read(file)
             if not box.size:
@@ -22,36 +44,38 @@ class Meta(Box):
             read_size -= box.size
 
     def __read_box(self, file, box):
-        box_size = box.size - 8
-        print(box.box_type)
+        print(box.box_type + ' ' + str(box.size))
+        full_box = FullBox(box)
+        full_box.read(file)
+
         if box.box_type == 'hdlr':
-            hdlr = Hdlr(box)
-            hdlr.read(file)
-            self.hdlr = hdlr
+            self.hdlr = HandlerReferenceBox(full_box)
+            self.hdlr.read(file)
         elif box.box_type == 'dinf':
-            dinf = Dinf(box)
-            dinf.read(file)
-            self.dinf = dinf
-        elif box.box_type == 'ipmc':
-            pass
+            self.dinf = DataInformationBox(full_box)
+            self.dinf.read(file)
+        elif box.box_type == 'iinf':
+            self.iinf = ItemInformationBox(full_box)
+            self.iinf.read(file)
         elif box.box_type == 'iloc':
+            self.iloc = ItemLocationBox(full_box)
+            self.iloc.read(file)
+        elif box.box_type == 'ipmc':
             pass
         elif box.box_type == 'ipro':
             pass
-        elif box.box_type == 'iinf':
-            pass
+        elif box.box_type == 'iprp':
+            self.iprp = ItemPropertiesBox(full_box)
+            self.iprp.read(file)
         elif box.box_type == 'xml ':
             pass
         elif box.box_type == 'bxml':
             pass
         elif box.box_type == 'pitm':
-            pass
+            self.pitm = PrimaryItemBox(full_box)
+            self.pitm.read(file)
         else:
-            if box_size > 0:
-                file.read(box_size)
-
-    def __repr__(self):
-        rep = super().__repr__()
-        rep += self.hdlr.__repr__()
-        rep += self.dinf.__repr__()
-        return rep
+            pass
+            #box_size = box.size - 8
+            #if box_size > 0:
+            #    print(file.read(box_size))

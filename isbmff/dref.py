@@ -1,40 +1,42 @@
 # -*- coding: utf-8 -*-
-from .box import Box
+from .box import FullBox
+from .box import read_int
+from .box import read_string
 
 
-class Url(Box):
+class DataEntryUrlBox(FullBox):
     """Data Entry Url Box
     """
 
     def __init__(self, box):
-        super().__init__(box.size, box.box_type)
+        super().__init__(box, box.version, box.flags)
         self.location = None
 
     def read(self, file):
-        url_size = self.size - 8
-        self.location = file.read(url_size).decode()
+        #url_size = self.size - 8
+        self.location = read_string(file)
 
 
-class Urn(Box):
-    """Data Entry Url Box
+class DataEntryUrnBox(FullBox):
+    """Data Entry Urn Box
     """
 
     def __init__(self, box):
-        super().__init__(box.size, box.box_type)
+        super().__init__(box, box.version, box.flags)
         self.location = None
 
     def read(self, file):
-        url_size = self.size - 8
-        self.location = file.read(url_size).decode()
+        #url_size = self.size - 8
+        self.location = read_string(file)
 
 
-class Dref(Box):
+class DataReferenceBox(FullBox):
     """Data Reference Box
     """
 
     def __init__(self, box):
-        super().__init__(box.size, box.box_type)
+        super().__init__(box, box.version, box.flags)
         self.entry_count = None
 
     def read(self, file):
-        self.entry_count = int.from_bytes(file.read(4), 'big')
+        self.entry_count = read_int(file, 4)

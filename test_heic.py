@@ -12,14 +12,10 @@ meta
   iinf
   pitm
 """
-
-
 if __name__ == "__main__":
     #media_file = isbmff.MediaFile('autumn_1440x960.heic')
     media_file = isbmff.MediaFile()
-    media_file.read('cheers_1440x960.heic')
-    
-    print(media_file.ftyp)
-    print(media_file.meta)
-    for mdat in media_file.mdats:
-        print(mdat)
+    #media_file.read('autumn_1440x960.heic')
+    #media_file.read('cheers_1440x960.heic')
+    media_file.read('C001.heic')
+    print(media_file)

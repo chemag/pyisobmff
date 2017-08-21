@@ -2,12 +2,12 @@
 from .box import Box
 
 
-class Mdat(Box):
-    """mdat
+class MediaDataBox(Box):
+    """MediaDataBox
     """
 
     def __init__(self, box):
-        super().__init__(box.size, box.box_type)
+        super().__init__(size=box.size, box_type=box.box_type)
         self.data_size = self.size - 8
         self.data = None
 

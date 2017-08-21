@@ -1,30 +1,33 @@
 # -*- coding: utf-8 -*-
 from .box import Box
+from .box import indent
+from .box import read_int
+from .box import read_string
 
 
-class Ftyp(Box):
+class FileTypeBox(Box):
     """File Type Box
     """
 
     def __init__(self, box):
-        super().__init__(box.size, box.box_type)
+        super().__init__(size=box.size, box_type=box.box_type)
         self.majar_brand = None
         self.minor_version = None
         self.compatible_brands = []
 
     def __repr__(self):
-        rep = super().__repr__()
-        rep += '  ' + self.majar_brand + '\n'
-        rep += '  ' + str(self.minor_version) + '\n'
-        rep += '  '
+        rep = 'majar_brand: ' + self.majar_brand + '\n'
+        rep += 'minor_version: ' + str(self.minor_version) + '\n'
+        rep += 'compatible_brands: '
         for brand in self.compatible_brands:
             rep += brand + ','
-        return rep
+        return super().__repr__() + indent(rep)
 
     def read(self, file):
-        self.majar_brand = file.read(4).decode()
-        self.minor_version = int.from_bytes(file.read(4), 'big')
+        self.majar_brand = read_string(file, 4)
+        self.minor_version = read_int(file, 4)
         num_compatible_brands = int((self.size - 16) / 4)
         for _ in range(num_compatible_brands):
-            self.compatible_brands.append(file.read(4).decode())
+            compat_brand = read_string(file, 4)
+            self.compatible_brands.append(compat_brand)
 
