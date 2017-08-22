@@ -11,7 +11,7 @@ class DataInformationBox(FullBox):
     """
 
     def __init__(self, box):
-        super().__init__(box, box.version, box.flags)
+        super().__init__(box=box, version=box.version, flags=box.flags)
         self.dref = None
         self.url = None
         self.urn = None

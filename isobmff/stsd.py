@@ -8,6 +8,8 @@ from .box import read_string
 class Stsd(FullBox):
     """Sample Description Box
     """
+    is_mandatory = True
+    
     def __init__(self, box, handler_type):
         super().__init__( box.size, box.box_type)
         self.handler_type = handler_type
@@ -35,7 +37,7 @@ class SampleEntry(Box):
     """
 
     def __init__(self, box):
-        super().__init__( box.size, box.box_type)
+        super().__init__(size=box.size, box_type=box.box_type)
         self.reserveds = []
         self.data_reference_index = None
 
@@ -59,7 +61,7 @@ class HintSampleEntry(SampleEntry):
     """
 
     def __init__(self, box):
-        super().__init__(box)
+        super().__init__(box=box)
         self.data = []
     
     def __repr__(self):
@@ -76,7 +78,7 @@ class VisualSampleEntry(SampleEntry):
     """
 
     def __init__(self, box):
-        super().__init__(box)
+        super().__init__(box=box)
         self.pre_defined1 = None
         self.reserved1 = None
         self.pre_defined2 = []

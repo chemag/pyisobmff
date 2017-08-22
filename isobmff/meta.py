@@ -13,9 +13,10 @@ from .pitm import PrimaryItemBox
 class MetaBox(FullBox):
     """Meta box
     """
+    is_mandatory = False
 
     def __init__(self, box):
-        super().__init__(box, box.version, box.flags)
+        super().__init__(box=box, version=box.version, flags=box.flags)
         self.hdlr = None
         self.dinf = None
         self.pitm = None

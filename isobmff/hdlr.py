@@ -8,9 +8,10 @@ from .box import read_string
 class HandlerReferenceBox(FullBox):
     """Handler Reference Box
     """
+    is_mandatory = True
 
     def __init__(self, box):
-        super().__init__(box, box.version, box.flags)
+        super().__init__(box=box, version=box.version, flags=box.flags)
         self.pre_defined = None
         self.handler_type = None
         self.reserved = []

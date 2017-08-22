@@ -7,6 +7,7 @@ from .box import read_int
 class PrimaryItemBox(FullBox):
     """Primary Item Box
     """
+    is_mandatory = False
 
     def __init__(self, box):
         super().__init__(box, box.version, box.flags)

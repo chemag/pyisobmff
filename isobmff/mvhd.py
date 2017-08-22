@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from .box import Box
+from .box import FullBox
 from .box import indent
 from .box import read_int
 
 
-class MovieBox(Box):
+class MovieHeaderBox(FullBox):
     """Movie Box
     """
     is_mandatory = True

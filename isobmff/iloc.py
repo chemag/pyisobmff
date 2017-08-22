@@ -7,9 +7,10 @@ from .box import indent
 class ItemLocationBox(FullBox):
     """Item Location Box
     """
+    is_mandatory = False
 
     def __init__(self, box):
-        super().__init__(box, box.version, box.flags)
+        super().__init__(box=box, version=box.version, flags=box.flags)
         self.offset_size = None
         self.length_size = None
         self.base_offset_size = None

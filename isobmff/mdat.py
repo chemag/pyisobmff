@@ -5,6 +5,7 @@ from .box import Box
 class MediaDataBox(Box):
     """MediaDataBox
     """
+    is_mandatory = False
 
     def __init__(self, box):
         super().__init__(size=box.size, box_type=box.box_type)

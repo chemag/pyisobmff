@@ -1,26 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
-
-def read_int(file, length):
-    """readint"""
-    return int.from_bytes(file.read(length), 'big')
-
-def read_string(file, length=None):
-    """readstring
-    TODO: convert utf8
-    """
-    if length:
-        res = file.read(length).decode()
-    else:
-        res = ''.join(iter(lambda: file.read(1).decode('ascii'), '\x00'))
-    return res
-
-def indent(rep):
-    """indent 2 spaces"""
-    return re.sub(r'^', '  ', rep, flags=re.M)
-
-class Box(object):  # pylint: disable=too-few-public-methods
+class Box(object):
     """Box
     """
 
@@ -71,3 +52,21 @@ class FullBox(Box):
     def write(self, file):
         pass
 
+
+def read_int(file, length):
+    """readint"""
+    return int.from_bytes(file.read(length), 'big')
+
+def read_string(file, length=None):
+    """readstring
+    TODO: convert utf8
+    """
+    if length:
+        res = file.read(length).decode()
+    else:
+        res = ''.join(iter(lambda: file.read(1).decode('ascii'), '\x00'))
+    return res
+
+def indent(rep):
+    """indent 2 spaces"""
+    return re.sub(r'^', '  ', rep, flags=re.M)

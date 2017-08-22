@@ -9,9 +9,10 @@ from .box import read_string
 class ItemInformationBox(FullBox):
     """Item Information Box
     """
+    is_mandatory = False
 
     def __init__(self, box):
-        super().__init__(box, box.version, box.flags)
+        super().__init__(box=box, version=box.version, flags=box.flags)
         self.item_infos = []
 
     def __repr__(self):
@@ -47,7 +48,7 @@ class ItemInfomationEntry(FullBox):
     """
 
     def __init__(self, box):
-        super().__init__(box, box.version, box.flags)
+        super().__init__(box=box, version=box.version, flags=box.flags)
         self.item_id = None
         self.item_protection_index = None
         self.item_name = None
@@ -59,7 +60,8 @@ class ItemInfomationEntry(FullBox):
 
     def __repr__(self):
         rep =  'item_id: ' + str(self.item_id) + '\n'
-        rep += 'item_protection_index: ' + str(self.item_protection_index) + '\n'
+        rep += 'item_protection_index: ' + \
+            str(self.item_protection_index) + '\n'
         rep += 'item_name: ' + self.item_name
         if self.version >= 2:
             rep += '\nitem_type: ' + str(self.item_type)

@@ -8,6 +8,7 @@ from .box import read_string
 class FileTypeBox(Box):
     """File Type Box
     """
+    is_mandatory = True
 
     def __init__(self, box):
         super().__init__(size=box.size, box_type=box.box_type)

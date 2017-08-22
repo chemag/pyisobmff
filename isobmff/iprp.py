@@ -13,7 +13,7 @@ class ItemPropertiesBox(FullBox):
     """
 
     def __init__(self, box):
-        super().__init__(box, box.version, box.flags)
+        super().__init__(box=box, version=box.version, flags=box.flags)
         self.ipco = None
 
     def __repr__(self):

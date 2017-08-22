@@ -7,12 +7,14 @@ from .box import read_string
 class Ipro(FullBox):
     """
     """
+    is_mandatory = False
 
     def __init__(self, box):
-        super().__init__(box, box.version, box.flags)
+        super().__init__(box=box, version=box.version, flags=box.flags)
 
     def __repr__(self):
         rep = super().__repr__()
         return rep
 
     def read(self, file):
+        pass
