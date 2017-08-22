@@ -7,9 +7,10 @@ from .box import read_int
 class SpaialExtentBox(Box):
     """SpaialExtentBox
     """
+    box_type = 'ispe'
 
-    def __init__(self, box):
-        super().__init__(size=box.size, box_type=box.box_type)
+    def __init__(self, size):
+        super().__init__(size=size)
 
     def __repr__(self):
         return  super().__repr__()

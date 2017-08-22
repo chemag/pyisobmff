@@ -9,9 +9,10 @@ from .stsd import VisualSampleEntry
 class HEVCConfigurationBox(Box):
     """HEVC Configuration Box, hvcC
     """
+    box_type = 'hvcC'
 
-    def __init__(self, box):
-        super().__init__(size=box.size, box_type=box.box_type)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.hevc_config = None
 
     def __repr__(self):

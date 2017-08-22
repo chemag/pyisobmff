@@ -9,10 +9,11 @@ from .box import read_string
 class ItemInformationBox(FullBox):
     """Item Information Box
     """
+    box_type = 'iinf'
     is_mandatory = False
 
-    def __init__(self, box):
-        super().__init__(box=box, version=box.version, flags=box.flags)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.item_infos = []
 
     def __repr__(self):
@@ -22,10 +23,9 @@ class ItemInformationBox(FullBox):
         return super().__repr__() + indent(rep)
 
     def read(self, file):
-        if self.version == 0:
-            entry_count = read_int(file, 2)
-        else:
-            entry_count = read_int(file, 4)
+        super().read(file)
+        count_size = 2 if self.version == 0 else 4
+        entry_count = read_int(file, count_size)
 
         for _ in range(entry_count):
             box = Box()
@@ -33,9 +33,7 @@ class ItemInformationBox(FullBox):
 
             if box.size:
                 if box.box_type == 'infe':
-                    full_box = FullBox(box)
-                    full_box.read(file)
-                    infe = ItemInfomationEntry(full_box)
+                    infe = ItemInfomationEntry(box.size)
                     infe.read(file)
                     self.item_infos.append(infe)
                 else:
@@ -46,9 +44,10 @@ class ItemInformationBox(FullBox):
 class ItemInfomationEntry(FullBox):
     """Item Infomation Entry
     """
+    box_type = 'infe'
 
-    def __init__(self, box):
-        super().__init__(box=box, version=box.version, flags=box.flags)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.item_id = None
         self.item_protection_index = None
         self.item_name = None
@@ -68,6 +67,7 @@ class ItemInfomationEntry(FullBox):
         return super().__repr__() + indent(rep)
 
     def read(self, file):
+        super().read(file)
         if self.version == 0 or self.version == 1:
             self.item_id = read_int(file, 2)
             self.item_protection_index = read_int(file, 2)
@@ -113,5 +113,5 @@ class FDItemInfoExtension(object):
         self.transfer_length = read_int(file, 8)
         entry_count = read_int(file, 1)
         for _ in range(entry_count):
-            id = read_int(file, 4)
-            self.group_ids.append(id)
+            group_id = read_int(file, 4)
+            self.group_ids.append(group_id)

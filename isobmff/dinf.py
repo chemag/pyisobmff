@@ -9,9 +9,11 @@ from .dref import DataReferenceBox
 class DataInformationBox(FullBox):
     """Data Information Box
     """
+    box_type = 'dinf'
+    is_mandatry = True
 
-    def __init__(self, box):
-        super().__init__(box=box, version=box.version, flags=box.flags)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.dref = None
         self.url = None
         self.urn = None
@@ -22,22 +24,20 @@ class DataInformationBox(FullBox):
         return rep
 
     def read(self, file):
+        super().read(file)
         box = Box()
         box.read(file)
         if box.size:
-            full_box = FullBox(box)
-            full_box.read(file)
-            
             if box.box_type == 'dref':
-                dref = DataReferenceBox(full_box)
+                dref = DataReferenceBox(box.size)
                 dref.read(file)
                 self.dref = dref
             if box.box_type == 'url ':
-                url = DataEntryUrlBox(full_box)
+                url = DataEntryUrlBox(box.size)
                 url.read(file)
                 self.url = dref
             if box.box_type == 'urn ':
-                urn = DataEntryUrnBox(full_box)
+                urn = DataEntryUrnBox(box.size)
                 urn.read(file)
                 self.urn = urn
             else:

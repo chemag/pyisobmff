@@ -8,10 +8,11 @@ from .box import read_string
 class FileTypeBox(Box):
     """File Type Box
     """
+    box_type = 'ftyp'
     is_mandatory = True
 
-    def __init__(self, box):
-        super().__init__(size=box.size, box_type=box.box_type)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.majar_brand = None
         self.minor_version = None
         self.compatible_brands = []

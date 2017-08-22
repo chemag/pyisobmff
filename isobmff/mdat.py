@@ -5,10 +5,11 @@ from .box import Box
 class MediaDataBox(Box):
     """MediaDataBox
     """
+    box_type = 'mdat'
     is_mandatory = False
 
-    def __init__(self, box):
-        super().__init__(size=box.size, box_type=box.box_type)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.data_size = self.size - 8
         self.data = None
 

@@ -7,10 +7,11 @@ from .box import indent
 class ItemLocationBox(FullBox):
     """Item Location Box
     """
+    box_type = 'iloc'
     is_mandatory = False
 
-    def __init__(self, box):
-        super().__init__(box=box, version=box.version, flags=box.flags)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.offset_size = None
         self.length_size = None
         self.base_offset_size = None
@@ -23,6 +24,7 @@ class ItemLocationBox(FullBox):
         return super().__repr__() + indent(rep)
 
     def read(self, file):
+        super().read(file)
         byte = read_int(file, 1)
         self.offset_size = (byte >> 4) & 0b1111
         self.length_size = byte & 0b1111

@@ -13,10 +13,11 @@ from .pitm import PrimaryItemBox
 class MetaBox(FullBox):
     """Meta box
     """
+    box_type = 'meta'
     is_mandatory = False
 
-    def __init__(self, box):
-        super().__init__(box=box, version=box.version, flags=box.flags)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.hdlr = None
         self.dinf = None
         self.pitm = None
@@ -33,6 +34,7 @@ class MetaBox(FullBox):
         return super().__repr__() + indent(rep)
 
     def read(self, file):
+        super().read(file)
         read_size = self.size - 12
         #print(file.read(read_size))
         while read_size > 0:
@@ -46,34 +48,32 @@ class MetaBox(FullBox):
 
     def __read_box(self, file, box):
         print(box.box_type + ' ' + str(box.size))
-        full_box = FullBox(box)
-        full_box.read(file)
 
         if box.box_type == 'hdlr':
-            self.hdlr = HandlerReferenceBox(full_box)
+            self.hdlr = HandlerReferenceBox(box.size)
             self.hdlr.read(file)
         elif box.box_type == 'dinf':
-            self.dinf = DataInformationBox(full_box)
+            self.dinf = DataInformationBox(box.size)
             self.dinf.read(file)
         elif box.box_type == 'iinf':
-            self.iinf = ItemInformationBox(full_box)
+            self.iinf = ItemInformationBox(box.size)
             self.iinf.read(file)
         elif box.box_type == 'iloc':
-            self.iloc = ItemLocationBox(full_box)
+            self.iloc = ItemLocationBox(box.size)
             self.iloc.read(file)
         elif box.box_type == 'ipmc':
             pass
         elif box.box_type == 'ipro':
             pass
         elif box.box_type == 'iprp':
-            self.iprp = ItemPropertiesBox(full_box)
+            self.iprp = ItemPropertiesBox(box.size)
             self.iprp.read(file)
         elif box.box_type == 'xml ':
             pass
         elif box.box_type == 'bxml':
             pass
         elif box.box_type == 'pitm':
-            self.pitm = PrimaryItemBox(full_box)
+            self.pitm = PrimaryItemBox(box.size)
             self.pitm.read(file)
         else:
             pass

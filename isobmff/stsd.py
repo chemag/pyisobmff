@@ -5,13 +5,14 @@ from .box import read_int
 from .box import read_string
 
 
-class Stsd(FullBox):
+class SampleDescriptionBox(FullBox):
     """Sample Description Box
     """
+    box_type = 'stsd'
     is_mandatory = True
     
-    def __init__(self, box, handler_type):
-        super().__init__( box.size, box.box_type)
+    def __init__(self, size, handler_type):
+        super().__init__(size=size)
         self.handler_type = handler_type
         self.samples = []
 
@@ -20,6 +21,7 @@ class Stsd(FullBox):
         return rep
 
     def read(self, file):
+        super().read(file)
         entry_count = read_int(file, 1)
         for _ in range(entry_count):
             box = Box()
@@ -36,8 +38,8 @@ class SampleEntry(Box):
     """Sample Entry
     """
 
-    def __init__(self, box):
-        super().__init__(size=box.size, box_type=box.box_type)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.reserveds = []
         self.data_reference_index = None
 
@@ -59,9 +61,10 @@ class SampleEntry(Box):
 class HintSampleEntry(SampleEntry):
     """Hint Sample Entry
     """
+    box_type = 'hint'
 
-    def __init__(self, box):
-        super().__init__(box=box)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.data = []
     
     def __repr__(self):
@@ -76,9 +79,10 @@ class HintSampleEntry(SampleEntry):
 class VisualSampleEntry(SampleEntry):
     """Visual Sample Entry
     """
+    box_type = 'vide'
 
-    def __init__(self, box):
-        super().__init__(box=box)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.pre_defined1 = None
         self.reserved1 = None
         self.pre_defined2 = []
@@ -115,9 +119,10 @@ class VisualSampleEntry(SampleEntry):
 class AudioSampleEntry(SampleEntry):
     """Audio Sample Entry
     """
+    box_type = 'soun'
 
-    def __init__(self, box):
-        super().__init__(box)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.reserved1 = []
         self.channelcount = None
         self.samplesize = None

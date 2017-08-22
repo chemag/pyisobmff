@@ -11,15 +11,17 @@ from .ispe import SpaialExtentBox
 class ItemPropertiesBox(FullBox):
     """Item Properties Box
     """
+    box_type = 'iprp'
 
-    def __init__(self, box):
-        super().__init__(box=box, version=box.version, flags=box.flags)
+    def __init__(self, size):
+        super().__init__(size=size)
         self.ipco = None
 
     def __repr__(self):
         return super().__repr__() + indent(self.ipco.__repr__())
 
     def read(self, file):
+        super().read(file)
         typ = read_string(file, 4) #ipco
         read_size = self.size - 16
         if typ == 'ipco':
@@ -59,10 +61,10 @@ class ItemPropertyContainer(object):
         print(box.box_type + ' ' + str(box.size))
 
         if box.box_type == 'hvcC':
-            self.hvcc = HEVCConfigurationBox(box)
+            self.hvcc = HEVCConfigurationBox(box.size)
             self.hvcc.read(file)
         if box.box_type == 'ispe':
-            ispe = SpaialExtentBox(box)
+            ispe = SpaialExtentBox(box.size)
             ispe.read(file)
             self.ispes.append(ispe)
         if box.box_type == 'ipma':

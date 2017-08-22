@@ -7,10 +7,11 @@ from .box import read_int
 class MovieBox(Box):
     """Movie Box
     """
+    box_type = 'moov'
     is_mandatory = True
 
-    def __init__(self, box):
-        super().__init__(size=box.size, box_type=box.box_type)
+    def __init__(self, size):
+        super().__init__(size=size)
 
     def __repr__(self):
         return  super().__repr__()

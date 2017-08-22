@@ -44,19 +44,17 @@ class MediaFile(object):
 
     def __read_box(self, file, box):
         if box.box_type == 'ftyp':
-            self.ftyp = FileTypeBox(box)
+            self.ftyp = FileTypeBox(box.size)
             self.ftyp.read(file)
         elif box.box_type == 'mdat':
-            mdat = MediaDataBox(box)
+            mdat = MediaDataBox(box.size)
             mdat.read(file)
             self.mdats.append(mdat)
         elif box.box_type == 'meta':
-            full_box = FullBox(box)
-            full_box.read(file)
-            self.meta = MetaBox(full_box)
+            self.meta = MetaBox(box.size)
             self.meta.read(file)
         elif box.box_type == 'moov':
-            self.moov = MovieBox(box)
+            self.moov = MovieBox(box.size)
             self.moov.read(file)
         else:
             box_size = box.size - 8

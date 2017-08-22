@@ -4,10 +4,10 @@ import re
 class Box(object):
     """Box
     """
+    box_type = None
 
-    def __init__(self, size=None, box_type=None):
+    def __init__(self, size=None):
         self.size = size
-        self.box_type = box_type
         self.largesize = None
 
     def __repr__(self):
@@ -29,9 +29,10 @@ class Box(object):
 
 class FullBox(Box):
     """FullBox"""
+    box_type = None
 
-    def __init__(self, box, version=None, flags=None):
-        super().__init__(box.size, box.box_type)
+    def __init__(self, size, version=None, flags=None):
+        super().__init__(size)
         self.version = version
         self.flags = flags
 
