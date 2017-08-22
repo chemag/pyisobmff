@@ -10,14 +10,11 @@ class PrimaryItemBox(FullBox):
     box_type = 'pitm'
     is_mandatory = False
 
-    def __init__(self, size):
-        super().__init__(size=size)
-        self.item_id = None
-
+    """
     def __repr__(self):
-        rep = 'item_id: ' + str(self.item_id)
+        #rep = 'item_id: ' + str(self.item_id)
         return  super().__repr__() + indent(rep)
+    """
 
     def read(self, file):
-        super().read(file)
         self.item_id = read_int(file, 2)

@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
+"""
+dinf
+"""
 from .box import Box
 from .box import FullBox
-from .dref import DataEntryUrlBox
-from .dref import DataEntryUrnBox
-from .dref import DataReferenceBox
+from .box import read_box
+from .box import read_int
+from .box import read_string
 
 
-class DataInformationBox(FullBox):
+class DataInformationBox(Box):
     """Data Information Box
     """
     box_type = 'dinf'
     is_mandatry = True
-
-    def __init__(self, size):
-        super().__init__(size=size)
-        self.dref = None
-        self.url = None
-        self.urn = None
 
     def __repr__(self):
         rep = super().__repr__()
@@ -24,23 +21,56 @@ class DataInformationBox(FullBox):
         return rep
 
     def read(self, file):
-        super().read(file)
-        box = Box()
-        box.read(file)
-        if box.size:
-            if box.box_type == 'dref':
-                dref = DataReferenceBox(box.size)
-                dref.read(file)
-                self.dref = dref
-            if box.box_type == 'url ':
-                url = DataEntryUrlBox(box.size)
-                url.read(file)
-                self.url = dref
-            if box.box_type == 'urn ':
-                urn = DataEntryUrnBox(box.size)
-                urn.read(file)
-                self.urn = urn
-            else:
-                box_size = box.size - 8
-                if box_size > 0:
-                    file.read(box_size)
+        box = read_box(file)
+        if not box:
+            return
+        setattr(self, box.box_type, box)
+
+
+class DataReferenceBox(FullBox):
+    """Data Reference Box
+    """
+    box_type = 'dref'
+    is_mandatry = True
+
+    def __init__(self, size, version, flags):
+        super().__init__(size=size, version=version, flags=flags)
+        self.data_entry = []
+
+    def read(self, file):
+        entry_count = read_int(file, 4)
+        for _ in range(entry_count):
+            box = read_box(file)
+            if not box:
+                break
+            self.data_entry.append(box)
+
+
+class DataEntryUrlBox(FullBox):
+    """Data Entry Url Box
+    """
+    box_type = 'url '
+    is_mandatry = True
+
+    def __init__(self, size, version, flags):
+        super().__init__(size=size, version=version, flags=flags)
+        self.location = None
+
+    def read(self, file):
+        self.location = read_string(file)
+
+
+class DataEntryUrnBox(FullBox):
+    """Data Entry Urn Box
+    """
+    box_type = 'urn '
+    is_mandatry = True
+
+    def __init__(self, size, version, flags):
+        super().__init__(size=size, version=version, flags=flags)
+        self.name = None
+        self.location = None
+
+    def read(self, file):
+        self.name = read_string(file)
+        self.location = read_string(file)

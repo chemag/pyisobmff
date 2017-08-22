@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 """
-from .box import Box
-from .box import FullBox
 from .box import indent
-from .ftyp import FileTypeBox
-from .mdat import MediaDataBox
-from .meta import MetaBox
-from .moov import MovieBox
+from .box import read_box
 
 
 class MediaFile(object):
@@ -29,34 +24,16 @@ class MediaFile(object):
         return 'ISOBaseMediaFile\n' + indent(rep)
 
     def read(self, file_name):
-        """
-        """
+        """read"""
         file = open(file_name, 'rb')
         try:
             while True:
-                box = Box()
-                box.read(file)
-                if not box.size:
+                box = read_box(file)
+                if not box:
                     break
-                self.__read_box(file, box)
+                if box.box_type == 'mdat':
+                    self.mdats.append(box)
+                else:
+                    setattr(self, box.box_type, box)
         finally:
             file.close()
-
-    def __read_box(self, file, box):
-        if box.box_type == 'ftyp':
-            self.ftyp = FileTypeBox(box.size)
-            self.ftyp.read(file)
-        elif box.box_type == 'mdat':
-            mdat = MediaDataBox(box.size)
-            mdat.read(file)
-            self.mdats.append(mdat)
-        elif box.box_type == 'meta':
-            self.meta = MetaBox(box.size)
-            self.meta.read(file)
-        elif box.box_type == 'moov':
-            self.moov = MovieBox(box.size)
-            self.moov.read(file)
-        else:
-            box_size = box.size - 8
-            if box_size > 0:
-                file.read(box_size)

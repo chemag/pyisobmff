@@ -3,7 +3,7 @@ from .box import Box
 
 
 class MediaDataBox(Box):
-    """MediaDataBox
+    """Media Data Box
     """
     box_type = 'mdat'
     is_mandatory = False

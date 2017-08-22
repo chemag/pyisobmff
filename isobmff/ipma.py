@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-from .box import FullBox
+from .box import Box
 from .box import indent
 from .box import read_int
 
 
-class MovieHeaderBox(FullBox):
-    """Movie Box
+class ipma(Box):
+    """SpaialExtentBox
     """
-    box_type = 'mvhd'
-    is_mandatory = True
+    box_type = 'ipma'
 
     def __init__(self, size):
         super().__init__(size=size)
@@ -17,5 +16,4 @@ class MovieHeaderBox(FullBox):
         return  super().__repr__()
 
     def read(self, file):
-        super().read(file)
         print(file.read(self.get_box_size()))

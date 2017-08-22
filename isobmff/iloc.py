@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""
+"""
 from .box import FullBox
 from .box import read_int
 from .box import indent
@@ -10,8 +12,8 @@ class ItemLocationBox(FullBox):
     box_type = 'iloc'
     is_mandatory = False
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, size, version, flags):
+        super().__init__(size=size, version=version, flags=flags)
         self.offset_size = None
         self.length_size = None
         self.base_offset_size = None
@@ -24,7 +26,6 @@ class ItemLocationBox(FullBox):
         return super().__repr__() + indent(rep)
 
     def read(self, file):
-        super().read(file)
         byte = read_int(file, 1)
         self.offset_size = (byte >> 4) & 0b1111
         self.length_size = byte & 0b1111

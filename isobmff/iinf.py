@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from .box import Box
 from .box import FullBox
 from .box import indent
+from .box import read_box
 from .box import read_int
 from .box import read_string
 
@@ -12,8 +12,8 @@ class ItemInformationBox(FullBox):
     box_type = 'iinf'
     is_mandatory = False
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, size, version, flags):
+        super().__init__(size=size, version=version, flags=flags)
         self.item_infos = []
 
     def __repr__(self):
@@ -28,26 +28,19 @@ class ItemInformationBox(FullBox):
         entry_count = read_int(file, count_size)
 
         for _ in range(entry_count):
-            box = Box()
-            box.read(file)
-
-            if box.size:
-                if box.box_type == 'infe':
-                    infe = ItemInfomationEntry(box.size)
-                    infe.read(file)
-                    self.item_infos.append(infe)
-                else:
-                    box_size = box.size - 8
-                    if box_size > 0:
-                        file.read(box_size)
+            box = read_box(file)
+            if not box:
+                break
+            if box.box_type == 'infe':
+                self.item_infos.append(box)
 
 class ItemInfomationEntry(FullBox):
     """Item Infomation Entry
     """
     box_type = 'infe'
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, size, version, flags):
+        super().__init__(size=size, version=version, flags=flags)
         self.item_id = None
         self.item_protection_index = None
         self.item_name = None
@@ -67,7 +60,6 @@ class ItemInfomationEntry(FullBox):
         return super().__repr__() + indent(rep)
 
     def read(self, file):
-        super().read(file)
         if self.version == 0 or self.version == 1:
             self.item_id = read_int(file, 2)
             self.item_protection_index = read_int(file, 2)

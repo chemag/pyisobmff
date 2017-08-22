@@ -11,17 +11,12 @@ class SampleDescriptionBox(FullBox):
     box_type = 'stsd'
     is_mandatory = True
     
-    def __init__(self, size, handler_type):
-        super().__init__(size=size)
+    def __init__(self, size, version, flags):
+        super().__init__(size=size, version=version, flags=flags)
         self.handler_type = handler_type
         self.samples = []
 
-    def __repr__(self):
-        rep = super().__repr__()
-        return rep
-
     def read(self, file):
-        super().read(file)
         entry_count = read_int(file, 1)
         for _ in range(entry_count):
             box = Box()
@@ -66,13 +61,8 @@ class HintSampleEntry(SampleEntry):
     def __init__(self, size):
         super().__init__(size=size)
         self.data = []
-    
-    def __repr__(self):
-        rep = super().__repr__()
-        return rep
 
     def read(self, file):
-        super().read(file)
         box_size = self.get_box_size()
         self.data = file.read(box_size)
 
@@ -96,10 +86,6 @@ class VisualSampleEntry(SampleEntry):
         self.depth = None
         self.pre_defined3 = None
     
-    def __repr__(self):
-        rep = super().__repr__()
-        return rep
-
     def read(self, file):
         super().read(file)
         self.pre_defined1 = read_int(file, 2)
@@ -130,10 +116,6 @@ class AudioSampleEntry(SampleEntry):
         self.reserved2 = []
         self.samperate = None
     
-    def __repr__(self):
-        rep = super().__repr__()
-        return rep
-
     def read(self, file):
         super().read(file)
         for _ in range(2):

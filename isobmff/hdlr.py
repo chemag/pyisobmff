@@ -11,8 +11,8 @@ class HandlerReferenceBox(FullBox):
     box_type = 'hdlr'
     is_mandatory = True
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, size, version, flags):
+        super().__init__(size=size, version=version, flags=flags)
         self.pre_defined = None
         self.handler_type = None
         self.reserved = []
@@ -24,7 +24,6 @@ class HandlerReferenceBox(FullBox):
         return super().__repr__() + indent(rep)
 
     def read(self, file):
-        super().read(file)
         self.pre_defined = read_int(file, 4)
         self.handler_type = read_string(file, 4)
         for _ in range(3): #3*4=12bytes
