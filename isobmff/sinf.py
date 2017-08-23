@@ -7,13 +7,11 @@ from .box import read_string
 
 
 class ProtectionSchemeInfoBox(Box):
-    """Protection Scheme Info Box"""
     box_type = 'sinf'
     is_mandatory = False
     quantity = Quantity.ONE_OR_MORE
 
 class OriginalFormatBox(Box):
-    """Original Format Box"""
     box_type = 'frma'
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
@@ -26,7 +24,6 @@ class OriginalFormatBox(Box):
         self.data_format = read_int(file, 4)
 
 class SchemeTypeBox(FullBox):
-    """Scheme Type Box"""
     box_type = 'schm'
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
@@ -44,7 +41,6 @@ class SchemeTypeBox(FullBox):
             self.scheme_uri = read_string(file)
 
 class SchemeInformationBox(Box):
-    """Scheme Information Box"""
     box_type = 'schi'
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE

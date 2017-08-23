@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-"""
 from .box import Box
 from .box import Quantity
 from .box import indent
@@ -9,8 +7,6 @@ from .box import read_string
 
 
 class FileTypeBox(Box):
-    """File Type Box
-    """
     box_type = 'ftyp'
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
@@ -37,4 +33,3 @@ class FileTypeBox(Box):
         for _ in range(num_compatible_brands):
             compat_brand = read_string(file, 4)
             self.compatible_brands.append(compat_brand)
-

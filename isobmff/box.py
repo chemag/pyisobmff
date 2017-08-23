@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-"""
 import re
 from enum import Enum
 
@@ -11,7 +9,6 @@ class AbcBox(type):
 
 
 class Box(object):
-    """Box"""
     box_type = None
 
     def __init__(self, size=None):
@@ -26,7 +23,6 @@ class Box(object):
         return self.size - 8
 
     def read(self, file):
-        """read box from file"""
         read_size = self.get_box_size()
         #print(file.read(read_size))
         while read_size > 0:
@@ -43,7 +39,6 @@ class Box(object):
 
 
 class FullBox(Box):
-    """FullBox"""
     box_type = None
 
     def __init__(self, size, version=None, flags=None):
@@ -62,7 +57,6 @@ class FullBox(Box):
 
 
 class Quantity(Enum):
-    """Quantity types"""
     ZERO_OR_ONE = 0
     EXACTLY_ONE = 1
     ONE_OR_MORE = 2
@@ -70,13 +64,10 @@ class Quantity(Enum):
 
 
 def read_int(file, length):
-    """readint"""
     return int.from_bytes(file.read(length), 'big')
 
 def read_string(file, length=None):
-    """readstring
-    TODO: convert utf8
-    """
+    #TODO: convert utf8
     if length:
         res = file.read(length).decode()
     else:
@@ -84,22 +75,21 @@ def read_string(file, length=None):
     return res
 
 def indent(rep):
-    """indent 2 spaces"""
     return re.sub(r'^', '  ', rep, flags=re.M)
 
 def read_box(file):
-    """read box from file"""
     size = read_int(file, 4)
     box_type = read_string(file, 4)
     print(box_type + '(' + str(size) + ')')
     box = None
 
-    for subclass in getattr(Box, '__subclasses__')():
-        if subclass.box_type == box_type:
-            box = subclass.__new__(subclass)
-            box.__init__(size=size)
-            if box.get_box_size():
-                box.read(file)
+    boxclass = get_target_boxclass(box_type)
+    if boxclass:
+        box = boxclass.__new__(boxclass)
+        box.__init__(size=size)
+        if box.get_box_size():
+            box.read(file)
+
     # TODO: 探索は1for文で済ませたい
     for subclass in getattr(FullBox, '__subclasses__')():
         if subclass.box_type == box_type:
@@ -109,5 +99,11 @@ def read_box(file):
             box.__init__(size=size, version=version, flags=flags)
             if box.get_box_size():
                 box.read(file)
-
     return box
+
+
+def get_target_boxclass(box_type):
+    for subclass in getattr(Box, '__subclasses__')():
+        if subclass.box_type == box_type:
+            return subclass
+    

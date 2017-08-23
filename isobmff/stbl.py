@@ -8,15 +8,11 @@ from .box import read_string
 
 
 class SampleTableBox(Box):
-    """Movie Box
-    """
     box_type = 'stbl'
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
 class SampleDescriptionBox(FullBox):
-    """Sample Description Box
-    """
     box_type = 'stsd'
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE    
@@ -35,8 +31,6 @@ class SampleDescriptionBox(FullBox):
             self.samples.append(box)
 
 class SampleEntry(Box):
-    """Sample Entry
-    """
 
     def __init__(self, size):
         super().__init__(size=size)
@@ -48,7 +42,6 @@ class SampleEntry(Box):
         return rep
 
     def get_box_size(self):
-        """get box size excluding header"""
         return super().get_box_size() - 6 + 2    
 
     def read(self, file):

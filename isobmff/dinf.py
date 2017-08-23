@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-dinf
-"""
 from .box import Box
 from .box import FullBox
 from .box import Quantity
@@ -11,16 +8,12 @@ from .box import read_string
 
 
 class DataInformationBox(Box):
-    """Data Information Box
-    """
     box_type = 'dinf'
     is_mandatry = True
     quantity = Quantity.EXACTLY_ONE
 
 
 class DataReferenceBox(FullBox):
-    """Data Reference Box
-    """
     box_type = 'dref'
     is_mandatry = True
     quantity = Quantity.EXACTLY_ONE
@@ -39,8 +32,6 @@ class DataReferenceBox(FullBox):
 
 
 class DataEntryUrlBox(FullBox):
-    """Data Entry Url Box
-    """
     box_type = 'url '
     is_mandatry = True
 
@@ -53,8 +44,6 @@ class DataEntryUrlBox(FullBox):
 
 
 class DataEntryUrnBox(FullBox):
-    """Data Entry Urn Box
-    """
     box_type = 'urn '
     is_mandatry = True
 

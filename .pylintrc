@@ -221,7 +221,8 @@ expected-line-ending-format=
 logging-modules=logging
 
 [MESSAGES CONTROL]
-disable=print-statement,...,deprecated-str-translate-call,C0111
+#disable=print-statement,...,deprecated-str-translate-call,C0111
+disable=C0111
 
 [MISCELLANEOUS]
 

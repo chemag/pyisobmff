@@ -7,7 +7,6 @@ from .box import read_string
 
 
 class HandlerReferenceBox(FullBox):
-    """Handler Reference Box"""
     box_type = 'hdlr'
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE

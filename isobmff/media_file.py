@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-"""
 from .box import indent
 from .box import read_box
 
 
 class MediaFile(object):
-    """MediaFile
-    """
 
     def __init__(self):
         self.ftyp = None
@@ -24,7 +20,6 @@ class MediaFile(object):
         return 'ISOBaseMediaFile\n' + indent(rep)
 
     def read(self, file_name):
-        """read"""
         file = open(file_name, 'rb')
         try:
             while True:
@@ -32,6 +27,7 @@ class MediaFile(object):
                 if not box:
                     break
                 if box.box_type == 'mdat':
+                    print('hoge')
                     self.mdats.append(box)
                 else:
                     setattr(self, box.box_type, box)

@@ -1,5 +1,5 @@
 # isobmff
-The isobmff is an open source software library for reading/writing ISO base media file format.
+The isobmff is an python library for reading/writing ISO base media file format.
 
 ## Requirements.
 

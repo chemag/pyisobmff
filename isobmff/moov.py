@@ -1,25 +1,21 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import FullBox
+from .box import Quantity
 from .box import indent
 from .box import read_box
 from .box import read_int
 
 
 class MovieBox(Box):
-    """Movie Box
-    """
     box_type = 'moov'
     is_mandatory = True
-    # Quantity: Exactly one
-
-
+    quantity = Quantity.EXACTLY_ONE
 
 class MovieHeaderBox(FullBox):
-    """Movie Header Box
-    """
     box_type = 'mvhd'
     is_mandatory = True
+    quantity = Quantity.EXACTLY_ONE
 
     def __init__(self, size, version, flags):
         super().__init__(size=size, version=version, flags=flags)

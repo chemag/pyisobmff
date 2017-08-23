@@ -1,24 +1,20 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import FullBox
+from .box import Quantity
 from .box import indent
 from .box import read_int
 
 
 class TrackBox(Box):
-    """Track Box
-    """
     box_type = 'trak'
     is_mandatory = True
-    #Quantity: Exactly one
-
+    quantity = Quantity.EXACTLY_ONE
 
 class TrackHeaderBox(FullBox):
-    """Track Header Box
-    """
     box_type = 'tkhd'
     is_mandatory = True
-    #Quantity: Exactly one
+    quantity = Quantity.EXACTLY_ONE
 
     def __init__(self, size, version, flags):
         super().__init__(size=size, version=version, flags=flags)
@@ -35,7 +31,6 @@ class TrackHeaderBox(FullBox):
         self.matrix = []
         self.width = None
         self.height = None
-
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4

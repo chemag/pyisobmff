@@ -11,10 +11,8 @@ from . import hdlr
 from . import hvc
 from . import iinf
 from . import iloc
-from . import ipma
 from . import ipro
 from . import iprp
-from . import ispe
 from . import mdat
 from . import mdia
 from . import meta

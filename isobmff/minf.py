@@ -6,14 +6,12 @@ from .box import read_int
 
 
 class MediaInformationBox(Box):
-    """Media Information Box"""
     box_type = 'minf'
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
 
 class VideoMediaHeaderBox(FullBox):
-    """Video Media Header Box"""
     box_type = 'vmhd'
     is_mandatory = True
 
@@ -29,8 +27,6 @@ class VideoMediaHeaderBox(FullBox):
 
 
 class SoundMediaHeaderBox(FullBox):
-    """Sound Media Header Box
-    """
     box_type = 'smhd'
     is_mandatory = True
 
@@ -45,8 +41,6 @@ class SoundMediaHeaderBox(FullBox):
 
 
 class HintMediaHeaderBox(FullBox):
-    """Hint Media Header Box
-    """
     box_type = 'hmhd'
     is_mandatory = True
 
@@ -67,7 +61,5 @@ class HintMediaHeaderBox(FullBox):
 
 
 class NullMediaHeaderBox(FullBox):
-    """Null Media Header Box
-    """
     box_type = 'nmhd'
     is_mandatory = True

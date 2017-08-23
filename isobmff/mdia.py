@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import FullBox
+from .box import Quantity
 from .box import indent
 from .box import read_int
 
 
 class MediaBox(Box):
-    """Media Box
-    """
     box_type = 'mdia'
     is_mandatory = True
-    #Quantity: Exactly one
+    quantity = Quantity.EXACTLY_ONE
 
 
 class MediaHeaderBox(FullBox):
-    """Media Header Box
-    """
     box_type = 'mdhd'
     is_mandatory = True
-    #Quantity: Exactly one
+    quantity = Quantity.EXACTLY_ONE
 
     def __init__(self, size, version, flags):
         super().__init__(size=size, version=version, flags=flags)
@@ -29,7 +26,6 @@ class MediaHeaderBox(FullBox):
         self.pad = None
         self.language = [] # ISO-639-2/T language code
         self.pre_defined = None
-
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4

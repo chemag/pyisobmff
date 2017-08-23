@@ -7,7 +7,6 @@ from .box import read_string
 
 
 class ItemInformationBox(FullBox):
-    """Item Information Box"""
     box_type = 'iinf'
     is_mandatory = False
 
@@ -33,8 +32,6 @@ class ItemInformationBox(FullBox):
                 self.item_infos.append(box)
 
 class ItemInfomationEntry(FullBox):
-    """Item Infomation Entry
-    """
     box_type = 'infe'
 
     def __init__(self, size, version, flags):
@@ -86,8 +83,6 @@ class ItemInfomationEntry(FullBox):
                 self.uri_type = read_string(file)
 
 class FDItemInfoExtension(object):
-    """FDItemInfoExtension
-    """
     def __init__(self):
         self.content_location = None
         self.content_md5 = None
