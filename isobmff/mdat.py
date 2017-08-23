@@ -12,6 +12,4 @@ class MediaDataBox(Box):
 
     def read(self, file):
         self.data = file.read(self.get_box_size())
-
-    def write(self):
-        pass
+        print(self.data[0:20])

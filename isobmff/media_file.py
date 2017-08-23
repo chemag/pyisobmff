@@ -27,7 +27,6 @@ class MediaFile(object):
                 if not box:
                     break
                 if box.box_type == 'mdat':
-                    print('hoge')
                     self.mdats.append(box)
                 else:
                     setattr(self, box.box_type, box)
