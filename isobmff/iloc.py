@@ -7,8 +7,7 @@ from .box import indent
 
 
 class ItemLocationBox(FullBox):
-    """Item Location Box
-    """
+    """Item Location Box"""
     box_type = 'iloc'
     is_mandatory = False
 

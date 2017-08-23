@@ -2,6 +2,7 @@
 """
 """
 from .box import Box
+from .box import Quantity
 from .box import indent
 from .box import read_int
 from .box import read_string
@@ -12,6 +13,8 @@ class FileTypeBox(Box):
     """
     box_type = 'ftyp'
     is_mandatory = True
+    quantity = Quantity.EXACTLY_ONE
+
 
     def __init__(self, size):
         super().__init__(size=size)

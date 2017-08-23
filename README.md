@@ -22,7 +22,8 @@ Python 3.4+
 - ISO/IEC 14496-15 Carriage of network abstraction layer (NAL) unit structured video in the ISO base media file format
     - box types: 'hvc1', 'hev1', 'hvcC'
 - [ISO/IEC CD 23008-12 HEVC Still Image File Format](http://mpeg.chiariglione.org/standards/mpeg-h/image-file-format/text-isoiec-cd-23008-12-image-file-format)
-- [ITU-T H.265](http://www.itu.int/rec/T-REC-H.265)
+    - box types: 'iprp', 'ispe', 'ipma'
+- [ITU-T Rec. H.265](http://www.itu.int/rec/T-REC-H.265)
 
 ## Author
 Minoru Hiki

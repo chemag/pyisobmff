@@ -7,8 +7,7 @@ from .box import read_string
 
 
 class ItemInformationBox(FullBox):
-    """Item Information Box
-    """
+    """Item Information Box"""
     box_type = 'iinf'
     is_mandatory = False
 
@@ -23,7 +22,6 @@ class ItemInformationBox(FullBox):
         return super().__repr__() + indent(rep)
 
     def read(self, file):
-        super().read(file)
         count_size = 2 if self.version == 0 else 4
         entry_count = read_int(file, count_size)
 

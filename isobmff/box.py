@@ -2,15 +2,16 @@
 """
 """
 import re
+from enum import Enum
 
 
 class AbcBox(type):
+    #TODO: human readable implementation of __repr__ 
     pass
 
 
 class Box(object):
-    """Box
-    """
+    """Box"""
     box_type = None
 
     def __init__(self, size=None):
@@ -25,17 +26,16 @@ class Box(object):
         return self.size - 8
 
     def read(self, file):
-        """read box from file
+        """read box from file"""
         read_size = self.get_box_size()
         #print(file.read(read_size))
         while read_size > 0:
             box = read_box(file)
             if not box:
                 break
+            #TODO: Quantityでそのままsetattrか配列にappendか分ける
             setattr(self, box.box_type, box)
             read_size -= box.size
-        """ 
-        pass
 
     def write(self, file):
         """write box to file"""
@@ -59,6 +59,14 @@ class FullBox(Box):
     def get_box_size(self):
         """get box size excluding header"""
         return self.size - 12
+
+
+class Quantity(Enum):
+    """Quantity types"""
+    ZERO_OR_ONE = 0
+    EXACTLY_ONE = 1
+    ONE_OR_MORE = 2
+    ANY_NUMBER = 3
 
 
 def read_int(file, length):
@@ -92,7 +100,6 @@ def read_box(file):
             box.__init__(size=size)
             if box.get_box_size():
                 box.read(file)
-            #print(subclass.__name__)
     # TODO: 探索は1for文で済ませたい
     for subclass in getattr(FullBox, '__subclasses__')():
         if subclass.box_type == box_type:

@@ -18,7 +18,6 @@ class ItemPropertiesBox(FullBox):
         return super().__repr__() + indent(self.ipco.__repr__())
 
     def read(self, file):
-        super().read(file)
         typ = read_string(file, 4) #ipco
         read_size = self.size - 16
         if typ == 'ipco':

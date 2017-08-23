@@ -11,16 +11,8 @@ class MovieBox(Box):
     """
     box_type = 'moov'
     is_mandatory = True
+    # Quantity: Exactly one
 
-    def read(self, file):
-        read_size = self.get_box_size()
-        #print(file.read(read_size))
-        while read_size > 0:
-            box = read_box(file)
-            if not box:
-                break
-            setattr(self, box.box_type, box)
-            read_size -= box.size
 
 
 class MovieHeaderBox(FullBox):

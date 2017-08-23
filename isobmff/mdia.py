@@ -3,7 +3,6 @@ from .box import Box
 from .box import FullBox
 from .box import indent
 from .box import read_int
-from .box import read_box
 
 
 class MediaBox(Box):
@@ -13,14 +12,6 @@ class MediaBox(Box):
     is_mandatory = True
     #Quantity: Exactly one
 
-    def read(self, file):
-        read_size = self.get_box_size()
-        while read_size > 0:
-            box = read_box(file)
-            if not box:
-                break
-            setattr(self, box.box_type, box)
-            read_size -= box.size
 
 class MediaHeaderBox(FullBox):
     """Media Header Box

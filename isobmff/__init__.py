@@ -21,5 +21,5 @@ from . import meta
 from . import minf
 from . import moov
 from . import pitm
-from . import stsd
+from . import stbl
 from . import trak

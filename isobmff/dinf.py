@@ -4,6 +4,7 @@ dinf
 """
 from .box import Box
 from .box import FullBox
+from .box import Quantity
 from .box import read_box
 from .box import read_int
 from .box import read_string
@@ -14,17 +15,7 @@ class DataInformationBox(Box):
     """
     box_type = 'dinf'
     is_mandatry = True
-
-    def __repr__(self):
-        rep = super().__repr__()
-        rep += self.dref.__repr__()
-        return rep
-
-    def read(self, file):
-        box = read_box(file)
-        if not box:
-            return
-        setattr(self, box.box_type, box)
+    quantity = Quantity.EXACTLY_ONE
 
 
 class DataReferenceBox(FullBox):
@@ -32,6 +23,7 @@ class DataReferenceBox(FullBox):
     """
     box_type = 'dref'
     is_mandatry = True
+    quantity = Quantity.EXACTLY_ONE
 
     def __init__(self, size, version, flags):
         super().__init__(size=size, version=version, flags=flags)

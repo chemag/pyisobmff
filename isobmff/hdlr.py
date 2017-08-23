@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
+from .box import Quantity
 from .box import indent
 from .box import read_int
 from .box import read_string
 
 
 class HandlerReferenceBox(FullBox):
-    """Handler Reference Box
-    """
+    """Handler Reference Box"""
     box_type = 'hdlr'
     is_mandatory = True
+    quantity = Quantity.EXACTLY_ONE
 
     def __init__(self, size, version, flags):
         super().__init__(size=size, version=version, flags=flags)

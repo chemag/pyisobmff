@@ -2,30 +2,36 @@
 from .box import Box
 from .box import indent
 from .box import read_int
-from .box import read_string
-from .stsd import VisualSampleEntry
+from .stbl import VisualSampleEntry
 
 
 class HEVCConfigurationBox(Box):
-    """HEVC Configuration Box, hvcC
-    """
+    """HEVC Configuration Box"""
     box_type = 'hvcC'
 
     def __init__(self, size):
         super().__init__(size=size)
         self.hevc_config = None
 
-    def __repr__(self):
-        return super().__repr__() + indent(self.hevc_config.__repr__())
-
     def read(self, file):
         self.hevc_config = HEVCDecoderConfigurationRecord()
         self.hevc_config.read(file)
 
 
+class HEVCSampleEntry(VisualSampleEntry):
+    """HEVC Sample Entry"""
+    box_type = 'hvc1'
+
+    def __init__(self, size):
+        super().__init__(size=size)
+        self.hevc_config = None
+
+    def read(self, file):
+        self.hevc_config = HEVCDecoderConfigurationRecord()
+        self.hevc_config.read(file)
+
 class HEVCDecoderConfigurationRecord(object):
-    """HEVC Decoder Configuration Record
-    """
+    """HEVC Decoder Configuration Record"""
 
     def __init__(self):
         self.configuration_version = None #8

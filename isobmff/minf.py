@@ -1,31 +1,19 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import FullBox
-from .box import indent
-from .box import read_box
+from .box import Quantity
 from .box import read_int
 
 
 class MediaInformationBox(Box):
-    """Media Information Box
-    """
+    """Media Information Box"""
     box_type = 'minf'
     is_mandatory = True
-    #Quantity: Exactly one
-
-    def read(self, file):
-        read_size = self.get_box_size()
-        while read_size > 0:
-            box = read_box(file)
-            if not box:
-                break
-            setattr(self, box.box_type, box)
-            read_size -= box.size
+    quantity = Quantity.EXACTLY_ONE
 
 
 class VideoMediaHeaderBox(FullBox):
-    """Video Media Header Box
-    """
+    """Video Media Header Box"""
     box_type = 'vmhd'
     is_mandatory = True
 

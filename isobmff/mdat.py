@@ -10,11 +10,10 @@ class MediaDataBox(Box):
 
     def __init__(self, size):
         super().__init__(size=size)
-        self.data_size = self.size - 8
         self.data = None
 
     def read(self, file):
-        self.data = file.read(self.data_size)
+        self.data = file.read(self.get_box_size())
 
     def write(self):
         pass
