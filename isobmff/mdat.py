@@ -8,8 +8,9 @@ class MediaDataBox(Box):
 
     def __init__(self, size):
         super().__init__(size=size)
-        self.data = None
+        self.data_offset = None
 
     def read(self, file):
-        self.data = file.read(self.get_box_size())
-        print(self.data[0:20])
+        print(file.tell())
+        self.data_offset = file.tell()
+        file.read(self.get_box_size())
