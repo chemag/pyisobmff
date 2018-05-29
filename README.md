@@ -17,7 +17,7 @@ Python 3.4+
 ### Writing a media file
 
 ## References
-- confermance test : https://github.com/nokiatech/heif_conformance
+- conformance test : https://github.com/nokiatech/heif_conformance
 - [ISO/IEC 14496-12:2015 ISO Base Media File Format](http://mpeg.chiariglione.org/standards/mpeg-4/iso-base-media-file-format/text-isoiec-14496-12-5th-edition)
 - ISO/IEC 14496-15 Carriage of network abstraction layer (NAL) unit structured video in the ISO base media file format
     - box types: 'hvc1', 'hev1', 'hvcC'
