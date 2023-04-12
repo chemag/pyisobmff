@@ -7,6 +7,7 @@ from .media_file import MediaFile
 from . import box
 from . import ccst
 from . import dinf
+from . import free
 from . import ftyp
 from . import hdlr
 from . import hvc
