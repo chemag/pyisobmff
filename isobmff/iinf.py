@@ -7,7 +7,7 @@ from .box import read_string
 
 
 class ItemInformationBox(FullBox):
-    box_type = 'iinf'
+    box_type = "iinf"
     is_mandatory = False
 
     def __init__(self, size, version, flags):
@@ -15,7 +15,7 @@ class ItemInformationBox(FullBox):
         self.item_infos = []
 
     def __repr__(self):
-        rep = 'entry_count: ' + str(len(self.item_infos)) + '\n'
+        rep = "entry_count: " + str(len(self.item_infos)) + "\n"
         for item in self.item_infos:
             rep += item.__repr__()
         return super().__repr__() + indent(rep)
@@ -28,11 +28,12 @@ class ItemInformationBox(FullBox):
             box = read_box(file)
             if not box:
                 break
-            if box.box_type == 'infe':
+            if box.box_type == "infe":
                 self.item_infos.append(box)
 
+
 class ItemInfomationEntry(FullBox):
-    box_type = 'infe'
+    box_type = "infe"
 
     def __init__(self, size, version, flags):
         super().__init__(size=size, version=version, flags=flags)
@@ -46,12 +47,11 @@ class ItemInfomationEntry(FullBox):
         self.uri_type = None
 
     def __repr__(self):
-        rep =  'item_id: ' + str(self.item_id) + '\n'
-        rep += 'item_protection_index: ' + \
-            str(self.item_protection_index) + '\n'
-        rep += 'item_name: ' + self.item_name
+        rep = "item_id: " + str(self.item_id) + "\n"
+        rep += "item_protection_index: " + str(self.item_protection_index) + "\n"
+        rep += "item_name: " + self.item_name
         if self.version >= 2:
-            rep += '\nitem_type: ' + str(self.item_type)
+            rep += "\nitem_type: " + str(self.item_type)
         return super().__repr__() + indent(rep)
 
     def read(self, file):
@@ -75,12 +75,13 @@ class ItemInfomationEntry(FullBox):
             self.item_protection_index = read_int(file, 2)
             self.item_type = read_string(file, 4)
             self.item_name = read_string(file)
-            
-            if self.item_type == 'mime':
+
+            if self.item_type == "mime":
                 self.content_type = read_string(file)
                 self.content_encoding = read_string(file)
-            elif self.item_type == 'uri ':
+            elif self.item_type == "uri ":
                 self.uri_type = read_string(file)
+
 
 class FDItemInfoExtension(object):
     def __init__(self):
@@ -89,7 +90,7 @@ class FDItemInfoExtension(object):
         self.content_length = None
         self.transfer_length = None
         self.group_ids = []
-    
+
     def read(self, file):
         """read"""
         self.content_location = read_string(file)

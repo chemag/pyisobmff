@@ -3,7 +3,7 @@ from .box import Box
 
 
 class ccst(Box):
-    box_type = 'ccst'
+    box_type = "ccst"
     is_mandatory = False
 
     def read(self, file):

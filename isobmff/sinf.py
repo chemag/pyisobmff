@@ -7,24 +7,26 @@ from .box import read_string
 
 
 class ProtectionSchemeInfoBox(Box):
-    box_type = 'sinf'
+    box_type = "sinf"
     is_mandatory = False
     quantity = Quantity.ONE_OR_MORE
 
+
 class OriginalFormatBox(Box):
-    box_type = 'frma'
+    box_type = "frma"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
     def __init__(self, size):
         super().__init__(size=size)
         self.data_format = None
-    
+
     def read(self, file):
         self.data_format = read_int(file, 4)
 
+
 class SchemeTypeBox(FullBox):
-    box_type = 'schm'
+    box_type = "schm"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
 
@@ -40,7 +42,8 @@ class SchemeTypeBox(FullBox):
         if self.flags & 0b1:
             self.scheme_uri = read_string(file)
 
+
 class SchemeInformationBox(Box):
-    box_type = 'schi'
+    box_type = "schi"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE

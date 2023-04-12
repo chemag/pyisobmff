@@ -7,7 +7,7 @@ from .box import read_string
 
 
 class ItemProtectionBox(FullBox):
-    box_type = 'ipro'
+    box_type = "ipro"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
 
@@ -26,6 +26,5 @@ class ItemProtectionBox(FullBox):
             box = read_box(file)
             if not box:
                 break
-            if box.box_type == 'sinf':
+            if box.box_type == "sinf":
                 self.protection_informations.append(box)
-

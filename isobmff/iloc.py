@@ -5,7 +5,7 @@ from .box import indent
 
 
 class ItemLocationBox(FullBox):
-    box_type = 'iloc'
+    box_type = "iloc"
     is_mandatory = False
 
     def __init__(self, size, version, flags):
@@ -17,8 +17,8 @@ class ItemLocationBox(FullBox):
         self.items = []
 
     def __repr__(self):
-        rep = 'offset_size:' + str(self.offset_size) + '\n'
-        rep += 'length_size:' + str(self.length_size)
+        rep = "offset_size:" + str(self.offset_size) + "\n"
+        rep += "length_size:" + str(self.length_size)
         return super().__repr__() + indent(rep)
 
     def read(self, file):
@@ -33,14 +33,14 @@ class ItemLocationBox(FullBox):
 
         for _ in range(item_count):
             item = {}
-            item['item_id'] = read_int(file, 2)
-            item['data_reference_index'] = read_int(file, 2)
-            item['base_offset'] = read_int(file, self.base_offset_size)
+            item["item_id"] = read_int(file, 2)
+            item["data_reference_index"] = read_int(file, 2)
+            item["base_offset"] = read_int(file, self.base_offset_size)
             extent_count = read_int(file, 2)
-            item['extents'] = []
+            item["extents"] = []
             for _ in range(extent_count):
                 extent = {}
-                extent['extent_offset'] = read_int(file, self.offset_size)
-                extent['extent_length'] = read_int(file, self.length_size)
-                item['extents'].append(extent)
+                extent["extent_offset"] = read_int(file, self.offset_size)
+                extent["extent_length"] = read_int(file, self.length_size)
+                item["extents"].append(extent)
             self.items.append(item)

@@ -7,10 +7,9 @@ from .box import read_string
 
 
 class FileTypeBox(Box):
-    box_type = 'ftyp'
+    box_type = "ftyp"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-
 
     def __init__(self, size):
         super().__init__(size=size)
@@ -19,11 +18,11 @@ class FileTypeBox(Box):
         self.compatible_brands = []
 
     def __repr__(self):
-        rep = 'majar_brand: ' + self.majar_brand + '\n'
-        rep += 'minor_version: ' + str(self.minor_version) + '\n'
-        rep += 'compatible_brands: '
+        rep = "majar_brand: " + self.majar_brand + "\n"
+        rep += "minor_version: " + str(self.minor_version) + "\n"
+        rep += "compatible_brands: "
         for brand in self.compatible_brands:
-            rep += brand + ','
+            rep += brand + ","
         return super().__repr__() + indent(rep)
 
     def read(self, file):

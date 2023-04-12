@@ -8,12 +8,13 @@ from .box import read_int
 
 
 class MovieBox(Box):
-    box_type = 'moov'
+    box_type = "moov"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
+
 class MovieHeaderBox(FullBox):
-    box_type = 'mvhd'
+    box_type = "mvhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 

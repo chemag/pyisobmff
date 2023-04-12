@@ -6,7 +6,7 @@ from .box import read_int
 
 
 class ChunkOffsetBox(FullBox):
-    box_type = 'stco'
+    box_type = "stco"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
@@ -19,5 +19,5 @@ class ChunkOffsetBox(FullBox):
 
         for _ in range(entry_count):
             entry = {}
-            entry['chunk_offset'] = read_int(file, 4)
+            entry["chunk_offset"] = read_int(file, 4)
             self.entries.append(entry)

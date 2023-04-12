@@ -5,7 +5,7 @@ from .box import read_int
 
 
 class PrimaryItemBox(FullBox):
-    box_type = 'pitm'
+    box_type = "pitm"
     is_mandatory = False
 
     def read(self, file):

@@ -8,13 +8,13 @@ from .box import read_string
 
 
 class DataInformationBox(Box):
-    box_type = 'dinf'
+    box_type = "dinf"
     is_mandatry = True
     quantity = Quantity.EXACTLY_ONE
 
 
 class DataReferenceBox(FullBox):
-    box_type = 'dref'
+    box_type = "dref"
     is_mandatry = True
     quantity = Quantity.EXACTLY_ONE
 
@@ -32,7 +32,7 @@ class DataReferenceBox(FullBox):
 
 
 class DataEntryUrlBox(FullBox):
-    box_type = 'url '
+    box_type = "url "
     is_mandatry = True
 
     def __init__(self, size, version, flags):
@@ -44,7 +44,7 @@ class DataEntryUrlBox(FullBox):
 
 
 class DataEntryUrnBox(FullBox):
-    box_type = 'urn '
+    box_type = "urn "
     is_mandatry = True
 
     def __init__(self, size, version, flags):

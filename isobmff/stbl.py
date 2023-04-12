@@ -8,18 +8,19 @@ from .box import read_string
 
 
 class SampleTableBox(Box):
-    box_type = 'stbl'
+    box_type = "stbl"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
+
 class SampleDescriptionBox(FullBox):
-    box_type = 'stsd'
+    box_type = "stsd"
     is_mandatory = True
-    quantity = Quantity.EXACTLY_ONE    
-    
+    quantity = Quantity.EXACTLY_ONE
+
     def __init__(self, size, version, flags):
         super().__init__(size=size, version=version, flags=flags)
-        #self.handler_type = handler_type
+        # self.handler_type = handler_type
         self.samples = []
 
     def read(self, file):
@@ -30,8 +31,8 @@ class SampleDescriptionBox(FullBox):
                 break
             self.samples.append(box)
 
-class SampleEntry(Box):
 
+class SampleEntry(Box):
     def __init__(self, size):
         super().__init__(size=size)
         self.reserveds = []
@@ -42,7 +43,7 @@ class SampleEntry(Box):
         return rep
 
     def get_box_size(self):
-        return super().get_box_size() - 6 + 2    
+        return super().get_box_size() - 6 + 2
 
     def read(self, file):
         for _ in range(6):
@@ -52,9 +53,9 @@ class SampleEntry(Box):
 
 
 class HintSampleEntry(SampleEntry):
-    """Hint Sample Entry
-    """
-    box_type = 'hint'
+    """Hint Sample Entry"""
+
+    box_type = "hint"
 
     def __init__(self, size):
         super().__init__(size=size)
@@ -64,10 +65,11 @@ class HintSampleEntry(SampleEntry):
         box_size = self.get_box_size()
         self.data = file.read(box_size)
 
+
 class VisualSampleEntry(SampleEntry):
-    """Visual Sample Entry
-    """
-    box_type = 'vide'
+    """Visual Sample Entry"""
+
+    box_type = "vide"
 
     def __init__(self, size):
         super().__init__(size=size)
@@ -83,7 +85,7 @@ class VisualSampleEntry(SampleEntry):
         self.compressorname = None
         self.depth = None
         self.pre_defined3 = None
-    
+
     def read(self, file):
         super().read(file)
         self.pre_defined1 = read_int(file, 2)
@@ -100,9 +102,11 @@ class VisualSampleEntry(SampleEntry):
         self.depth = read_int(file, 2)
         self.pre_defined3 = read_int(file, 2)
 
+
 class AudioSampleEntry(SampleEntry):
     """Audio Sample Entry"""
-    box_type = 'soun'
+
+    box_type = "soun"
 
     def __init__(self, size):
         super().__init__(size=size)
@@ -112,7 +116,7 @@ class AudioSampleEntry(SampleEntry):
         self.pre_defined = None
         self.reserved2 = []
         self.samperate = None
-    
+
     def read(self, file):
         super().read(file)
         for _ in range(2):
@@ -127,7 +131,8 @@ class AudioSampleEntry(SampleEntry):
 
 class BitRateBox(Box):
     """Bit Rate Box"""
-    box_type = 'btrt'
+
+    box_type = "btrt"
 
     def __init__(self, size):
         super().__init__(size=size)

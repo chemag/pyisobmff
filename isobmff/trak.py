@@ -7,12 +7,13 @@ from .box import read_int
 
 
 class TrackBox(Box):
-    box_type = 'trak'
+    box_type = "trak"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
+
 class TrackHeaderBox(FullBox):
-    box_type = 'tkhd'
+    box_type = "tkhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
