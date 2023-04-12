@@ -18,11 +18,9 @@ class FileTypeBox(Box):
         self.compatible_brands = []
 
     def __repr__(self):
-        rep = "major_brand: " + str(self.major_brand) + "\n"
-        rep += "minor_version: " + str(self.minor_version) + "\n"
-        rep += "compatible_brands: "
-        for brand in self.compatible_brands:
-            rep += brand + ","
+        rep = f"major_brand: {self.major_brand}\n"
+        rep += f"minor_version: {self.minor_version}\n"
+        rep += f"compatible_brands: {','.join(self.compatible_brands)}"
         return super().__repr__() + indent(rep)
 
     def read(self, file):

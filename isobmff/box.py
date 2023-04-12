@@ -11,15 +11,29 @@ class AbcBox(type):
 class Box(object):
     box_type = None
 
-    def __init__(self, size=None):
+    def __init__(self, size=None, largesize=None):
         self.size = size
-        self.largesize = None
+        self.largesize = largesize
+
+    def __repr__(self):
+        rep = ""
+        rep += f"box_type: {self.box_type}" + "\n"
+        rep += f"size: {self.size}" + "\n"
+        if self.largesize is not None:
+            rep += f"largesize: {self.largesize}" + "\n"
+        return "Box\n" + indent(rep)
 
     def get_box_size(self):
         """get box size excluding header"""
-        return self.size - 8
+        return self.largesize - 16 if self.largesize is not None else self.size - 8
 
+    # read the remaining bytes as simple bytes
     def read(self, file):
+        remaining_size = self.get_box_size()
+        self.contents = file.read(remaining_size)
+
+    # read the remaining bytes as boxes
+    def read_box(self, file):
         read_size = self.get_box_size()
         # print(file.read(read_size))
         while read_size > 0:
@@ -38,19 +52,34 @@ class Box(object):
 class FullBox(Box):
     box_type = None
 
-    def __init__(self, size, version=None, flags=None):
-        super().__init__(size)
+    def __init__(self, size, largesize=None, version=None, flags=None):
+        super().__init__(size, largesize)
         self.version = version
         self.flags = flags
 
     def __repr__(self):
         srep = super().__repr__()
-        rep = " v" + str(self.version) + "\n"
-        return re.sub("\n", rep, srep, flags=re.MULTILINE)
+        rep = ""
+        rep += f"version: {self.version}" + "\n"
+        rep += f"flags: {self.flags}" + "\n"
+        return "FullBox\n" + srep + indent(rep)
 
     def get_box_size(self):
         """get box size excluding header"""
         return self.size - 12
+
+
+class UnimplementedBox(Box):
+    def __init__(self, box_type, size, largesize):
+        self.box_type = box_type
+        super().__init__(size, largesize)
+
+    def __repr__(self):
+        return super().__repr__()
+
+    def read(self, file):
+        remaining_size = self.get_box_size()
+        self.content = file.read(remaining_size)
 
 
 class Quantity(Enum):
@@ -61,7 +90,10 @@ class Quantity(Enum):
 
 
 def read_int(file, length):
-    return int.from_bytes(file.read(length), byteorder="big", signed=False)
+    byte_array = file.read(length)
+    if not byte_array:
+        return ""
+    return int.from_bytes(byte_array, byteorder="big", signed=False)
 
 
 def read_string(file, length=None):
@@ -87,7 +119,15 @@ def get_class_list(cls, res=[]):
 
 def read_box(file, debug=0):
     size = read_int(file, 4)
+    if size == "":
+        return None
     box_type = read_string(file, 4)
+    largesize = None
+    if size == 0:
+        import code; code.interact(local=locals())  # python gdb/debugging
+    elif size == 1:
+        largesize = read_int(file, 8)
+
     if debug > 0:
         print(box_type + "(" + str(size) + ")")
     box_classes = get_class_list(Box)
@@ -98,10 +138,19 @@ def read_box(file, debug=0):
             if box_class.__base__.__name__ == "FullBox":
                 version = read_int(file, 1)
                 flags = read_int(file, 3)
-                box.__init__(size=size, version=version, flags=flags)
+                box.__init__(
+                    size=size, largesize=largesize, version=version, flags=flags
+                )
             else:
-                box.__init__(size=size)
+                box.__init__(size=size, largesize=largesize)
             if box.get_box_size():
+                # there is data left
                 box.read(file)
             break
+    else:
+        # unimplemented box
+        if debug > 0:
+            print(f"warning: unimplemented box offset: 0x{file.tell() - 8:08x} type: {box_type} size: 0x{size:x} next: 0x{size+file.tell():08x}")
+        box = UnimplementedBox(box_type, size, largesize)
+        box.read(file)
     return box

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .box import Box
+from .box import Box, indent
 
 
 class MediaDataBox(Box):
@@ -10,7 +10,11 @@ class MediaDataBox(Box):
         super().__init__(**kwargs)
         self.data_offset = None
 
+    def __repr__(self):
+        rep = f"data_offset: 0x{self.data_offset:08x}"
+        return super().__repr__() + indent(rep)
+
     def read(self, file):
-        print(f"mdat: {file.tell()}")
+        # store the offset
         self.data_offset = file.tell()
         file.read(self.get_box_size())

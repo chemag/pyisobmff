@@ -5,17 +5,12 @@ from .box import read_box
 
 class MediaFile(object):
     def __init__(self):
-        self.ftyp = None
-        self.mdats = []
-        self.meta = None
-        self.moov = None
+        self.box_list = []
 
     def __repr__(self):
-        rep = self.ftyp.__repr__() + "\n"
-        rep += self.meta.__repr__() + "\n"
-        rep += self.moov.__repr__() + "\n"
-        for mdat in self.mdats:
-            rep += mdat.__repr__() + "\n"
+        rep = ""
+        for box in self.box_list:
+            rep += repr(box) + "\n"
         return "ISOBaseMediaFile\n" + indent(rep)
 
     def read(self, file_name):
@@ -25,9 +20,7 @@ class MediaFile(object):
                 box = read_box(file)
                 if not box:
                     break
-                if box.box_type == "mdat":
-                    self.mdats.append(box)
-                else:
-                    setattr(self, box.box_type, box)
+                setattr(self, box.box_type, box)
+                self.box_list.append(box)
         finally:
             file.close()
