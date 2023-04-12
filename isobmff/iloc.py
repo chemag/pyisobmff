@@ -13,6 +13,7 @@ class ItemLocationBox(FullBox):
         self.offset_size = None
         self.length_size = None
         self.base_offset_size = None
+        self.index_size = None
         self.reserved = None
         self.items = []
 
@@ -21,25 +22,40 @@ class ItemLocationBox(FullBox):
         rep += "length_size:" + str(self.length_size)
         return super().__repr__() + indent(rep)
 
+    # Section 8.11.3.2
     def read(self, file):
         byte = read_int(file, 1)
         self.offset_size = (byte >> 4) & 0b1111
         self.length_size = byte & 0b1111
         byte = read_int(file, 1)
         self.base_offset_size = (byte >> 4) & 0b1111
-        self.reserved = byte & 0b1111
+        if self.version in [1, 2]:
+            self.index_size = byte & 0b1111
+        else:
+            self.reserved = byte & 0b1111
+        if self.version < 2:
+            item_count = read_int(file, 2)
+        elif self.version == 2:
+            item_count = read_int(file, 4)
         self.items = []
-        item_count = read_int(file, 2)
-
         for _ in range(item_count):
             item = {}
-            item["item_id"] = read_int(file, 2)
+            if self.version < 2:
+                item["item_id"] = read_int(file, 2)
+            elif self.version == 2:
+                item["item_id"] = read_int(file, 4)
+            if self.version in [1, 2]:
+                half = read_int(file, 2)
+                item["construction_method"] = half & 0b1111
             item["data_reference_index"] = read_int(file, 2)
             item["base_offset"] = read_int(file, self.base_offset_size)
             extent_count = read_int(file, 2)
             item["extents"] = []
             for _ in range(extent_count):
                 extent = {}
+                if self.version in [1, 2] and self.index_size > 0:
+                    item["item_reference_index"] = read_int(file, self.index_size)
+
                 extent["extent_offset"] = read_int(file, self.offset_size)
                 extent["extent_length"] = read_int(file, self.length_size)
                 item["extents"].append(extent)
