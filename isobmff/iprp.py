@@ -34,28 +34,28 @@ class PixelAspectRatio(Box):
     box_type = "pasp"
 
     def read(self, file):
-        print(file.read(self.get_box_size()))
+        print(f"pasp: {file.read(self.get_box_size())}")
 
 
 class ColorInformation(Box):
     box_type = "colr"
 
     def read(self, file):
-        print(file.read(self.get_box_size()))
+        print(f"colr: {file.read(self.get_box_size())}")
 
 
 class PixelInformation(Box):
     box_type = "pixi"
 
     def read(self, file):
-        print(file.read(self.get_box_size()))
+        print(f"pixi: {file.read(self.get_box_size())}")
 
 
 class RelativeInformation(Box):
     box_type = "rloc"
 
     def read(self, file):
-        print(file.read(self.get_box_size()))
+        print(f"rloc: {file.read(self.get_box_size())}")
 
 
 class ItemPropertyAssociation(FullBox):
