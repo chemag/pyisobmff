@@ -11,8 +11,8 @@ class FileTypeBox(Box):
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.majar_brand = None
         self.minor_version = None
         self.compatible_brands = []

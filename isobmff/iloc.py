@@ -8,8 +8,8 @@ class ItemLocationBox(FullBox):
     box_type = "iloc"
     is_mandatory = False
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.offset_size = None
         self.length_size = None
         self.base_offset_size = None

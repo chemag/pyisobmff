@@ -7,8 +7,8 @@ class TimeToSampleBox(FullBox):
     box_type = "stts"
     is_mandatory = True
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.entry_count = None
         self.entries = []
 

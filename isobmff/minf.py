@@ -15,8 +15,8 @@ class VideoMediaHeaderBox(FullBox):
     box_type = "vmhd"
     is_mandatory = True
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.graphicsmode = None
         self.opcolor = []
 
@@ -30,8 +30,8 @@ class SoundMediaHeaderBox(FullBox):
     box_type = "smhd"
     is_mandatory = True
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.balance = None
         self.reserved = None
 
@@ -44,8 +44,8 @@ class HintMediaHeaderBox(FullBox):
     box_type = "hmhd"
     is_mandatory = True
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.max_pdu_size = None
         self.avg_pdu_size = None
         self.max_bit_rate = None

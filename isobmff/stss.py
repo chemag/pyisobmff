@@ -7,8 +7,8 @@ class SyncSampleBox(FullBox):
     box_type = "stss"
     is_mandatory = False
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.entries = []
 
     def read(self, file):

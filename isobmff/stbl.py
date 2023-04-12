@@ -18,8 +18,8 @@ class SampleDescriptionBox(FullBox):
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         # self.handler_type = handler_type
         self.samples = []
 
@@ -33,8 +33,8 @@ class SampleDescriptionBox(FullBox):
 
 
 class SampleEntry(Box):
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.reserveds = []
         self.data_reference_index = None
 
@@ -57,8 +57,8 @@ class HintSampleEntry(SampleEntry):
 
     box_type = "hint"
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.data = []
 
     def read(self, file):
@@ -71,8 +71,8 @@ class VisualSampleEntry(SampleEntry):
 
     box_type = "vide"
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.pre_defined1 = None
         self.reserved1 = None
         self.pre_defined2 = []
@@ -108,8 +108,8 @@ class AudioSampleEntry(SampleEntry):
 
     box_type = "soun"
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.reserved1 = []
         self.channelcount = None
         self.samplesize = None
@@ -134,8 +134,8 @@ class BitRateBox(Box):
 
     box_type = "btrt"
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.buffer_size_db = None
         self.max_bitrate = None
         self.avg_bitrate = None

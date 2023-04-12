@@ -17,8 +17,8 @@ class OriginalFormatBox(Box):
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.data_format = None
 
     def read(self, file):
@@ -30,8 +30,8 @@ class SchemeTypeBox(FullBox):
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
 
-    def __init__(self, size):
-        super().__init__(size=size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.scheme_type = None
         self.scheme_version = None
         self.scheme_uri = None

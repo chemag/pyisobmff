@@ -20,8 +20,8 @@ class ItemPropertyContainer(Box):
 class ImageSpatialExtents(FullBox):
     box_type = "ispe"
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.width = None
         self.height = None
 
@@ -63,8 +63,8 @@ class ItemPropertyAssociation(FullBox):
     is_mandatry = True
     quantity = Quantity.EXACTLY_ONE
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.items = []
 
     def read(self, file):

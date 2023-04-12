@@ -11,8 +11,8 @@ class HandlerReferenceBox(FullBox):
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
-    def __init__(self, size, version, flags):
-        super().__init__(size=size, version=version, flags=flags)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.pre_defined = None
         self.handler_type = None
         self.reserved = []
