@@ -85,10 +85,11 @@ def get_class_list(cls, res=[]):
     return res
 
 
-def read_box(file):
+def read_box(file, debug=0):
     size = read_int(file, 4)
     box_type = read_string(file, 4)
-    print(box_type + "(" + str(size) + ")")
+    if debug > 0:
+        print(box_type + "(" + str(size) + ")")
     box_classes = get_class_list(Box)
     box = None
     for box_class in box_classes:
