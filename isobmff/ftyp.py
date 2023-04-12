@@ -18,7 +18,7 @@ class FileTypeBox(Box):
         self.compatible_brands = []
 
     def __repr__(self):
-        rep = "major_brand: " + self.major_brand + "\n"
+        rep = "major_brand: " + str(self.major_brand) + "\n"
         rep += "minor_version: " + str(self.minor_version) + "\n"
         rep += "compatible_brands: "
         for brand in self.compatible_brands:
