@@ -26,7 +26,7 @@ class Box(object):
             box = read_box(file)
             if not box:
                 break
-            # TODO: Quantityでそのままsetattrか配列にappendか分ける
+            # TODO: Divide by Quantity as it is setattr or append to array
             setattr(self, box.box_type, box)
             read_size -= box.size
 
