@@ -19,6 +19,11 @@ class HEVCSampleEntry(VisualSampleEntry):
         super().read(file)
         self.config = read_box(file)
 
+    def __repr__(self):
+        repl = ()
+        repl += (f"config: {self.config}",)
+        return super().repr(repl)
+
 
 class HEVCConfigurationBox(Box):
     box_type = "hvcC"
@@ -30,6 +35,11 @@ class HEVCConfigurationBox(Box):
     def read(self, file):
         self.hevc_config = HEVCDecoderConfigurationRecord()
         self.hevc_config.read(file)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"hevc_config: {self.hevc_config}",)
+        return super().repr(repl)
 
 
 class HEVCDecoderConfigurationRecord(object):
@@ -82,7 +92,7 @@ class HEVCDecoderConfigurationRecord(object):
         repl += (f"num_temporal_layers: {self.num_temporal_layers}",)
         repl += (f"temporal_id_nested: {self.temporal_id_nested}",)
         repl += (f"length_size_minus_1: {self.length_size_minus_1}",)
-        return super().repr(repl)
+        return "\n".join(repl)
 
     def read(self, file):
         self.configuration_version = read_int(file, 1)

@@ -53,3 +53,15 @@ class MediaHeaderBox(FullBox):
         self.language.append((byte >> 5) & 0b11111)
         self.language.append(byte & 0b11111)
         self.pre_defined = read_int(file, 2)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"creation_time: {self.creation_time}",)
+        repl += (f"modification_time: {self.modification_time}",)
+        repl += (f"timescale: {self.timescale}",)
+        repl += (f"duration: {self.duration}",)
+        repl += (f"pad: {self.pad}",)
+        for idx, val in enumerate(self.language):
+            repl += (f"language[{idx}]: {val}",)
+        repl += (f"pre_defined: {self.pre_defined}",)
+        return super().repr(repl)

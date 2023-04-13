@@ -7,12 +7,28 @@ from .box import read_int
 from .box import read_string
 
 
+# ISO/IEC 14496-12:2022, Section 8.5.2.1
 class SampleTableBox(Box):
     box_type = "stbl"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
+    box_list = []
+
+    def read(self, file):
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.box_list.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 8.5.2.2
 class SampleDescriptionBox(FullBox):
     box_type = "stsd"
     is_mandatory = True
@@ -20,7 +36,6 @@ class SampleDescriptionBox(FullBox):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # self.handler_type = handler_type
         self.samples = []
 
     def read(self, file):
@@ -31,11 +46,18 @@ class SampleDescriptionBox(FullBox):
                 break
             self.samples.append(box)
 
+    def __repr__(self):
+        repl = ()
+        for box in self.samples:
+            repl += (repr(box),)
+        return super().repr(repl)
 
+
+# ISO/IEC 14496-12:2022, Section 8.5.2.2
 class SampleEntry(Box):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.reserveds = []
+        self.reserved = []
         self.data_reference_index = None
 
     def __repr__(self):
@@ -48,8 +70,18 @@ class SampleEntry(Box):
     def read(self, file):
         for _ in range(6):
             reserved = read_int(file, 1)
-            self.reserveds.append(reserved)
+            self.reserved.append(reserved)
         self.data_reference_index = read_int(file, 2)
+
+    def repr(self, repl=None):
+        new_repl = ()
+        for idx, val in enumerate(self.reserved):
+            new_repl += (f"reserved: {val}",)
+        new_repl += (f"data_reference_index: {self.data_reference_index}",)
+        return super().repr(repl)
+
+    def __repr__(self):
+        return self.repr()
 
 
 class HintSampleEntry(SampleEntry):
@@ -66,10 +98,12 @@ class HintSampleEntry(SampleEntry):
         self.data = file.read(box_size)
 
 
+# ISO/IEC 14496-12:2022, Section 12.1.3.2
 class VisualSampleEntry(SampleEntry):
     """Visual Sample Entry"""
 
     box_type = "vide"
+    box_list = []
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -101,12 +135,42 @@ class VisualSampleEntry(SampleEntry):
         self.compressorname = read_string(file, 32)
         self.depth = read_int(file, 2)
         self.pre_defined3 = read_int(file, 2)
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.box_list.append(box)
+
+    def repr(self, repl=None):
+        new_repl = ()
+        new_repl += (f"pre_defined1: {self.pre_defined1}",)
+        new_repl += (f"reserved1: {self.reserved1}",)
+        for idx, val in enumerate(self.pre_defined2):
+            new_repl += (f"pre_defined2[{idx}]: {val}",)
+        new_repl += (f"width: {self.width}",)
+        new_repl += (f"height: {self.height}",)
+        new_repl += (f"horizresolution: 0x{self.horizresolution:08x}",)
+        new_repl += (f"vertresolution: 0x{self.vertresolution:08x}",)
+        new_repl += (f"reserved2: {self.reserved2}",)
+        new_repl += (f"frame_count: {self.frame_count}",)
+        new_repl += (f'compressorname: "{self.compressorname.strip()}"',)
+        new_repl += (f"depth: 0x{self.depth:04x}",)
+        new_repl += (f"pre_defined3: {self.pre_defined3}",)
+        for box in self.box_list:
+            new_repl += (repr(box),)
+        if repl is not None:
+            new_repl += repl
+        return super().repr(new_repl)
+
+    def __repr__(self):
+        return self.repr()
 
 
 class AudioSampleEntry(SampleEntry):
     """Audio Sample Entry"""
 
     box_type = "soun"
+    box_list = []
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -115,7 +179,7 @@ class AudioSampleEntry(SampleEntry):
         self.samplesize = None
         self.pre_defined = None
         self.reserved2 = []
-        self.samperate = None
+        self.samplerate = None
 
     def read(self, file):
         super().read(file)
@@ -126,7 +190,27 @@ class AudioSampleEntry(SampleEntry):
         self.pre_defined = read_int(file, 2)
         for _ in range(2):
             self.reserved2.append(read_int(file, 2))
-        self.samperate = read_int(file, 4)
+        self.samplerate = read_int(file, 4)
+        # parse the boxes
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.box_list.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for idx, val in self.reserved1:
+            repl += (f"reserved1: {val}",)
+        repl += (f"channelcount: {self.channelcount}",)
+        repl += (f"samplesize: {self.samplesize}",)
+        repl += (f"pre_defined: {self.pre_defined}",)
+        for idx, val in self.reserved2:
+            repl += (f"reserved2: {val}",)
+        repl += (f"samplerate: {self.samplerate}",)
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
 class BitRateBox(Box):
@@ -144,3 +228,10 @@ class BitRateBox(Box):
         self.buffer_size_db = read_int(file, 4)
         self.max_bitrate = read_int(file, 4)
         self.avg_bitrate = read_int(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"buffer_size_db: {self.buffer_size_db}",)
+        repl += (f"max_bitrate: {self.max_bitrate}",)
+        repl += (f"avg_bitrate: {self.avg_bitrate}",)
+        return super().repr(repl)
