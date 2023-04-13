@@ -110,28 +110,51 @@ class ItemPropertyAssociation(FullBox):
     box_type = "ipma"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
+    entries = []
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.items = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
-        id_size = 2 if self.version < 1 else 4
+        entry = {}
         for _ in range(entry_count):
-            item = {}
-            item["id"] = read_uint(file, id_size)
+            if self.version < 1:
+                entry["item_id"] = read_uint(file, 2)
+            else:
+                entry["item_id"] = read_uint(file, 4)
             association_count = read_uint(file, 1)
-            item["associations"] = []
-            for __ in range(association_count):
-                association = {}
-                if self.flags & 0b1:
-                    byte = read_uint(file, 2)
-                    association["essential"] = (byte >> 15) & 0b1
-                    association["property_index"] = byte & 0b111111111111111
+            associations = []
+            for _ in range(association_count):
+                if self.flags & 1 == 1:
+                    item = read_uint(file, 2)
+                    essential = item >> 15
+                    property_index = item & 0x7FFF
                 else:
-                    byte = read_uint(file, 1)
-                    association["essential"] = (byte >> 7) & 0b1
-                    association["property_index"] = byte & 0b1111111
-                item["associations"].append(association)
-            self.items.append(item)
+                    item = read_uint(file, 1)
+                    essential = item >> 7
+                    property_index = item & 0x7F
+                association = {
+                    "item": item,
+                    "essential": essential,
+                    "property_index": property_index,
+                }
+                associations.append(association)
+            entry["associations"] = associations
+        self.entries.append(entry)
+
+    def __repr__(self):
+        repl = ()
+        for idx, entry in enumerate(self.entries):
+            repl += (f'entry[{idx}]["item_id"]: {entry["item_id"]}',)
+            for jdx, association in enumerate(entry["associations"]):
+                repl += (
+                    f'entry[{idx}]["associations"][{jdx}]["item"]: {association["item"]}',
+                )
+                repl += (
+                    f'entry[{idx}]["associations"][{jdx}]["essential"]: {association["essential"]}',
+                )
+                repl += (
+                    f'entry[{idx}]["associations"][{jdx}]["property_index"]: {association["property_index"]}',
+                )
+        return super().repr(repl)
