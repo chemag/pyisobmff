@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import re
 from enum import Enum
 
@@ -52,7 +53,7 @@ class Box(object):
 class FullBox(Box):
     box_type = None
 
-    def __init__(self, size, largesize=None, version=None, flags=None):
+    def __init__(self, size, largesize, version, flags):
         super().__init__(size, largesize)
         self.version = version
         self.flags = flags
@@ -134,18 +135,14 @@ def read_box(file, debug=0):
     box = None
     for box_class in box_classes:
         if box_class.box_type == box_type:
-            box = box_class.__new__(box_class)
-            if box_class.__base__.__name__ == "FullBox":
+            if box_class.__base__.__name__ == "Box":
+                box = box_class(size=size, largesize=largesize)
+            elif box_class.__base__.__name__ == "FullBox":
                 version = read_int(file, 1)
                 flags = read_int(file, 3)
-                box.__init__(
-                    size=size, largesize=largesize, version=version, flags=flags
-                )
-            else:
-                box.__init__(size=size, largesize=largesize)
-            if box.get_box_size():
-                # there is data left
-                box.read(file)
+                box = box_class(size=size, largesize=largesize, version=version, flags=flags)
+            # read any data left
+            box.read(file)
             break
     else:
         # unimplemented box
