@@ -135,6 +135,16 @@ def get_class_list(cls, res=[]):
     return res
 
 
+def get_class_type(cls):
+    while cls:
+        if cls.__name__ == "Box":
+            return "Box"
+        elif cls.__name__ == "FullBox":
+            return "FullBox"
+        cls = cls.__base__
+    return "Unknown"
+
+
 def read_box(file, debug=0):
     offset = file.tell()
     size = read_int(file, 4)
@@ -153,9 +163,10 @@ def read_box(file, debug=0):
     box = None
     for box_class in box_classes:
         if box_class.box_type == box_type:
-            if box_class.__base__.__name__ == "Box":
+            class_type = get_class_type(box_class)
+            if class_type == "Box":
                 box = box_class(offset=offset, size=size, largesize=largesize)
-            elif box_class.__base__.__name__ == "FullBox":
+            elif class_type == "FullBox":
                 version = read_int(file, 1)
                 flags = read_int(file, 3)
                 box = box_class(
@@ -165,6 +176,9 @@ def read_box(file, debug=0):
                     version=version,
                     flags=flags,
                 )
+            else:
+                print(f"ERROR: INVALID BOX TYPE (offset: 0x{offset:08x})")
+                break
             # read any data left
             box.read(file)
             break
