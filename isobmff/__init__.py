@@ -21,6 +21,7 @@ from . import meta
 from . import minf
 from . import moov
 from . import pitm
+from . import skip
 from . import stbl
 from . import stco
 from . import stsc
