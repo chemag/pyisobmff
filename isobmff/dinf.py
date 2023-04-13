@@ -93,3 +93,20 @@ class DataEntryUrnBox(FullBox):
         repl += (f'name: "{self.name}"',)
         repl += (f'location: "{self.location}"',)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 8.7.2.2
+class DataEntryImdaBox(FullBox):
+    box_type = "imdt"
+    is_mandatory = False
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def read(self, file):
+        self.imda_ref_identifier = read_int(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f'imda_ref_identifier: "{self.imda_ref_identifier}"',)
+        return super().repr(repl)
