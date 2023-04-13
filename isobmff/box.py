@@ -12,12 +12,14 @@ class AbcBox(type):
 class Box(object):
     box_type = None
 
-    def __init__(self, size=None, largesize=None):
+    def __init__(self, offset, size=None, largesize=None):
+        self.offset = offset
         self.size = size
         self.largesize = largesize
 
     def __repr__(self):
         rep = ""
+        rep += f"offset: 0x{self.offset:08x}" + "\n"
         rep += f"box_type: {self.box_type}" + "\n"
         rep += f"size: {self.size}" + "\n"
         if self.largesize is not None:
@@ -53,8 +55,8 @@ class Box(object):
 class FullBox(Box):
     box_type = None
 
-    def __init__(self, size, largesize, version, flags):
-        super().__init__(size, largesize)
+    def __init__(self, offset, size, largesize, version, flags):
+        super().__init__(offset, size, largesize)
         self.version = version
         self.flags = flags
 
@@ -119,6 +121,7 @@ def get_class_list(cls, res=[]):
 
 
 def read_box(file, debug=0):
+    offset = file.tell()
     size = read_int(file, 4)
     if size == "":
         return None
@@ -136,11 +139,11 @@ def read_box(file, debug=0):
     for box_class in box_classes:
         if box_class.box_type == box_type:
             if box_class.__base__.__name__ == "Box":
-                box = box_class(size=size, largesize=largesize)
+                box = box_class(offset=offset, size=size, largesize=largesize)
             elif box_class.__base__.__name__ == "FullBox":
                 version = read_int(file, 1)
                 flags = read_int(file, 3)
-                box = box_class(size=size, largesize=largesize, version=version, flags=flags)
+                box = box_class(offset=offset, size=size, largesize=largesize, version=version, flags=flags)
             # read any data left
             box.read(file)
             break
