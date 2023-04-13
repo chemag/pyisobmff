@@ -32,7 +32,7 @@ class ItemInformationBox(FullBox):
                 self.item_infos.append(box)
 
 
-class ItemInfomationEntry(FullBox):
+class ItemInformationEntry(FullBox):
     box_type = "infe"
 
     def __init__(self, **kwargs):
