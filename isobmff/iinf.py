@@ -41,7 +41,7 @@ class ItemInformationEntry(FullBox):
         self.item_id = None
         self.item_protection_index = None
         self.item_name = None
-        self.item_extension = None
+        self.item_info_extension = None
         self.item_type = None
         self.content_type = None
         self.content_encoding = None
@@ -58,7 +58,7 @@ class ItemInformationEntry(FullBox):
             extension_type = read_string(file, 4)
             fdel = FDItemInfoExtension()
             fdel.read(file)
-            self.item_extension = fdel
+            self.item_info_extension = fdel
         if self.version >= 2:
             if self.version == 2:
                 self.item_id = read_uint(file, 2)
@@ -75,15 +75,25 @@ class ItemInformationEntry(FullBox):
 
     def __repr__(self):
         repl = ()
-        repl += (f"item_id: {self.item_id}",)
-        repl += (f"item_protection_index: {self.item_protection_index}",)
+        if self.version == 0 or self.version == 1:
+            repl += (f"item_id: {self.item_id}",)
+            repl += (f"item_protection_index: {self.item_protection_index}",)
+            repl += (f"item_name: {self.item_name}",)
+            repl += (f"content_type: {self.content_type}",)
+            repl += (f"content_encoding: {self.content_encoding}",)
+        if self.version == 1:
+            repl += (f"extension_type: {self.extension_type}",)
+            repl += (f"item_info_extension: {self.item_info_extension}",)
         if self.version >= 2:
+            repl += (f"item_id: {self.item_id}",)
+            repl += (f"item_protection_index: {self.item_protection_index}",)
             repl += (f"item_type: {self.item_type}",)
-        repl += (f"item_name: {self.item_name}",)
-        repl += (f"content_type: {self.content_type}",)
-        repl += (f"content_encoding: {self.content_encoding}",)
-        if self.uri_type is not None:
-            repl += (f"uri_type: {self.uri_type}",)
+            repl += (f"item_name: {self.item_name}",)
+            if self.item_type == "mime":
+                repl += (f"content_type: {self.content_type}",)
+                repl += (f"content_encoding: {self.content_encoding}",)
+            elif self.item_type == "uri ":
+                repl += (f"uri_type: {self.uri_type}",)
         return super().repr(repl)
 
 
@@ -107,3 +117,13 @@ class FDItemInfoExtension(object):
         for _ in range(entry_count):
             group_id = read_uint(file, 4)
             self.group_ids.append(group_id)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"content_location: {self.content_location}",)
+        repl += (f"content_md5: {self.content_md5}",)
+        repl += (f"content_length: {self.content_length}",)
+        repl += (f"transfer_length: {self.transfer_length}",)
+        for idx, val in enumerate(self.group_ids):
+            repl += (f"group_ids[{idx}]: {val}",)
+        return super().repr(repl)
