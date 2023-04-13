@@ -110,3 +110,12 @@ class DataEntryImdaBox(FullBox):
         repl = ()
         repl += (f'imda_ref_identifier: "{self.imda_ref_identifier}"',)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 8.7.2.2
+class DataEntrySeqNumImdaBox(FullBox):
+    box_type = "snim"
+    is_mandatory = False
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)

@@ -23,6 +23,7 @@ from . import minf
 from . import moov
 from . import pitm
 from . import skip
+from . import snim
 from . import stbl
 from . import stco
 from . import stsc
