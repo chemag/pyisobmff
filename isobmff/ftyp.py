@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import Quantity
-from .box import read_int
+from .box import read_uint
 from .box import read_string
 
 
@@ -19,7 +19,7 @@ class FileTypeBox(Box):
 
     def read(self, file):
         self.major_brand = read_string(file, 4)
-        self.minor_version = read_int(file, 4)
+        self.minor_version = read_uint(file, 4)
         num_compatible_brands = int((self.size - 16) / 4)
         for _ in range(num_compatible_brands):
             compat_brand = read_string(file, 4)

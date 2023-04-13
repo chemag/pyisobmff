@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import Box
-from .box import read_int
 
 # ISO/IEC 14496-12:2022, Section 8.1.2
 class FreeBox(Box):

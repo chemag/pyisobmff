@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from .box import Box
+from .box import FullBox
+from .box import read_uint
 
 # ISO/IEC 23008-12:2022, Section 7.2.3.2
 class ccst(FullBox):
@@ -7,7 +8,7 @@ class ccst(FullBox):
     is_mandatory = False
 
     def read(self, file):
-        word = read_int(file, 4)
+        word = read_uint(file, 4)
         self.all_ref_pics_intra = (word >> 31) & 0x1
         self.intra_pred_used = (word >> 30) & 0x1
         self.max_ref_per_pic = (word >> 26) & 0xF

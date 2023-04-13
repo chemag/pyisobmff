@@ -2,39 +2,54 @@
 from .box import Box
 from .box import FullBox
 from .box import Quantity
-from .box import read_int
+from .box import read_uint
 
 
+# ISO/IEC 14496-12:2022, Section 8.11.4.2
 class ItemPropertiesBox(Box):
     box_type = "iprp"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
 
 
+# ISO/IEC 14496-12:2022, Section 8.11.4.2
 class ItemPropertyContainer(Box):
     box_type = "ipco"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
 
+# ISO/IEC 23008-12:2022, Section 6.5.3.2
 class ImageSpatialExtents(FullBox):
     box_type = "ispe"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.width = None
-        self.height = None
 
     def read(self, file):
-        self.width = read_int(file, 4)
-        self.height = read_int(file, 4)
+        self.width = read_uint(file, 4)
+        self.height = read_uint(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"width: {self.width}",)
+        repl += (f"height: {self.height}",)
+        return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 12.1.4.2
 class PixelAspectRatio(Box):
     box_type = "pasp"
 
     def read(self, file):
-        print(f"pasp: {file.read(self.get_payload_size())}")
+        self.hSpacing = read_uint(file, 4)
+        self.vSpacing = read_uint(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"hSpacing: {self.hSpacing}",)
+        repl += (f"vSpacing: {self.vSpacing}",)
+        return super().repr(repl)
 
 
 class ColorInformation(Box):
@@ -58,6 +73,7 @@ class RelativeInformation(Box):
         print(f"rloc: {file.read(self.get_payload_size())}")
 
 
+# ISO/IEC 14496-12:2022, Section 8.11.4.2
 class ItemPropertyAssociation(FullBox):
     box_type = "ipma"
     is_mandatory = True
@@ -68,21 +84,21 @@ class ItemPropertyAssociation(FullBox):
         self.items = []
 
     def read(self, file):
-        entry_count = read_int(file, 4)
+        entry_count = read_uint(file, 4)
         id_size = 2 if self.version < 1 else 4
         for _ in range(entry_count):
             item = {}
-            item["id"] = read_int(file, id_size)
-            association_count = read_int(file, 1)
+            item["id"] = read_uint(file, id_size)
+            association_count = read_uint(file, 1)
             item["associations"] = []
             for __ in range(association_count):
                 association = {}
                 if self.flags & 0b1:
-                    byte = read_int(file, 2)
+                    byte = read_uint(file, 2)
                     association["essential"] = (byte >> 15) & 0b1
                     association["property_index"] = byte & 0b111111111111111
                 else:
-                    byte = read_int(file, 1)
+                    byte = read_uint(file, 1)
                     association["essential"] = (byte >> 7) & 0b1
                     association["property_index"] = byte & 0b1111111
                 item["associations"].append(association)

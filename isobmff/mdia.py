@@ -2,10 +2,11 @@
 from .box import Box
 from .box import FullBox
 from .box import Quantity
-from .box import read_int
+from .box import read_uint
 from .box import read_box
 
 
+# ISO/IEC 14496-12:2022, Section 8.4.1.1
 class MediaBox(Box):
     box_type = "mdia"
     is_mandatory = True
@@ -26,6 +27,7 @@ class MediaBox(Box):
         return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 8.4.2.1
 class MediaHeaderBox(FullBox):
     box_type = "mdhd"
     is_mandatory = True
@@ -43,16 +45,16 @@ class MediaHeaderBox(FullBox):
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4
-        self.creation_time = read_int(file, read_size)
-        self.modification_time = read_int(file, read_size)
-        self.timescale = read_int(file, 4)
-        self.duration = read_int(file, read_size)
-        byte = read_int(file, 2)
+        self.creation_time = read_uint(file, read_size)
+        self.modification_time = read_uint(file, read_size)
+        self.timescale = read_uint(file, 4)
+        self.duration = read_uint(file, read_size)
+        byte = read_uint(file, 2)
         self.pad = (byte >> 15) & 0b1
         self.language.append((byte >> 10) & 0b11111)
         self.language.append((byte >> 5) & 0b11111)
         self.language.append(byte & 0b11111)
-        self.pre_defined = read_int(file, 2)
+        self.pre_defined = read_uint(file, 2)
 
     def __repr__(self):
         repl = ()

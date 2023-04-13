@@ -3,9 +3,10 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_box
-from .box import read_int
+from .box import read_uint
 
 
+# ISO/IEC 14496-12:2022, Section 8.2.1
 class MovieBox(Box):
     box_type = "moov"
     is_mandatory = True
@@ -26,6 +27,7 @@ class MovieBox(Box):
         return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 8.2.2
 class MovieHeaderBox(FullBox):
     box_type = "mvhd"
     is_mandatory = True
@@ -47,20 +49,20 @@ class MovieHeaderBox(FullBox):
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4
-        self.creation_time = read_int(file, read_size)
-        self.modification_time = read_int(file, read_size)
-        self.timescale = read_int(file, 4)
-        self.duration = read_int(file, read_size)
-        self.rate = read_int(file, 4)
-        self.volume = read_int(file, 2)
-        self.reserved1 = read_int(file, 2)
+        self.creation_time = read_uint(file, read_size)
+        self.modification_time = read_uint(file, read_size)
+        self.timescale = read_uint(file, 4)
+        self.duration = read_uint(file, read_size)
+        self.rate = read_uint(file, 4)
+        self.volume = read_uint(file, 2)
+        self.reserved1 = read_uint(file, 2)
         for _ in range(2):
-            self.reserved2.append(read_int(file, 4))
+            self.reserved2.append(read_uint(file, 4))
         for _ in range(9):
-            self.matrix.append(read_int(file, 4))
+            self.matrix.append(read_uint(file, 4))
         for _ in range(6):
-            self.pre_defined.append(read_int(file, 4))
-        self.next_track_id = read_int(file, 4)
+            self.pre_defined.append(read_uint(file, 4))
+        self.next_track_id = read_uint(file, 4)
 
     def __repr__(self):
         repl = ()

@@ -3,10 +3,12 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_box
-from .box import read_int
+from .box import read_uint
+from .box import read_sint
 from .box import int_to_fixed_point_16_16
 
 
+# ISO/IEC 14496-12:2022, Section 8.3.1
 class TrackBox(Box):
     box_type = "trak"
     is_mandatory = True
@@ -27,6 +29,7 @@ class TrackBox(Box):
         return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 8.3.2
 class TrackHeaderBox(FullBox):
     box_type = "tkhd"
     is_mandatory = True
@@ -50,21 +53,21 @@ class TrackHeaderBox(FullBox):
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4
-        self.creation_time = read_int(file, read_size)
-        self.modification_time = read_int(file, read_size)
-        self.track_id = read_int(file, 4)
-        self.reserved1 = read_int(file, 4)
-        self.duration = read_int(file, read_size)
+        self.creation_time = read_uint(file, read_size)
+        self.modification_time = read_uint(file, read_size)
+        self.track_id = read_uint(file, 4)
+        self.reserved1 = read_uint(file, 4)
+        self.duration = read_uint(file, read_size)
         for _ in range(2):
-            self.reserved2.append(read_int(file, 4))
-        self.layer = read_int(file, 2)
-        self.alternate_group = read_int(file, 2)
-        self.volume = read_int(file, 2)
-        self.reserved3 = read_int(file, 2)
+            self.reserved2.append(read_uint(file, 4))
+        self.layer = read_sint(file, 2)
+        self.alternate_group = read_uint(file, 2)
+        self.volume = read_uint(file, 2)
+        self.reserved3 = read_uint(file, 2)
         for _ in range(9):
-            self.matrix.append(read_int(file, 4))
-        self.width = read_int(file, 4)
-        self.height = read_int(file, 4)
+            self.matrix.append(read_uint(file, 4))
+        self.width = read_uint(file, 4)
+        self.height = read_uint(file, 4)
 
     def __repr__(self):
         repl = ()

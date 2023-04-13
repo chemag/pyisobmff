@@ -9,6 +9,7 @@ class AbcBox(type):
     pass
 
 
+# ISO/IEC 14496-12:2022, Section 4.2.2
 class Box(object):
     box_type = None
 
@@ -57,6 +58,7 @@ class Box(object):
         pass
 
 
+# ISO/IEC 14496-12:2022, Section 4.2.2
 class FullBox(Box):
     box_type = None
 
@@ -101,11 +103,19 @@ class Quantity(Enum):
     ANY_NUMBER = 3
 
 
-def read_int(file, length):
+def read_sint(file, length):
+    return read_int_generic(file, length, signed=True)
+
+
+def read_uint(file, length):
+    return read_int_generic(file, length, signed=False)
+
+
+def read_int_generic(file, length, signed):
     byte_array = file.read(length)
     if not byte_array:
         return ""
-    return int.from_bytes(byte_array, byteorder="big", signed=False)
+    return int.from_bytes(byte_array, byteorder="big", signed=signed)
 
 
 def read_string(file, length=None):
@@ -147,7 +157,7 @@ def get_class_type(cls):
 
 def read_box(file, debug=0):
     offset = file.tell()
-    size = read_int(file, 4)
+    size = read_uint(file, 4)
     if size == "":
         return None
     box_type = read_string(file, 4)
@@ -155,7 +165,7 @@ def read_box(file, debug=0):
     if size == 0:
         import code; code.interact(local=locals())  # python gdb/debugging
     elif size == 1:
-        largesize = read_int(file, 8)
+        largesize = read_uint(file, 8)
 
     if debug > 0:
         print(box_type + "(" + str(size) + ")")
@@ -167,8 +177,8 @@ def read_box(file, debug=0):
             if class_type == "Box":
                 box = box_class(offset=offset, size=size, largesize=largesize)
             elif class_type == "FullBox":
-                version = read_int(file, 1)
-                flags = read_int(file, 3)
+                version = read_uint(file, 1)
+                flags = read_uint(file, 3)
                 box = box_class(
                     offset=offset,
                     size=size,

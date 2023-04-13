@@ -3,7 +3,7 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_box
-from .box import read_int
+from .box import read_uint
 from .box import read_string
 
 
@@ -39,7 +39,7 @@ class DataReferenceBox(FullBox):
         super().__init__(**kwargs)
 
     def read(self, file):
-        entry_count = read_int(file, 4)
+        entry_count = read_uint(file, 4)
         for _ in range(entry_count):
             box = read_box(file)
             if not box:
@@ -104,7 +104,7 @@ class DataEntryImdaBox(FullBox):
         super().__init__(**kwargs)
 
     def read(self, file):
-        self.imda_ref_identifier = read_int(file, 4)
+        self.imda_ref_identifier = read_uint(file, 4)
 
     def __repr__(self):
         repl = ()

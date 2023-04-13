@@ -3,7 +3,7 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_box
-from .box import read_int
+from .box import read_uint, read_sint
 from .box import read_string
 
 
@@ -39,7 +39,7 @@ class SampleDescriptionBox(FullBox):
         self.samples = []
 
     def read(self, file):
-        entry_count = read_int(file, 4)
+        entry_count = read_uint(file, 4)
         for _ in range(entry_count):
             box = read_box(file)
             if not box:
@@ -69,9 +69,9 @@ class SampleEntry(Box):
 
     def read(self, file):
         for _ in range(6):
-            reserved = read_int(file, 1)
+            reserved = read_uint(file, 1)
             self.reserved.append(reserved)
-        self.data_reference_index = read_int(file, 2)
+        self.data_reference_index = read_uint(file, 2)
 
     def repr(self, repl=None):
         new_repl = ()
@@ -122,19 +122,19 @@ class VisualSampleEntry(SampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.pre_defined1 = read_int(file, 2)
-        self.reserved1 = read_int(file, 2)
+        self.pre_defined1 = read_uint(file, 2)
+        self.reserved1 = read_uint(file, 2)
         for _ in range(3):
-            self.pre_defined2.append(read_int(file, 4))
-        self.width = read_int(file, 2)
-        self.height = read_int(file, 2)
-        self.horizresolution = read_int(file, 4)
-        self.vertresolution = read_int(file, 4)
-        self.reserved2 = read_int(file, 4)
-        self.frame_count = read_int(file, 2)
+            self.pre_defined2.append(read_uint(file, 4))
+        self.width = read_uint(file, 2)
+        self.height = read_uint(file, 2)
+        self.horizresolution = read_uint(file, 4)
+        self.vertresolution = read_uint(file, 4)
+        self.reserved2 = read_uint(file, 4)
+        self.frame_count = read_uint(file, 2)
         self.compressorname = read_string(file, 32)
-        self.depth = read_int(file, 2)
-        self.pre_defined3 = read_int(file, 2)
+        self.depth = read_uint(file, 2)
+        self.pre_defined3 = read_sint(file, 2)
         offset = file.tell()
         max_offset = offset + self.get_payload_size()
         while file.tell() < max_offset:
@@ -166,6 +166,7 @@ class VisualSampleEntry(SampleEntry):
         return self.repr()
 
 
+# ISO/IEC 14496-12:2022, Section 12.2.3.2
 class AudioSampleEntry(SampleEntry):
     """Audio Sample Entry"""
 
@@ -184,13 +185,13 @@ class AudioSampleEntry(SampleEntry):
     def read(self, file):
         super().read(file)
         for _ in range(2):
-            self.reserved1.append(read_int(file, 4))
-        self.channelcount = read_int(file, 2)
-        self.samplesize = read_int(file, 2)
-        self.pre_defined = read_int(file, 2)
+            self.reserved1.append(read_uint(file, 4))
+        self.channelcount = read_uint(file, 2)
+        self.samplesize = read_uint(file, 2)
+        self.pre_defined = read_uint(file, 2)
         for _ in range(2):
-            self.reserved2.append(read_int(file, 2))
-        self.samplerate = read_int(file, 4)
+            self.reserved2.append(read_uint(file, 2))
+        self.samplerate = read_uint(file, 4)
         # parse the boxes
         offset = file.tell()
         max_offset = offset + self.get_payload_size()
@@ -213,6 +214,7 @@ class AudioSampleEntry(SampleEntry):
         return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 8.5.2.2
 class BitRateBox(Box):
     """Bit Rate Box"""
 
@@ -225,9 +227,9 @@ class BitRateBox(Box):
         self.avg_bitrate = None
 
     def read(self, file):
-        self.buffer_size_db = read_int(file, 4)
-        self.max_bitrate = read_int(file, 4)
-        self.avg_bitrate = read_int(file, 4)
+        self.buffer_size_db = read_uint(file, 4)
+        self.max_bitrate = read_uint(file, 4)
+        self.avg_bitrate = read_uint(file, 4)
 
     def __repr__(self):
         repl = ()
