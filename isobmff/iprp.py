@@ -3,6 +3,7 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_uint
+from .box import read_box
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.4.2
@@ -10,6 +11,22 @@ class ItemPropertiesBox(Box):
     box_type = "iprp"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
+    association = []
+
+    def read(self, file):
+        self.property_container = read_box(file)
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.association.append(box)
+
+    def __repr__(self):
+        repl = ()
+        repl += (repr(self.property_container),)
+        for box in self.association:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.4.2
