@@ -17,5 +17,8 @@ class MetaBox(FullBox):
         return super().repr(repl)
 
     def read(self, file):
-        box = read_box(file)
-        self.box_list.append(box)
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.box_list.append(box)
