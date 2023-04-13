@@ -8,7 +8,7 @@ from .stbl import VisualSampleEntry
 
 class HEVCSampleEntry(VisualSampleEntry):
     box_type = "hvc1"
-    is_mandatry = True
+    is_mandatory = True
     quantity = Quantity.ONE_OR_MORE
 
     def __init__(self, **kwargs):

@@ -7,13 +7,13 @@ from .box import read_int
 
 class ItemPropertiesBox(Box):
     box_type = "iprp"
-    is_mandatry = False
+    is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
 
 
 class ItemPropertyContainer(Box):
     box_type = "ipco"
-    is_mandatry = True
+    is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
 
@@ -60,7 +60,7 @@ class RelativeInformation(Box):
 
 class ItemPropertyAssociation(FullBox):
     box_type = "ipma"
-    is_mandatry = True
+    is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
     def __init__(self, **kwargs):

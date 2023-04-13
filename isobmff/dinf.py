@@ -9,7 +9,7 @@ from .box import read_string
 
 class DataInformationBox(Box):
     box_type = "dinf"
-    is_mandatry = True
+    is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     box_list = []
 
@@ -29,7 +29,7 @@ class DataInformationBox(Box):
 
 class DataReferenceBox(FullBox):
     box_type = "dref"
-    is_mandatry = True
+    is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
     def __init__(self, **kwargs):
@@ -53,7 +53,7 @@ class DataReferenceBox(FullBox):
 
 class DataEntryUrlBox(FullBox):
     box_type = "url "
-    is_mandatry = True
+    is_mandatory = True
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -73,7 +73,7 @@ class DataEntryUrlBox(FullBox):
 
 class DataEntryUrnBox(FullBox):
     box_type = "urn "
-    is_mandatry = True
+    is_mandatory = True
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
