@@ -34,6 +34,21 @@ class ItemPropertyContainer(Box):
     box_type = "ipco"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
+    properties = []
+
+    def read(self, file):
+        self.property_container = read_box(file)
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.properties.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.properties:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
 # ISO/IEC 23008-12:2022, Section 6.5.3.2
