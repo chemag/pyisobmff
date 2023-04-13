@@ -7,33 +7,21 @@ from .box import read_uint
 class ItemLocationBox(FullBox):
     box_type = "iloc"
     is_mandatory = False
+    items = []
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.offset_size = None
-        self.length_size = None
-        self.base_offset_size = None
-        self.index_size = None
-        self.reserved = None
-        self.items = []
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"offset_size: {self.offset_size}",)
-        repl += (f"length_size: {self.length_size}",)
-        return super().repr(repl)
-
-    # Section 8.11.3.2
     def read(self, file):
-        byte = read_uint(file, 1)
-        self.offset_size = (byte >> 4) & 0b1111
-        self.length_size = byte & 0b1111
-        byte = read_uint(file, 1)
-        self.base_offset_size = (byte >> 4) & 0b1111
+        byte0 = read_uint(file, 1)
+        self.offset_size = (byte0 >> 4) & 0b1111
+        self.length_size = byte0 & 0b1111
+        byte1 = read_uint(file, 1)
+        self.base_offset_size = (byte1 >> 4) & 0b1111
         if self.version in [1, 2]:
-            self.index_size = byte & 0b1111
+            self.index_size = byte1 & 0b1111
         else:
-            self.reserved = byte & 0b1111
+            self.reserved = byte1 & 0b1111
         if self.version < 2:
             item_count = read_uint(file, 2)
         elif self.version == 2:
@@ -47,6 +35,7 @@ class ItemLocationBox(FullBox):
                 item["item_id"] = read_uint(file, 4)
             if self.version in [1, 2]:
                 half = read_uint(file, 2)
+                item["reserved"] = half >> 4
                 item["construction_method"] = half & 0b1111
             item["data_reference_index"] = read_uint(file, 2)
             item["base_offset"] = read_uint(file, self.base_offset_size)
@@ -61,3 +50,35 @@ class ItemLocationBox(FullBox):
                 extent["extent_length"] = read_uint(file, self.length_size)
                 item["extents"].append(extent)
             self.items.append(item)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"offset_size: {self.offset_size}",)
+        repl += (f"length_size: {self.length_size}",)
+        if self.version in [1, 2]:
+            repl += (f"index_size: {self.index_size}",)
+        else:
+            repl += (f"reserved: {self.reserved}",)
+        for idx, item in enumerate(self.items):
+            repl += (f'item[{idx}]["item_id"]: {item["item_id"]}',)
+            if self.version in [1, 2]:
+                repl += (f'item[{idx}]["reserved"]: {item["reserved"]}',)
+                repl += (
+                    f'item[{idx}]["construction_method"]: {item["construction_method"]}',
+                )
+            repl += (
+                f'item[{idx}]["data_reference_index"]: {item["data_reference_index"]}',
+            )
+            repl += (f'item[{idx}]["base_offset"]: {item["base_offset"]}',)
+            for jdx, extent in enumerate(item["extents"]):
+                if self.version in [1, 2] and self.index_size > 0:
+                    repl += (
+                        f'item[{idx}]["extent"][{jdx}]["item_reference_index"]: {extent["item_reference_index"]}',
+                    )
+                repl += (
+                    f'item[{idx}]["extent"][{jdx}]["extent_offset"]: 0x{extent["extent_offset"]:08x}',
+                )
+                repl += (
+                    f'item[{idx}]["extent"][{jdx}]["extent_length"]: {extent["extent_length"]}',
+                )
+        return super().repr(repl)
