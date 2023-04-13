@@ -143,14 +143,22 @@ def read_box(file, debug=0):
             elif box_class.__base__.__name__ == "FullBox":
                 version = read_int(file, 1)
                 flags = read_int(file, 3)
-                box = box_class(offset=offset, size=size, largesize=largesize, version=version, flags=flags)
+                box = box_class(
+                    offset=offset,
+                    size=size,
+                    largesize=largesize,
+                    version=version,
+                    flags=flags,
+                )
             # read any data left
             box.read(file)
             break
     else:
         # unimplemented box
         if debug > 0:
-            print(f"warning: unimplemented box offset: 0x{file.tell() - 8:08x} type: {box_type} size: 0x{size:x} next: 0x{size+file.tell():08x}")
+            print(
+                f"warning: unimplemented box offset: 0x{offset:08x} type: {box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
+            )
         box = UnimplementedBox(box_type, size, largesize)
         box.read(file)
     return box
