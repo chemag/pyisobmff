@@ -5,6 +5,7 @@ from .box import read_int
 from .box import read_string
 
 
+# ISO/IEC 23008-12:2022, Section 4.3.2
 class FileTypeBox(Box):
     box_type = "ftyp"
     is_mandatory = True
@@ -16,13 +17,6 @@ class FileTypeBox(Box):
         self.minor_version = None
         self.compatible_brands = []
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"major_brand: {self.major_brand}",)
-        repl += (f"minor_version: {self.minor_version}",)
-        repl += (f"compatible_brands: \"{','.join(self.compatible_brands)}\"",)
-        return super().repr(repl)
-
     def read(self, file):
         self.major_brand = read_string(file, 4)
         self.minor_version = read_int(file, 4)
@@ -30,3 +24,10 @@ class FileTypeBox(Box):
         for _ in range(num_compatible_brands):
             compat_brand = read_string(file, 4)
             self.compatible_brands.append(compat_brand)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"major_brand: {self.major_brand}",)
+        repl += (f"minor_version: {self.minor_version}",)
+        repl += (f"compatible_brands: \"{','.join(self.compatible_brands)}\"",)
+        return super().repr(repl)
