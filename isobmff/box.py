@@ -110,7 +110,7 @@ def read_int(file, length):
 
 def read_string(file, length=None):
     # TODO: convert utf8
-    if length:
+    if length is not None:
         res = file.read(length).decode()
     else:
         res = "".join(iter(lambda: file.read(1).decode("ascii"), "\x00"))
@@ -119,6 +119,12 @@ def read_string(file, length=None):
 
 def indent(rep):
     return re.sub(r"^", "  ", rep, flags=re.M)
+
+
+def int_to_fixed_point_16_16(num):
+    int_part = num >> 16
+    frac_part = (num & 0xFFFF) / 0xFFFF
+    return int_part + frac_part
 
 
 def get_class_list(cls, res=[]):

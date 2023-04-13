@@ -2,6 +2,7 @@
 from .box import Box
 from .box import FullBox
 from .box import Quantity
+from .box import read_box
 from .box import read_int
 
 
@@ -9,6 +10,20 @@ class MediaInformationBox(Box):
     box_type = "minf"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
+    box_list = []
+
+    def read(self, file):
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.box_list.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
 class VideoMediaHeaderBox(FullBox):

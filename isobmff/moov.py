@@ -10,6 +10,20 @@ class MovieBox(Box):
     box_type = "moov"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
+    box_list = []
+
+    def read(self, file):
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.box_list.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
 class MovieHeaderBox(FullBox):
@@ -47,3 +61,21 @@ class MovieHeaderBox(FullBox):
         for _ in range(6):
             self.pre_defined.append(read_int(file, 4))
         self.next_track_id = read_int(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"creation_time: {self.creation_time}",)
+        repl += (f"modification_time: {self.modification_time}",)
+        repl += (f"timescale: {self.timescale}",)
+        repl += (f"duration: {self.duration}",)
+        repl += (f"rate: 0x{self.creation_time:08x}",)
+        repl += (f"volume: 0x{self.volume:04x}",)
+        repl += (f"reserved1: {self.reserved1}",)
+        for idx, val in enumerate(self.reserved2):
+            repl += (f"reserved2[{idx}]: {val}",)
+        for idx, val in enumerate(self.matrix):
+            repl += (f"matrix[{idx}]: 0x{val:08x}",)
+        for idx, val in enumerate(self.pre_defined):
+            repl += (f"pre_defined[{idx}]: {val}",)
+        repl += (f"next_track_id: {self.next_track_id}",)
+        return super().repr(repl)

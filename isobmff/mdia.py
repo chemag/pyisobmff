@@ -3,12 +3,27 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_int
+from .box import read_box
 
 
 class MediaBox(Box):
     box_type = "mdia"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
+    box_list = []
+
+    def read(self, file):
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.box_list.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
 class MediaHeaderBox(FullBox):

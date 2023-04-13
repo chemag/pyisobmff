@@ -11,6 +11,20 @@ class DataInformationBox(Box):
     box_type = "dinf"
     is_mandatry = True
     quantity = Quantity.EXACTLY_ONE
+    box_list = []
+
+    def read(self, file):
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.box_list.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
 class DataReferenceBox(FullBox):
@@ -30,6 +44,12 @@ class DataReferenceBox(FullBox):
                 break
             self.data_entry.append(box)
 
+    def __repr__(self):
+        repl = ()
+        for box in self.data_entry:
+            repl += (repr(box),)
+        return super().repr(repl)
+
 
 class DataEntryUrlBox(FullBox):
     box_type = "url "
@@ -40,7 +60,15 @@ class DataEntryUrlBox(FullBox):
         self.location = None
 
     def read(self, file):
-        self.location = read_string(file)
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        max_length = max_offset - offset
+        self.location = read_string(file, max_length)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f'location: "{self.location}"',)
+        return super().repr(repl)
 
 
 class DataEntryUrnBox(FullBox):
@@ -55,3 +83,9 @@ class DataEntryUrnBox(FullBox):
     def read(self, file):
         self.name = read_string(file)
         self.location = read_string(file)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f'name: "{self.name}"',)
+        repl += (f'location: "{self.location}"',)
+        return super().repr(repl)

@@ -2,13 +2,29 @@
 from .box import Box
 from .box import FullBox
 from .box import Quantity
+from .box import read_box
 from .box import read_int
+from .box import int_to_fixed_point_16_16
 
 
 class TrackBox(Box):
     box_type = "trak"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
+    box_list = []
+
+    def read(self, file):
+        offset = file.tell()
+        max_offset = offset + self.get_payload_size()
+        while file.tell() < max_offset:
+            box = read_box(file)
+            self.box_list.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
 class TrackHeaderBox(FullBox):
@@ -49,3 +65,22 @@ class TrackHeaderBox(FullBox):
             self.matrix.append(read_int(file, 4))
         self.width = read_int(file, 4)
         self.height = read_int(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"creation_time: {self.creation_time}",)
+        repl += (f"modification_time: {self.modification_time}",)
+        repl += (f"track_id: {self.track_id}",)
+        repl += (f"reserved1: {self.reserved1}",)
+        repl += (f"duration: {self.duration}",)
+        for idx, val in enumerate(self.reserved2):
+            repl += (f"reserved2[{idx}]: {val}",)
+        repl += (f"layer: {self.layer}",)
+        repl += (f"alternate_group: {self.alternate_group}",)
+        repl += (f"volume: 0x{self.volume:04x}",)
+        repl += (f"reserved3: {self.reserved3}",)
+        for idx, val in enumerate(self.matrix):
+            repl += (f"matrix[{idx}]: 0x{val:08x}",)
+        repl += (f"width: {int_to_fixed_point_16_16(self.width)}",)
+        repl += (f"height: {int_to_fixed_point_16_16(self.height)}",)
+        return super().repr(repl)
