@@ -7,6 +7,7 @@ from .box import read_int
 from .box import read_string
 
 
+# ISO/IEC 14496-12:2022, Section 8.7.1.2
 class DataInformationBox(Box):
     box_type = "dinf"
     is_mandatory = True
@@ -27,14 +28,15 @@ class DataInformationBox(Box):
         return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 8.7.2.2
 class DataReferenceBox(FullBox):
     box_type = "dref"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
+    data_entry = []
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.data_entry = []
 
     def read(self, file):
         entry_count = read_int(file, 4)
@@ -51,6 +53,7 @@ class DataReferenceBox(FullBox):
         return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 8.7.2.2
 class DataEntryUrlBox(FullBox):
     box_type = "url "
     is_mandatory = True
@@ -71,6 +74,7 @@ class DataEntryUrlBox(FullBox):
         return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 8.7.2.2
 class DataEntryUrnBox(FullBox):
     box_type = "urn "
     is_mandatory = True
