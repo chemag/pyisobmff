@@ -38,7 +38,6 @@ class Box(object):
     # read the remaining bytes as boxes
     def read_box(self, file):
         read_size = self.get_box_size()
-        # print(file.read(read_size))
         while read_size > 0:
             box = read_box(file)
             if not box:
