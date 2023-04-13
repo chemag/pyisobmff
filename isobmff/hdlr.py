@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
 from .box import Quantity
-from .box import indent
 from .box import read_int
 from .box import read_string
 
@@ -19,9 +18,10 @@ class HandlerReferenceBox(FullBox):
         self.name = None
 
     def __repr__(self):
-        rep = "handler_type: " + self.handler_type + "\n"
-        rep += "name: " + self.name
-        return super().__repr__() + indent(rep)
+        repl = ()
+        repl += (f"handler_type: {self.handler_type}",)
+        repl += (f'name: "{self.name}"',)
+        return super().repr(repl)
 
     def read(self, file):
         self.pre_defined = read_int(file, 4)

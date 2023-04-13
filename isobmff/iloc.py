@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
 from .box import read_int
-from .box import indent
 
 
 class ItemLocationBox(FullBox):
@@ -18,9 +17,10 @@ class ItemLocationBox(FullBox):
         self.items = []
 
     def __repr__(self):
-        rep = "offset_size:" + str(self.offset_size) + "\n"
-        rep += "length_size:" + str(self.length_size)
-        return super().__repr__() + indent(rep)
+        repl = ()
+        repl += (f"offset_size: {self.offset_size}",)
+        repl += (f"length_size: {self.length_size}",)
+        return super().repr(repl)
 
     # Section 8.11.3.2
     def read(self, file):

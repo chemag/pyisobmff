@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
-from .box import indent
 from .box import read_int
 
 

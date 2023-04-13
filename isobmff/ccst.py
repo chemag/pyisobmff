@@ -7,4 +7,4 @@ class ccst(Box):
     is_mandatory = False
 
     def read(self, file):
-        print(f"ccst: {file.read(self.get_box_size())}")
+        print(f"ccst: {file.read(self.get_payload_size())}")

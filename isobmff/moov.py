@@ -2,7 +2,6 @@
 from .box import Box
 from .box import FullBox
 from .box import Quantity
-from .box import indent
 from .box import read_box
 from .box import read_int
 

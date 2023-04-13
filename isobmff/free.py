@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import Box
-from .box import indent
 from .box import read_int
 
 
@@ -13,5 +12,6 @@ class FreeBox(Box):
         self.contents = None
 
     def __repr__(self):
-        rep = "contents: " + str(self.contents)
-        return super().__repr__() + indent(rep)
+        repl = ()
+        repl += (f'contents: "{self.contents}"',)
+        return super().repr(repl)

@@ -42,8 +42,8 @@ class SampleEntry(Box):
         rep = super().__repr__()
         return rep
 
-    def get_box_size(self):
-        return super().get_box_size() - 6 + 2
+    def get_payload_size(self):
+        return super().get_payload_size() - 6 + 2
 
     def read(self, file):
         for _ in range(6):
@@ -62,7 +62,7 @@ class HintSampleEntry(SampleEntry):
         self.data = []
 
     def read(self, file):
-        box_size = self.get_box_size()
+        box_size = self.get_payload_size()
         self.data = file.read(box_size)
 
 

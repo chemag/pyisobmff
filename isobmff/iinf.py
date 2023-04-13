@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
-from .box import indent
 from .box import read_box
 from .box import read_int
 from .box import read_string
@@ -15,15 +14,15 @@ class ItemInformationBox(FullBox):
         self.item_infos = []
 
     def __repr__(self):
-        rep = "entry_count: " + str(len(self.item_infos)) + "\n"
+        repl = ()
+        repl += (f"entry_count: {str(len(self.item_infos))}",)
         for item in self.item_infos:
-            rep += item.__repr__()
-        return super().__repr__() + indent(rep)
+            repl += (repr(item),)
+        return super().repr(repl)
 
     def read(self, file):
         count_size = 2 if self.version == 0 else 4
         entry_count = read_int(file, count_size)
-
         for _ in range(entry_count):
             box = read_box(file)
             if not box:
@@ -47,12 +46,13 @@ class ItemInformationEntry(FullBox):
         self.uri_type = None
 
     def __repr__(self):
-        rep = "item_id: " + str(self.item_id) + "\n"
-        rep += "item_protection_index: " + str(self.item_protection_index) + "\n"
-        rep += "item_name: " + self.item_name
+        repl = ()
+        repl += (f"item_id: {self.item_id}",)
+        repl += (f"item_protection_index: {self.item_protection_index}",)
+        repl += (f"item_name: {self.item_name}",)
         if self.version >= 2:
-            rep += "\nitem_type: " + str(self.item_type)
-        return super().__repr__() + indent(rep)
+            repl += (f"item_type: {self.item_type}",)
+        return super().repr(repl)
 
     def read(self, file):
         if self.version == 0 or self.version == 1:

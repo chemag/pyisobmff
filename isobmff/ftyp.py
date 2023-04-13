@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import Quantity
-from .box import indent
 from .box import read_int
 from .box import read_string
 
@@ -18,10 +17,11 @@ class FileTypeBox(Box):
         self.compatible_brands = []
 
     def __repr__(self):
-        rep = f"major_brand: {self.major_brand}\n"
-        rep += f"minor_version: {self.minor_version}\n"
-        rep += f"compatible_brands: {','.join(self.compatible_brands)}"
-        return super().__repr__() + indent(rep)
+        repl = ()
+        repl += (f"major_brand: {self.major_brand}",)
+        repl += (f"minor_version: {self.minor_version}",)
+        repl += (f"compatible_brands: \"{','.join(self.compatible_brands)}\"",)
+        return super().repr(repl)
 
     def read(self, file):
         self.major_brand = read_string(file, 4)

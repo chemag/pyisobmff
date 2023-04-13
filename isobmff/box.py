@@ -12,33 +12,38 @@ class AbcBox(type):
 class Box(object):
     box_type = None
 
-    def __init__(self, offset, size=None, largesize=None):
+    def __init__(self, offset, size, largesize):
         self.offset = offset
         self.size = size
         self.largesize = largesize
 
-    def __repr__(self):
-        rep = ""
-        rep += f"offset: 0x{self.offset:08x}" + "\n"
-        rep += f"box_type: {self.box_type}" + "\n"
-        rep += f"size: {self.size}" + "\n"
+    def repr(self, repl=None):
+        new_repl = ()
+        new_repl += (f"offset: 0x{self.offset:08x}",)
+        new_repl += (f"box_type: {self.box_type}",)
+        new_repl += (f"size: {self.size}",)
         if self.largesize is not None:
-            rep += f"largesize: {self.largesize}" + "\n"
-        return "Box\n" + indent(rep)
+            new_repl += (f"largesize: {self.largesize}",)
+        if repl is not None:
+            new_repl += repl
+        return f"[{self.box_type}]\n" + indent("\n".join(new_repl))
 
-    def get_box_size(self):
+    def __repr__(self):
+        return self.repr()
+
+    def get_payload_size(self):
         """get box size excluding header"""
-        return self.largesize - 16 if self.largesize is not None else self.size - 8
+        return self.size - 8 if self.largesize is None else self.largesize - 16
 
     # read the remaining bytes as simple bytes
     def read(self, file):
-        remaining_size = self.get_box_size()
+        remaining_size = self.get_payload_size()
         if remaining_size > 0:
             self.contents = file.read(remaining_size)
 
     # read the remaining bytes as boxes
     def read_box(self, file):
-        read_size = self.get_box_size()
+        read_size = self.get_payload_size()
         while read_size > 0:
             box = read_box(file)
             if not box:
@@ -60,28 +65,32 @@ class FullBox(Box):
         self.version = version
         self.flags = flags
 
-    def __repr__(self):
-        srep = super().__repr__()
-        rep = ""
-        rep += f"version: {self.version}" + "\n"
-        rep += f"flags: {self.flags}" + "\n"
-        return "FullBox\n" + srep + indent(rep)
+    def repr(self, repl=None):
+        new_repl = ()
+        new_repl += (f"version: {self.version}",)
+        new_repl += (f"flags: {self.flags}",)
+        if repl is not None:
+            new_repl += repl
+        return super().repr(new_repl)
 
-    def get_box_size(self):
+    def __repr__(self):
+        return self.repr()
+
+    def get_payload_size(self):
         """get box size excluding header"""
         return self.size - 12
 
 
 class UnimplementedBox(Box):
-    def __init__(self, box_type, size, largesize):
+    def __init__(self, offset, box_type, size, largesize):
         self.box_type = box_type
-        super().__init__(size, largesize)
+        super().__init__(offset, size, largesize)
 
     def __repr__(self):
         return super().__repr__()
 
     def read(self, file):
-        remaining_size = self.get_box_size()
+        remaining_size = self.get_payload_size()
         self.content = file.read(remaining_size)
 
 
@@ -159,6 +168,6 @@ def read_box(file, debug=0):
             print(
                 f"warning: unimplemented box offset: 0x{offset:08x} type: {box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
             )
-        box = UnimplementedBox(box_type, size, largesize)
+        box = UnimplementedBox(offset, box_type, size, largesize)
         box.read(file)
     return box

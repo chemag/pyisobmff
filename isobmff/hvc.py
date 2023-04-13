@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import Quantity
-from .box import indent
 from .box import read_box
 from .box import read_int
 from .stbl import VisualSampleEntry
@@ -61,41 +60,29 @@ class HEVCDecoderConfigurationRecord(object):
         self.array = []
 
     def __repr__(self):
-        rep = "HEVCDecoderConfigurationRecord\n"
-        rep += "  configuration_version: " + str(self.configuration_version) + "\n"
-        rep += "  general_profile_space: " + str(self.general_profile_space) + "\n"
-        rep += "  general_tier_flag: " + str(bin(self.general_tier_flag)) + "\n"
-        rep += "  general_profile_idc: " + str(self.general_profile_idc) + "\n"
-        rep += (
-            "  general_profile_compat_flags: "
-            + str(bin(self.general_profile_compat_flags))
-            + "\n"
+        repl = ()
+        repl += (f"configuration_version: {self.configuration_version}",)
+        repl += (f"general_profile_space: {self.general_profile_space}",)
+        repl += (f"general_tier_flag: {bin(self.general_tier_flag)}",)
+        repl += (f"general_profile_idc: {self.general_profile_idc}",)
+        repl += (
+            f"general_profile_compat_flags: {bin(self.general_profile_compat_flags)}",
         )
-        rep += (
-            "  general_const_indicator_flags: "
-            + str(bin(self.general_const_indicator_flags))
-            + "\n"
+        repl += (
+            f"general_const_indicator_flags: {bin(self.general_const_indicator_flags)}",
         )
-        rep += "  general_level_idc: " + str(self.general_level_idc) + "\n"
-        rep += (
-            "  min_spatial_segmentation_idc: "
-            + str(self.min_spatial_segmentation_idc)
-            + "\n"
-        )
-        rep += "  parallelism_type: " + str(self.parallelism_type) + "\n"
-        rep += "  chroma_format: " + str(self.chroma_format) + "\n"
-        rep += "  bit_depth_luma_minus_8: " + str(self.bit_depth_luma_minus_8) + "\n"
-        rep += (
-            "  bit_depth_chroma_minus_8: " + str(self.bit_depth_chroma_minus_8) + "\n"
-        )
-        rep += "  avg_frame_rate: " + str(self.avg_frame_rate) + "\n"
-        rep += "  constant_frame_rate: " + str(self.constant_frame_rate) + "\n"
-        rep += "  num_temporal_layers: " + str(self.num_temporal_layers) + "\n"
-        rep += "  temporal_id_nested: " + str(self.temporal_id_nested) + "\n"
-        rep += "  length_size_minus_1: " + str(self.length_size_minus_1)
-        # rep += '  array: ' + \
-        #    str(self.array) + '\n'
-        return indent(rep)
+        repl += (f"general_level_idc: {self.general_level_idc}",)
+        repl += (f"min_spatial_segmentation_idc: {self.min_spatial_segmentation_idc}",)
+        repl += (f"parallelism_type: {self.parallelism_type}",)
+        repl += (f"chroma_format: {self.chroma_format}",)
+        repl += (f"bit_depth_luma_minus_8: {self.bit_depth_luma_minus_8}",)
+        repl += (f"bit_depth_chroma_minus_8: {self.bit_depth_chroma_minus_8}",)
+        repl += (f"avg_frame_rate: {self.avg_frame_rate}",)
+        repl += (f"constant_frame_rate: {self.constant_frame_rate}",)
+        repl += (f"num_temporal_layers: {self.num_temporal_layers}",)
+        repl += (f"temporal_id_nested: {self.temporal_id_nested}",)
+        repl += (f"length_size_minus_1: {self.length_size_minus_1}",)
+        return super().repr(repl)
 
     def read(self, file):
         self.configuration_version = read_int(file, 1)

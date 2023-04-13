@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from .box import indent
 from .box import read_box
 
 
@@ -10,8 +9,8 @@ class MediaFile(object):
     def __repr__(self):
         rep = ""
         for box in self.box_list:
-            rep += repr(box) + "\n"
-        return "ISOBaseMediaFile\n" + indent(rep)
+            rep += f"{repr(box)}\n"
+        return rep
 
     def read(self, file_name):
         file = open(file_name, "rb")
