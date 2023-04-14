@@ -172,7 +172,7 @@ def read_box(file, debug=0):
         print(f"read_box() offset: 0x{offset:08x} size: 0x{size:08x} type: {box_type}")
     largesize = None
     if size == 0:
-        raise(f"ERROR: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)")
+        raise Exception(f"ERROR: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)")
     elif size == 1:
         largesize = read_uint(file, 8)
     box_classes = get_class_list(Box)
