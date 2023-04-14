@@ -79,19 +79,9 @@ class SampleEntry(Box):
         return self.repr()
 
 
+# ISO/IEC 14496-12:2022, Section 12.4.4.2
 class HintSampleEntry(SampleEntry):
-    """Hint Sample Entry"""
-
-    box_type = "hint"
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.data = []
-
-    def read(self, file):
-        offset = file.tell()
-        max_offset = self.get_max_offset()
-        self.data = file.read(max_offset - offset)
+    pass
 
 
 # ISO/IEC 14496-12:2022, Section 12.1.3.2
