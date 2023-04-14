@@ -37,7 +37,6 @@ class ItemPropertyContainer(Box):
     properties = []
 
     def read(self, file):
-        self.property_container = read_box(file)
         while file.tell() < self.get_max_offset():
             box = read_box(file)
             self.properties.append(box)
