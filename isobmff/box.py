@@ -168,16 +168,13 @@ def read_box(file, debug=0):
         box_type = read_fixed_size_string(file, 4)
     except:
         raise Exception(f"error: cannot read box type at location 0x{offset+4:08x}")
-    if debug > 0:
+    if debug > 1:
         print(f"read_box() offset: 0x{offset:08x} size: 0x{size:08x} type: {box_type}")
     largesize = None
     if size == 0:
-        import code; code.interact(local=locals())  # python gdb/debugging
+        raise(f"ERROR: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)")
     elif size == 1:
         largesize = read_uint(file, 8)
-
-    if debug > 0:
-        print(box_type + "(" + str(size) + ")")
     box_classes = get_class_list(Box)
     box = None
     for box_class in box_classes:
