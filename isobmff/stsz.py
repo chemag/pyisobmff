@@ -7,11 +7,7 @@ from .box import read_uint
 class SampleSizeBox(FullBox):
     box_type = "stsz"
     is_mandatory = False
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.sample_size = None
-        self.entries = []
+    entries = []
 
     def read(self, file):
         self.sample_size = read_uint(file, 4)
@@ -21,3 +17,10 @@ class SampleSizeBox(FullBox):
                 entry = {}
                 entry["entry_size"] = read_uint(file, 4)
                 self.entries.append(entry)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"sample_size: {self.sample_size}",)
+        for idx, val in enumerate(self.entries):
+            repl += (f"entries[{idx}]: {val}",)
+        return super().repr(repl)
