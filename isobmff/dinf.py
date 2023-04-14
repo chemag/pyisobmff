@@ -4,7 +4,7 @@ from .box import FullBox
 from .box import Quantity
 from .box import read_box
 from .box import read_uint
-from .box import read_string
+from .box import read_utf8string
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.1.2
@@ -66,7 +66,7 @@ class DataEntryUrlBox(FullBox):
         offset = file.tell()
         max_offset = offset + self.get_payload_size()
         max_length = max_offset - offset
-        self.location = read_string(file, max_length)
+        self.location = read_utf8string(file, max_length)
 
     def __repr__(self):
         repl = ()
@@ -85,8 +85,8 @@ class DataEntryUrnBox(FullBox):
         self.location = None
 
     def read(self, file):
-        self.name = read_string(file)
-        self.location = read_string(file)
+        self.name = read_utf8string(file)
+        self.location = read_utf8string(file)
 
     def __repr__(self):
         repl = ()

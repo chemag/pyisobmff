@@ -118,13 +118,18 @@ def read_int_generic(file, length, signed):
     return int.from_bytes(byte_array, byteorder="big", signed=signed)
 
 
-def read_string(file, length=None):
-    # TODO: convert utf8
-    if length is not None:
-        res = file.read(length).decode()
-    else:
-        res = "".join(iter(lambda: file.read(1).decode("ascii"), "\x00"))
-    return res
+def read_fixed_size_string(file, length):
+    return file.read(length).decode("ascii")
+
+
+def read_utf8string(file, max_len=None):
+    if max_len == 0:
+        return ""
+    bstr = file.read(1)
+    nbytes = 1
+    while bstr[-1] != 0 and (max_len is None or nbytes < max_len):
+        bstr += file.read(1)
+    return bstr.decode("ascii")
 
 
 def read_bytes(file, length):
@@ -164,7 +169,7 @@ def read_box(file, debug=0):
     size = read_uint(file, 4)
     if size == "":
         return None
-    box_type = read_string(file, 4)
+    box_type = read_fixed_size_string(file, 4)
     largesize = None
     if size == 0:
         import code; code.interact(local=locals())  # python gdb/debugging

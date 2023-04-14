@@ -3,7 +3,7 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_uint
-from .box import read_string
+from .box import read_utf8string
 
 
 # ISO/IEC 14496-12:2022, Section 8.12.2
@@ -43,7 +43,7 @@ class SchemeTypeBox(FullBox):
         self.scheme_type = read_uint(file, 4)
         self.scheme_version = read_uint(file, 4)
         if self.flags & 0b1:
-            self.scheme_uri = read_string(file)
+            self.scheme_uri = read_utf8string(file)
 
 
 class SchemeInformationBox(Box):

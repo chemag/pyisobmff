@@ -3,7 +3,7 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_uint
-from .box import read_string
+from .box import read_fixed_size_string
 from .box import read_box
 
 
@@ -90,7 +90,7 @@ class ColorInformation(Box):
     box_type = "colr"
 
     def read(self, file):
-        self.colour_type = read_string(file, 4)
+        self.colour_type = read_fixed_size_string(file, 4)
         if self.colour_type == "nclx":
             self.colour_primaries = read_uint(file, 2)
             self.transfer_characteristics = read_uint(file, 2)

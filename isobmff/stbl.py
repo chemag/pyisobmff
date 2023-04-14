@@ -4,7 +4,7 @@ from .box import FullBox
 from .box import Quantity
 from .box import read_box
 from .box import read_uint, read_sint
-from .box import read_string
+from .box import read_fixed_size_string
 
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.1
@@ -132,7 +132,7 @@ class VisualSampleEntry(SampleEntry):
         self.vertresolution = read_uint(file, 4)
         self.reserved2 = read_uint(file, 4)
         self.frame_count = read_uint(file, 2)
-        self.compressorname = read_string(file, 32)
+        self.compressorname = read_fixed_size_string(file, 32)
         self.depth = read_uint(file, 2)
         self.pre_defined3 = read_sint(file, 2)
         offset = file.tell()
