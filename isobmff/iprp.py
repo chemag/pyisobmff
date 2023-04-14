@@ -116,10 +116,25 @@ class ColorInformation(Box):
         return super().repr(repl)
 
 
+# ISO/IEC 23008-12:2022, Section 6.5.6
 class PixelInformation(Box):
     box_type = "pixi"
+    channels = []
 
-    # TODO(chema): unimplemented
+    def read(self, file):
+        num_channels = read_fixed_size_string(file, 1)
+        for _ in range(num_channels):
+            channel = {}
+            channel.bits_per_channel = read_fixed_size_string(file, 1)
+            self.channels.append(channel)
+
+    def __repr__(self):
+        repl = ()
+        for idx, channel in enumerate(self.channels):
+            repl += (
+                f'channel[{idx}]["bits_per_channel"]: {channel["bits_per_channel"]}',
+            )
+        return super().repr(repl)
 
 
 class RelativeInformation(Box):
