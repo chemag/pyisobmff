@@ -18,3 +18,9 @@ class ChunkOffsetBox(FullBox):
             entry = {}
             entry["chunk_offset"] = read_uint(file, 4)
             self.entries.append(entry)
+
+    def __repl__(self):
+        repl = ()
+        for idx, val in enumerate(self.entries):
+            repl += (f'entry[{idx}]["chunk_offset"]: {val["chunk_offset"]}',)
+        return super().repr(repl)
