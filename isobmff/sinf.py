@@ -34,18 +34,19 @@ class SchemeTypeBox(FullBox):
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.scheme_type = None
-        self.scheme_version = None
-        self.scheme_uri = None
-
     def read(self, file):
         self.scheme_type = read_uint(file, 4)
         self.scheme_version = read_uint(file, 4)
         if self.flags & 0b1:
             max_len = self.get_max_offset() - file.tell()
             self.scheme_uri = read_utf8string(file, max_len)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"scheme_type: {self.scheme_type}",)
+        repl += (f"scheme_version: {self.scheme_version}",)
+        repl += (f'scheme_uri: "{self.scheme_uri}"',)
+        return super().repr(repl)
 
 
 class SchemeInformationBox(Box):
