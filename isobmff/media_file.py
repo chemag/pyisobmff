@@ -3,8 +3,10 @@ from .box import read_box
 
 
 class MediaFile(object):
-    def __init__(self):
-        self.box_list = []
+    box_list = []
+
+    def __init__(self, debug):
+        self.debug = debug
 
     def __repr__(self):
         rep = ""
@@ -15,7 +17,7 @@ class MediaFile(object):
     def read(self, file_name):
         with open(file_name, "rb") as file:
             while True:
-                box = read_box(file)
+                box = read_box(file, self.debug)
                 if not box:
                     break
                 setattr(self, box.box_type, box)

@@ -24,7 +24,7 @@ default_values = {
 
 
 def parse_file(infile, debug):
-    media_file = isobmff.MediaFile()
+    media_file = isobmff.MediaFile(debug)
     media_file.read(infile)
     print(media_file)
 
