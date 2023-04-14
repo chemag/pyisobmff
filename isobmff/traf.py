@@ -165,3 +165,19 @@ class TrackRunBox(FullBox):
                     f'samples[{idx}]["sample_composition_time_offset"]: {val["sample_composition_time_offset"]}',
                 )
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 8.8.12
+class TrackFragmentBaseMediaDecodeTimeBox(FullBox):
+    box_type = "tfdt"
+
+    def read(self, file):
+        if self.version == 1:
+            self.baseMediaDecodeTime = read_uint(file, 8)
+        else:
+            self.baseMediaDecodeTime = read_uint(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"baseMediaDecodeTime: {self.baseMediaDecodeTime}",)
+        return super().repr(repl)
