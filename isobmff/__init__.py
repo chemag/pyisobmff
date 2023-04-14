@@ -20,6 +20,7 @@ from . import mdat
 from . import mdia
 from . import meta
 from . import minf
+from . import moof
 from . import moov
 from . import pitm
 from . import stbl
