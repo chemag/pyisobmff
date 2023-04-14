@@ -19,14 +19,16 @@ __version__ = "0.1"
 default_values = {
     "debug": 0,
     "dry_run": False,
+    "listfile": None,
     "infile": None,
 }
 
 
-def parse_file(infile, debug):
+def parse_file(infile, debug, do_print=True):
     media_file = isobmff.MediaFile(debug)
     media_file.read(infile)
-    print(media_file)
+    if do_print:
+        print(media_file)
 
 
 def get_options(argv):
@@ -75,6 +77,13 @@ def get_options(argv):
         help="Dry run",
     )
     parser.add_argument(
+        "--listfile",
+        type=str,
+        default=default_values["listfile"],
+        metavar="list-file",
+        help="list file",
+    )
+    parser.add_argument(
         "infile",
         type=str,
         nargs="?",
@@ -101,6 +110,25 @@ def main(argv):
     if options.debug > 0:
         print(options)
     # parse the input file
+    if options.listfile is not None:
+        # read the list of input files from the input file
+        error_list = []
+        with open(options.listfile, "r") as f:
+            for infile in f.readlines():
+                # parse the input file
+                infile = infile.strip()
+                print(f"### parsing {infile}")
+                try:
+                    parse_file(infile, options.debug, do_print=False)
+                except:
+                    print(f"    error on {infile}")
+                    error_list.append(infile)
+        # dump the list of broken input files
+        if error_list:
+            print("BROKEN FILES")
+            for filename in error_list:
+                print(f"  {filename}")
+        sys.exit()
     parse_file(options.infile, options.debug)
 
 
