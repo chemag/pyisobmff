@@ -29,16 +29,19 @@ class MediaInformationBox(Box):
 class VideoMediaHeaderBox(FullBox):
     box_type = "vmhd"
     is_mandatory = True
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.graphicsmode = None
-        self.opcolor = []
+    opcolor = []
 
     def read(self, file):
         self.graphicsmode = read_uint(file, 2)
         for _ in range(3):
             self.opcolor.append(read_uint(file, 2))
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"graphicsmode: {self.graphicsmode}",)
+        for idx, val in enumerate(self.opcolor):
+            repl += (f"opcolor[{idx}]: {val}",)
+        return super().repr(repl)
 
 
 # ISO/IEC 14496-12:2022, Section 12.2.2
