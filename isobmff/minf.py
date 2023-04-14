@@ -49,14 +49,15 @@ class SoundMediaHeaderBox(FullBox):
     box_type = "smhd"
     is_mandatory = True
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.balance = None
-        self.reserved = None
-
     def read(self, file):
         self.balance = read_sint(file, 2)
         self.reserved = read_uint(file, 2)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"balance: {self.balance}",)
+        repl += (f"reserved: {self.reserved}",)
+        return super().repr(repl)
 
 
 # ISO/IEC 14496-12:2022, Section 12.4.3
