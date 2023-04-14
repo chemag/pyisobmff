@@ -165,6 +165,8 @@ def read_box(file, debug=0):
     if size == "":
         return None
     box_type = read_fixed_size_string(file, 4)
+    if debug > 0:
+        print(f"read_box() offset: 0x{offset:08x} size: 0x{size:08x} type: {box_type}")
     largesize = None
     if size == 0:
         import code; code.interact(local=locals())  # python gdb/debugging
