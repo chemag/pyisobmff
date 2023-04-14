@@ -8,7 +8,17 @@ from .box import read_bytes
 from .box import read_box
 
 
-# ISO/IEC 14496-12:2022, Section 8.11.4.2
+# ISO/IEC 14496-12:2022, Section 8.11.14.2
+class ItemProperty(Box):
+    pass
+
+
+# ISO/IEC 14496-12:2022, Section 8.11.14.2
+class ItemFullProperty(FullBox):
+    pass
+
+
+# ISO/IEC 14496-12:2022, Section 8.11.14.2
 class ItemPropertiesBox(Box):
     box_type = "iprp"
     is_mandatory = False
@@ -16,8 +26,10 @@ class ItemPropertiesBox(Box):
     association = []
 
     def read(self, file):
+        # must be ItemPropertyContainerBox
         self.property_container = read_box(file)
         while file.tell() < self.get_max_offset():
+            # must be ItemPropertyAssociationBox
             box = read_box(file)
             self.association.append(box)
 
@@ -29,7 +41,7 @@ class ItemPropertiesBox(Box):
         return super().repr(repl)
 
 
-# ISO/IEC 14496-12:2022, Section 8.11.4.2
+# ISO/IEC 14496-12:2022, Section 8.11.14.2
 class ItemPropertyContainer(Box):
     box_type = "ipco"
     is_mandatory = True
@@ -38,6 +50,8 @@ class ItemPropertyContainer(Box):
 
     def read(self, file):
         while file.tell() < self.get_max_offset():
+            # boxes derived from ItemProperty, ItemFullProperty,
+            # or FreeSpaceBox
             box = read_box(file)
             self.properties.append(box)
 
@@ -117,7 +131,7 @@ class ColorInformation(Box):
 
 
 # ISO/IEC 23008-12:2022, Section 6.5.6
-class PixelInformation(Box):
+class PixelInformationProperty(ItemFullProperty):
     box_type = "pixi"
     channels = []
 
@@ -143,8 +157,8 @@ class RelativeInformation(Box):
     # TODO(chema): unimplemented
 
 
-# ISO/IEC 14496-12:2022, Section 8.11.4.2
-class ItemPropertyAssociation(FullBox):
+# ISO/IEC 14496-12:2022, Section 8.11.14.2
+class ItemPropertyAssociationBox(FullBox):
     box_type = "ipma"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
