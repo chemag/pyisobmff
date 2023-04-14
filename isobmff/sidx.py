@@ -16,14 +16,17 @@ class SegmentIndexBox(FullBox):
         reference_count = read_uint(file, 2)
         for _ in range(reference_count):
             reference = {}
-            word = read_uint(file, 4)
-            reference.reference_type = word >> 31
-            reference.reference_size = word & 0x7FFFFFFF
-            word = read_uint(file, 4)
-            reference.starts_with_SAP = word >> 31
-            reference.SAP_type = (word >> 28) & 0x7
-            reference.SAP_delta_time = word & 0x0FFFFFFF
+            word1 = read_uint(file, 4)
+            reference.reference_type = word1 >> 31
+            reference.reference_size = word1 & 0x7FFFFFFF
+            word2 = read_uint(file, 4)
+            reference.starts_with_SAP = word2 >> 31
+            reference.SAP_type = (word2 >> 28) & 0x7
+            reference.SAP_delta_time = word2 & 0x0FFFFFFF
             self.references.append(reference)
+        # skip the remaining data
+        max_offset = self.get_max_offset()
+        file.seek(max_offset)
 
     def __repr__(self):
         repl = ()
