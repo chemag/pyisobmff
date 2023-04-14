@@ -13,13 +13,10 @@ class MediaFile(object):
         return rep
 
     def read(self, file_name):
-        file = open(file_name, "rb")
-        try:
+        with open(file_name, "rb") as file:
             while True:
                 box = read_box(file)
                 if not box:
                     break
                 setattr(self, box.box_type, box)
                 self.box_list.append(box)
-        finally:
-            file.close()
