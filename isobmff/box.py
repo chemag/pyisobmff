@@ -206,7 +206,7 @@ def read_box(file, debug):
         # unimplemented box
         if debug > 0:
             print(
-                f"warning: unimplemented box offset: 0x{offset:08x} type: {box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
+                f"warning: unimplemented box offset: 0x{offset:08x} type: {ascii(box_type)} size: 0x{size:x} next: 0x{size+offset:08x}"
             )
         box = UnimplementedBox(offset, box_type, size, largesize, debug)
         box.read(file)
