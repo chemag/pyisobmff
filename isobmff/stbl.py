@@ -70,14 +70,14 @@ class SampleEntry(Box):
 
 
 # ISO/IEC 14496-12:2022, Section 12.4.4.2
+# ISO/IEC 14496-14:2020, Section 6.7.2
 class HintSampleEntry(SampleEntry):
-    pass
+    box_type = "hint"
 
 
 # ISO/IEC 14496-12:2022, Section 12.1.3.2
+# ISO/IEC 14496-14:2020, Section 6.7.2
 class VisualSampleEntry(SampleEntry):
-    """Visual Sample Entry"""
-
     box_type = "vide"
     box_list = []
     pre_defined2 = []
@@ -127,9 +127,8 @@ class VisualSampleEntry(SampleEntry):
 
 
 # ISO/IEC 14496-12:2022, Section 12.2.3.2
+# ISO/IEC 14496-14:2020, Section 6.7.2
 class AudioSampleEntry(SampleEntry):
-    """Audio Sample Entry"""
-
     box_type = "soun"
     box_list = []
     reserved1 = []
@@ -167,8 +166,6 @@ class AudioSampleEntry(SampleEntry):
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
 class BitRateBox(Box):
-    """Bit Rate Box"""
-
     box_type = "btrt"
 
     def read(self, file):
