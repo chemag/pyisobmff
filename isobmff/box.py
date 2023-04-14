@@ -127,6 +127,10 @@ def read_string(file, length=None):
     return res
 
 
+def read_bytes(file, length):
+    return file.read(length)
+
+
 def indent(rep):
     return re.sub(r"^", "  ", rep, flags=re.M)
 
