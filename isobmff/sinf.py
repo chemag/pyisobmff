@@ -19,12 +19,13 @@ class OriginalFormatBox(Box):
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.data_format = None
-
     def read(self, file):
         self.data_format = read_uint(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"data_format: {self.data_format}",)
+        return super().repr(repl)
 
 
 # ISO/IEC 14496-12:2022, Section 8.12.6
