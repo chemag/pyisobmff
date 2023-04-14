@@ -164,7 +164,10 @@ def read_box(file, debug=0):
     size = read_uint(file, 4)
     if size == "":
         return None
-    box_type = read_fixed_size_string(file, 4)
+    try:
+        box_type = read_fixed_size_string(file, 4)
+    except:
+        raise Exception(f"error: cannot read box type at location 0x{offset+4:08x}")
     if debug > 0:
         print(f"read_box() offset: 0x{offset:08x} size: 0x{size:08x} type: {box_type}")
     largesize = None
