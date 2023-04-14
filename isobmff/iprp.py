@@ -151,10 +151,19 @@ class PixelInformationProperty(ItemFullProperty):
         return super().repr(repl)
 
 
-class RelativeInformation(Box):
+# ISO/IEC 23008-12:2022, Section 6.5.7
+class RelativeInformation(ItemFullProperty):
     box_type = "rloc"
 
-    # TODO(chema): unimplemented
+    def read(self, file):
+        self.horizontal_offset = read_fixed_size_string(file, 4)
+        self.vertical_offset = read_fixed_size_string(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"horizontal_offset: {self.horizontal_offset}",)
+        repl += (f"vertical_offset: {self.vertical_offset}",)
+        return super().repr(repl)
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.14.2
