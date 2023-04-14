@@ -36,6 +36,7 @@ class DataReferenceBox(FullBox):
     def read(self, file):
         entry_count = read_uint(file, 4)
         for _ in range(entry_count):
+            # only DataEntryBaseBox boxes here
             box = read_box(file)
             if not box:
                 break
@@ -49,7 +50,12 @@ class DataReferenceBox(FullBox):
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
-class DataEntryUrlBox(FullBox):
+class DataEntryBaseBox(FullBox):
+    pass
+
+
+# ISO/IEC 14496-12:2022, Section 8.7.2.2
+class DataEntryUrlBox(DataEntryBaseBox):
     box_type = "url "
     is_mandatory = True
 
@@ -64,7 +70,7 @@ class DataEntryUrlBox(FullBox):
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
-class DataEntryUrnBox(FullBox):
+class DataEntryUrnBox(DataEntryBaseBox):
     box_type = "urn "
     is_mandatory = True
 
@@ -82,7 +88,7 @@ class DataEntryUrnBox(FullBox):
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
-class DataEntryImdaBox(FullBox):
+class DataEntryImdaBox(DataEntryBaseBox):
     box_type = "imdt"
     is_mandatory = False
 
@@ -96,8 +102,6 @@ class DataEntryImdaBox(FullBox):
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
-class DataEntrySeqNumImdaBox(FullBox):
+class DataEntrySeqNumImdaBox(DataEntryBaseBox):
     box_type = "snim"
     is_mandatory = False
-
-    # TODO(chema): unimplemented
