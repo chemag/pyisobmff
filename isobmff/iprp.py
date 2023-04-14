@@ -3,6 +3,7 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_uint
+from .box import read_string
 from .box import read_box
 
 
@@ -84,11 +85,42 @@ class PixelAspectRatio(Box):
         return super().repr(repl)
 
 
+# ISO/IEC 14496-12:2022, Section 12.1.5
 class ColorInformation(Box):
     box_type = "colr"
 
     def read(self, file):
-        print(f"colr: {file.read(self.get_payload_size())}")
+        self.colour_type = read_string(file, 4)
+        if self.colour_type == "nclx":
+            self.colour_primaries = read_uint(file, 2)
+            self.transfer_characteristics = read_uint(file, 2)
+            self.matrix_coefficients = read_uint(file, 2)
+            byte = read_uint(file, 1)
+            self.full_range_flag = byte >> 7
+            self.reserved = byte % 0x7F
+        elif self.colour_type == "rICC":
+            offset = file.tell()
+            max_offset = offset + self.get_payload_size()
+            self.ICC_profile = read_bytes(max_offset - offset)
+        elif self.colour_type == "prof":
+            offset = file.tell()
+            max_offset = offset + self.get_payload_size()
+            self.ICC_profile = read_bytes(max_offset - offset)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"colour_type: {self.colour_type}",)
+        if self.colour_type == "nclx":
+            repl += (f"colour_primaries: {self.colour_primaries}",)
+            repl += (f"transfer_characteristics: {self.transfer_characteristics}",)
+            repl += (f"matrix_coefficients: {self.matrix_coefficients}",)
+            repl += (f"full_range_flag: {self.full_range_flag}",)
+            repl += (f"reserved: {self.reserved}",)
+        elif self.colour_type == "rICC":
+            repl += (f'ICC_profile: "{self.ICC_profile}"',)
+        elif self.colour_type == "prof":
+            repl += (f'ICC_profile: "{self.ICC_profile}"',)
+        return super().repr(repl)
 
 
 class PixelInformation(Box):
