@@ -31,3 +31,8 @@ class FileTypeBox(Box):
         repl += (f"minor_version: {self.minor_version}",)
         repl += (f"compatible_brands: \"{','.join(self.compatible_brands)}\"",)
         return super().repr(repl)
+
+
+# ISO/IEC 23008-12:2022, Section 8.16.2
+class SegmentTypeBox(FileTypeBox):
+    box_type = "styp"
