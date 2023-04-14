@@ -30,4 +30,5 @@ from . import stsc
 from . import stss
 from . import stts
 from . import stsz
+from . import traf
 from . import trak
