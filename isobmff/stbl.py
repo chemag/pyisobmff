@@ -132,7 +132,6 @@ class AudioSampleEntry(SampleEntry):
     box_type = "soun"
     box_list = []
     reserved1 = []
-    reserved2 = []
 
     def read(self, file):
         super().read(file)
@@ -141,8 +140,7 @@ class AudioSampleEntry(SampleEntry):
         self.channelcount = read_uint(file, 2)
         self.samplesize = read_uint(file, 2)
         self.pre_defined = read_uint(file, 2)
-        for _ in range(2):
-            self.reserved2.append(read_uint(file, 2))
+        self.reserved2 = read_uint(file, 2)
         self.samplerate = read_uint(file, 4)
         # parse the boxes
         while file.tell() < self.get_max_offset():
@@ -156,8 +154,7 @@ class AudioSampleEntry(SampleEntry):
         repl += (f"channelcount: {self.channelcount}",)
         repl += (f"samplesize: {self.samplesize}",)
         repl += (f"pre_defined: {self.pre_defined}",)
-        for idx, val in self.reserved2:
-            repl += (f"reserved2: {val}",)
+        repl += (f"reserved2: {self.reserved2}",)
         repl += (f"samplerate: {self.samplerate}",)
         for box in self.box_list:
             repl += (repr(box),)
