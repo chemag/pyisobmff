@@ -24,3 +24,22 @@ class ChunkOffsetBox(FullBox):
         for idx, val in enumerate(self.entries):
             repl += (f'entry[{idx}]["chunk_offset"]: {val["chunk_offset"]}',)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 8.7.5
+class ChunkLargeOffsetBox(FullBox):
+    box_type = "co64"
+    entries = []
+
+    def read(self, file):
+        entry_count = read_uint(file, 4)
+        for _ in range(entry_count):
+            entry = {}
+            entry["chunk_offset"] = read_uint(file, 8)
+            self.entries.append(entry)
+
+    def __repl__(self):
+        repl = ()
+        for idx, val in enumerate(self.entries):
+            repl += (f'entry[{idx}]["chunk_offset"]: {val["chunk_offset"]}',)
+        return super().repr(repl)
