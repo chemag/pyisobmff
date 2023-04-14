@@ -15,7 +15,7 @@ class MediaBox(Box):
 
     def read(self, file):
         while file.tell() < self.get_max_offset():
-            box = read_box(file)
+            box = read_box(file, self.debug)
             self.box_list.append(box)
 
     def __repr__(self):

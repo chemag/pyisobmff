@@ -16,7 +16,7 @@ class SampleTableBox(Box):
 
     def read(self, file):
         while file.tell() < self.get_max_offset():
-            box = read_box(file)
+            box = read_box(file, self.debug)
             self.box_list.append(box)
 
     def __repr__(self):
@@ -36,7 +36,7 @@ class SampleDescriptionBox(FullBox):
     def read(self, file):
         entry_count = read_uint(file, 4)
         for _ in range(entry_count):
-            box = read_box(file)
+            box = read_box(file, self.debug)
             if not box:
                 break
             self.samples.append(box)
@@ -98,7 +98,7 @@ class VisualSampleEntry(SampleEntry):
         self.depth = read_uint(file, 2)
         self.pre_defined3 = read_sint(file, 2)
         while file.tell() < self.get_max_offset():
-            box = read_box(file)
+            box = read_box(file, self.debug)
             self.box_list.append(box)
 
     def repr(self, repl=None):
@@ -147,7 +147,7 @@ class AudioSampleEntry(SampleEntry):
         self.samplerate = read_uint(file, 4)
         # parse the boxes
         while file.tell() < self.get_max_offset():
-            box = read_box(file)
+            box = read_box(file, self.debug)
             self.box_list.append(box)
 
     def __repr__(self):

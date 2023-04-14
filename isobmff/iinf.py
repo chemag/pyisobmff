@@ -16,7 +16,7 @@ class ItemInformationBox(FullBox):
         count_size = 2 if self.version == 0 else 4
         entry_count = read_uint(file, count_size)
         for _ in range(entry_count):
-            box = read_box(file)
+            box = read_box(file, self.debug)
             if not box:
                 break
             if box.box_type == "infe":

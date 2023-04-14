@@ -13,10 +13,11 @@ class AbcBox(type):
 class Box(object):
     box_type = None
 
-    def __init__(self, offset, size, largesize):
+    def __init__(self, offset, size, largesize, debug):
         self.offset = offset
         self.size = size
         self.largesize = largesize
+        self.debug = debug
 
     def repr(self, repl=None):
         new_repl = ()
@@ -45,7 +46,7 @@ class Box(object):
     # read the remaining bytes as boxes
     def read_box(self, file):
         while file.tell() < max_offset:
-            box = read_box(file)
+            box = read_box(file, self.debug)
             if not box:
                 break
             # TODO: Divide by Quantity as it is setattr or append to array
@@ -60,8 +61,8 @@ class Box(object):
 class FullBox(Box):
     box_type = None
 
-    def __init__(self, offset, size, largesize, version, flags):
-        super().__init__(offset, size, largesize)
+    def __init__(self, offset, size, largesize, version, flags, debug):
+        super().__init__(offset, size, largesize, debug)
         self.version = version
         self.flags = flags
 
@@ -78,9 +79,9 @@ class FullBox(Box):
 
 
 class UnimplementedBox(Box):
-    def __init__(self, offset, box_type, size, largesize):
+    def __init__(self, offset, box_type, size, largesize, debug):
         self.box_type = box_type
-        super().__init__(offset, size, largesize)
+        super().__init__(offset, size, largesize, debug)
 
     def __repr__(self):
         return super().__repr__()
@@ -159,7 +160,7 @@ def get_class_type(cls):
     return "Unknown"
 
 
-def read_box(file, debug=0):
+def read_box(file, debug):
     offset = file.tell()
     size = read_uint(file, 4)
     if size == "":
@@ -181,7 +182,9 @@ def read_box(file, debug=0):
         if box_class.box_type == box_type:
             class_type = get_class_type(box_class)
             if class_type == "Box":
-                box = box_class(offset=offset, size=size, largesize=largesize)
+                box = box_class(
+                    offset=offset, size=size, largesize=largesize, debug=debug
+                )
             elif class_type == "FullBox":
                 version = read_uint(file, 1)
                 flags = read_uint(file, 3)
@@ -191,6 +194,7 @@ def read_box(file, debug=0):
                     largesize=largesize,
                     version=version,
                     flags=flags,
+                    debug=debug,
                 )
             else:
                 print(f"ERROR: INVALID BOX TYPE (offset: 0x{offset:08x})")
@@ -204,6 +208,6 @@ def read_box(file, debug=0):
             print(
                 f"warning: unimplemented box offset: 0x{offset:08x} type: {box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
             )
-        box = UnimplementedBox(offset, box_type, size, largesize)
+        box = UnimplementedBox(offset, box_type, size, largesize, debug)
         box.read(file)
     return box

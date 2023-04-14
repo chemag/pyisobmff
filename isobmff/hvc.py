@@ -14,7 +14,7 @@ class HEVCSampleEntry(VisualSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.config = read_box(file)
+        self.config = read_box(file, self.debug)
 
     def __repr__(self):
         repl = ()

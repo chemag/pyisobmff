@@ -16,7 +16,7 @@ class DataInformationBox(Box):
 
     def read(self, file):
         while file.tell() < self.get_max_offset():
-            box = read_box(file)
+            box = read_box(file, self.debug)
             self.box_list.append(box)
 
     def __repr__(self):
@@ -37,7 +37,7 @@ class DataReferenceBox(FullBox):
         entry_count = read_uint(file, 4)
         for _ in range(entry_count):
             # only DataEntryBaseBox boxes here
-            box = read_box(file)
+            box = read_box(file, self.debug)
             if not box:
                 break
             self.data_entry.append(box)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
 from .box import Quantity
-from .box import read_box
 from .box import read_uint
 
 
