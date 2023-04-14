@@ -4,6 +4,7 @@ from .box import FullBox
 from .box import Quantity
 from .box import read_box
 from .box import read_uint
+from .box import read_sint
 
 
 # ISO/IEC 14496-12:2022, Section 8.8.6
@@ -83,4 +84,84 @@ class TrackFragmentHeaderBox(FullBox):
             "default-sample-flags-present"
         ]:
             repl += (f"default_sample_flags: {self.default_sample_flags}",)
+        return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 8.8.8
+class TrackRunBox(FullBox):
+    box_type = "trun"
+    FLAGS = {
+        "data-offset-present": 0x000001,
+        "first-sample-flags-present": 0x000004,
+        "sample-duration-present": 0x000100,
+        "sample-size-present": 0x000200,
+        "sample-flags-present": 0x000400,
+        "sample-composition-time-offsets-present": 0x000800,
+    }
+    samples = []
+
+    def read(self, file):
+        sample_count = read_uint(file, 4)
+        if (self.flags & self.FLAGS["data-offset-present"]) == self.FLAGS[
+            "data-offset-present"
+        ]:
+            self.data_offset = read_sint(file, 8)
+        if (self.flags & self.FLAGS["first-sample-flags-present"]) == self.FLAGS[
+            "first-sample-flags-present"
+        ]:
+            self.first_sample_flags = read_uint(file, 4)
+        for _ in range(sample_count):
+            sample = {}
+            if (self.flags & self.FLAGS["sample-duration-present"]) == self.FLAGS[
+                "sample-duration-present"
+            ]:
+                sample["sample_duration"] = read_uint(file, 4)
+            if (self.flags & self.FLAGS["sample-size-present"]) == self.FLAGS[
+                "sample-size-present"
+            ]:
+                sample["sample_size"] = read_uint(file, 4)
+            if (self.flags & self.FLAGS["sample-flags-present"]) == self.FLAGS[
+                "sample-flags-present"
+            ]:
+                sample["sample_flags"] = read_uint(file, 4)
+            if (
+                self.flags & self.FLAGS["sample-composition-time-offsets-present"]
+            ) == self.FLAGS["sample-composition-time-offsets-present"]:
+                if self.version == 0:
+                    sample["sample_composition_time_offset"] = read_uint(file, 4)
+                else:
+                    sample["sample_composition_time_offset"] = read_sint(file, 4)
+            self.samples.append(sample)
+
+    def __repr__(self):
+        repl = ()
+        if (self.flags & self.FLAGS["data-offset-present"]) == self.FLAGS[
+            "data-offset-present"
+        ]:
+            repl += (f"data_offset: {self.data_offset}",)
+        if (self.flags & self.FLAGS["first-sample-flags-present"]) == self.FLAGS[
+            "first-sample-flags-present"
+        ]:
+            repl += (f"first_sample_flags: {self.first_sample_flags}",)
+        for idx, val in enumerate(self.samples):
+            if (self.flags & self.FLAGS["sample-duration-present"]) == self.FLAGS[
+                "sample-duration-present"
+            ]:
+                repl += (
+                    f'samples[{idx}]["sample_duration"]: {val["sample_duration"]}',
+                )
+            if (self.flags & self.FLAGS["sample-size-present"]) == self.FLAGS[
+                "sample-size-present"
+            ]:
+                repl += (f'samples[{idx}]["sample_size"]: {val["sample_size"]}',)
+            if (self.flags & self.FLAGS["sample-flags-present"]) == self.FLAGS[
+                "sample-flags-present"
+            ]:
+                repl += (f'samples[{idx}]["sample_flags"]: {val["sample_flags"]}',)
+            if (
+                self.flags & self.FLAGS["sample-composition-time-offsets-present"]
+            ) == self.FLAGS["sample-composition-time-offsets-present"]:
+                repl += (
+                    f'samples[{idx}]["sample_composition_time_offset"]: {val["sample_composition_time_offset"]}',
+                )
         return super().repr(repl)
