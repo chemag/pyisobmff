@@ -33,9 +33,6 @@ class DataReferenceBox(FullBox):
     quantity = Quantity.EXACTLY_ONE
     data_entry = []
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     def read(self, file):
         entry_count = read_uint(file, 4)
         for _ in range(entry_count):
@@ -56,10 +53,6 @@ class DataEntryUrlBox(FullBox):
     box_type = "url "
     is_mandatory = True
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.location = None
-
     def read(self, file):
         max_len = self.get_max_offset() - file.tell()
         self.location = read_utf8string(file, max_len)
@@ -74,11 +67,6 @@ class DataEntryUrlBox(FullBox):
 class DataEntryUrnBox(FullBox):
     box_type = "urn "
     is_mandatory = True
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.name = None
-        self.location = None
 
     def read(self, file):
         max_len = self.get_max_offset() - file.tell()
@@ -98,9 +86,6 @@ class DataEntryImdaBox(FullBox):
     box_type = "imdt"
     is_mandatory = False
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     def read(self, file):
         self.imda_ref_identifier = read_uint(file, 4)
 
@@ -115,5 +100,4 @@ class DataEntrySeqNumImdaBox(FullBox):
     box_type = "snim"
     is_mandatory = False
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    # TODO(chema): unimplemented

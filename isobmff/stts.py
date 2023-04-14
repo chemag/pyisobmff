@@ -7,11 +7,7 @@ from .box import read_uint
 class TimeToSampleBox(FullBox):
     box_type = "stts"
     is_mandatory = True
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.entry_count = None
-        self.entries = []
+    entries = []
 
     def read(self, file):
         self.entry_count = read_uint(file, 4)

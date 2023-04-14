@@ -52,9 +52,6 @@ class ItemPropertyContainer(Box):
 class ImageSpatialExtents(FullBox):
     box_type = "ispe"
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     def read(self, file):
         self.width = read_uint(file, 4)
         self.height = read_uint(file, 4)
@@ -137,9 +134,6 @@ class ItemPropertyAssociation(FullBox):
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     entries = []
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
 
     def read(self, file):
         entry_count = read_uint(file, 4)

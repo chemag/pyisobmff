@@ -10,12 +10,7 @@ class FileTypeBox(Box):
     box_type = "ftyp"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.major_brand = None
-        self.minor_version = None
-        self.compatible_brands = []
+    compatible_brands = []
 
     def read(self, file):
         self.major_brand = read_fixed_size_string(file, 4)

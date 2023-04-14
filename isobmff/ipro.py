@@ -12,9 +12,6 @@ class ItemProtectionBox(FullBox):
     quantity = Quantity.ZERO_OR_ONE
     protection_informations = []
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     def read(self, file):
         protection_count = read_uint(file, 2)
         for _ in range(protection_count):

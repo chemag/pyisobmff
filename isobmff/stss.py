@@ -7,10 +7,7 @@ from .box import read_uint
 class SyncSampleBox(FullBox):
     box_type = "stss"
     is_mandatory = False
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.entries = []
+    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)

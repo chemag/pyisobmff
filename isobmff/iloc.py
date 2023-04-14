@@ -9,9 +9,6 @@ class ItemLocationBox(FullBox):
     is_mandatory = False
     items = []
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     def read(self, file):
         byte0 = read_uint(file, 1)
         self.offset_size = (byte0 >> 4) & 0b1111

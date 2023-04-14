@@ -32,22 +32,8 @@ class TrackHeaderBox(FullBox):
     box_type = "tkhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.creation_time = None
-        self.modification_time = None
-        self.track_id = None
-        self.duration = None
-        self.reserved1 = None
-        self.reserved2 = []
-        self.layer = None
-        self.alternate_group = None
-        self.volume = None
-        self.reserved3 = None
-        self.matrix = []
-        self.width = None
-        self.height = None
+    reserved2 = []
+    matrix = []
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4

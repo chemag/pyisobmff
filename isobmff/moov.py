@@ -30,20 +30,9 @@ class MovieHeaderBox(FullBox):
     box_type = "mvhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.creation_time = None
-        self.modification_time = None
-        self.timescale = None
-        self.duration = None
-        self.rate = None
-        self.volume = None
-        self.reserved1 = None
-        self.reserved2 = []
-        self.matrix = []
-        self.pre_defined = []
-        self.next_track_id = None
+    reserved2 = []
+    matrix = []
+    pre_defined = []
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4

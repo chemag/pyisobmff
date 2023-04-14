@@ -10,10 +10,7 @@ class ChunkOffsetBox(FullBox):
     box_type = "stco"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.entries = []
+    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)

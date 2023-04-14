@@ -31,10 +31,7 @@ class SampleDescriptionBox(FullBox):
     box_type = "stsd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.samples = []
+    samples = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
@@ -53,14 +50,7 @@ class SampleDescriptionBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
 class SampleEntry(Box):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.reserved = []
-        self.data_reference_index = None
-
-    def __repr__(self):
-        rep = super().__repr__()
-        return rep
+    reserved = []
 
     def read(self, file):
         for _ in range(6):
@@ -90,21 +80,7 @@ class VisualSampleEntry(SampleEntry):
 
     box_type = "vide"
     box_list = []
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.pre_defined1 = None
-        self.reserved1 = None
-        self.pre_defined2 = []
-        self.width = None
-        self.height = None
-        self.horizresolution = None
-        self.vertresolution = None
-        self.reserved2 = None
-        self.frame_count = None
-        self.compressorname = None
-        self.depth = None
-        self.pre_defined3 = None
+    pre_defined2 = []
 
     def read(self, file):
         super().read(file)
@@ -156,15 +132,8 @@ class AudioSampleEntry(SampleEntry):
 
     box_type = "soun"
     box_list = []
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.reserved1 = []
-        self.channelcount = None
-        self.samplesize = None
-        self.pre_defined = None
-        self.reserved2 = []
-        self.samplerate = None
+    reserved1 = []
+    reserved2 = []
 
     def read(self, file):
         super().read(file)
@@ -201,12 +170,6 @@ class BitRateBox(Box):
     """Bit Rate Box"""
 
     box_type = "btrt"
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.buffer_size_db = None
-        self.max_bitrate = None
-        self.avg_bitrate = None
 
     def read(self, file):
         self.buffer_size_db = read_uint(file, 4)

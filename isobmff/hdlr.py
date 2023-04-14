@@ -13,15 +13,6 @@ class HandlerReferenceBox(FullBox):
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def __repr__(self):
-        repl = ()
-        repl += (f"handler_type: {self.handler_type}",)
-        repl += (f'name: "{self.name}"',)
-        return super().repr(repl)
-
     def read(self, file):
         self.pre_defined = read_uint(file, 4)
         self.handler_type = read_fixed_size_string(file, 4)
@@ -33,3 +24,9 @@ class HandlerReferenceBox(FullBox):
         # ensure we read all the way to the end of the box
         max_len = self.get_max_offset() - file.tell()
         garbage = read_bytes(file, max_len)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"handler_type: {self.handler_type}",)
+        repl += (f'name: "{self.name}"',)
+        return super().repr(repl)

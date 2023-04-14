@@ -30,16 +30,8 @@ class MediaHeaderBox(FullBox):
     box_type = "mdhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.creation_time = None
-        self.modification_time = None
-        self.timescale = None
-        self.duration = None
-        self.pad = None
-        self.language = []  # ISO-639-2/T language code
-        self.pre_defined = None
+    # ISO-639-2/T language code
+    language = []
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4
