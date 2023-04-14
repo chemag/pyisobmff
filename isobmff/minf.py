@@ -65,20 +65,21 @@ class HintMediaHeaderBox(FullBox):
     box_type = "hmhd"
     is_mandatory = True
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.max_pdu_size = None
-        self.avg_pdu_size = None
-        self.max_bit_rate = None
-        self.avg_bit_rate = None
-        self.reserved = None
-
     def read(self, file):
         self.max_pdu_size = read_uint(file, 2)
         self.avg_pdu_size = read_uint(file, 2)
         self.max_bit_rate = read_uint(file, 4)
         self.avg_bit_rate = read_uint(file, 4)
         self.reserved = read_uint(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"max_pdu_size: {self.max_pdu_size}",)
+        repl += (f"avg_pdu_size: {self.avg_pdu_size}",)
+        repl += (f"max_bit_rate: {self.max_bit_rate}",)
+        repl += (f"avg_bit_rate: {self.avg_bit_rate}",)
+        repl += (f"reserved: {self.reserved}",)
+        return super().repr(repl)
 
 
 # ISO/IEC 14496-12:2022, Section 8.4.5.2
