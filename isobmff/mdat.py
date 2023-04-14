@@ -13,4 +13,6 @@ class MediaDataBox(Box):
     def read(self, file):
         # store the offset
         self.data_offset = file.tell()
-        file.read(self.get_payload_size())
+        offset = file.tell()
+        max_offset = self.get_max_offset()
+        file.read(max_offset - offset)

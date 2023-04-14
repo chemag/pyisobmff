@@ -15,9 +15,7 @@ class SampleTableBox(Box):
     box_list = []
 
     def read(self, file):
-        offset = file.tell()
-        max_offset = offset + self.get_payload_size()
-        while file.tell() < max_offset:
+        while file.tell() < self.get_max_offset():
             box = read_box(file)
             self.box_list.append(box)
 
@@ -64,9 +62,6 @@ class SampleEntry(Box):
         rep = super().__repr__()
         return rep
 
-    def get_payload_size(self):
-        return super().get_payload_size() - 6 + 2
-
     def read(self, file):
         for _ in range(6):
             reserved = read_uint(file, 1)
@@ -94,8 +89,9 @@ class HintSampleEntry(SampleEntry):
         self.data = []
 
     def read(self, file):
-        box_size = self.get_payload_size()
-        self.data = file.read(box_size)
+        offset = file.tell()
+        max_offset = self.get_max_offset()
+        self.data = file.read(max_offset - offset)
 
 
 # ISO/IEC 14496-12:2022, Section 12.1.3.2
@@ -135,9 +131,7 @@ class VisualSampleEntry(SampleEntry):
         self.compressorname = read_fixed_size_string(file, 32)
         self.depth = read_uint(file, 2)
         self.pre_defined3 = read_sint(file, 2)
-        offset = file.tell()
-        max_offset = offset + self.get_payload_size()
-        while file.tell() < max_offset:
+        while file.tell() < self.get_max_offset():
             box = read_box(file)
             self.box_list.append(box)
 
@@ -193,9 +187,7 @@ class AudioSampleEntry(SampleEntry):
             self.reserved2.append(read_uint(file, 2))
         self.samplerate = read_uint(file, 4)
         # parse the boxes
-        offset = file.tell()
-        max_offset = offset + self.get_payload_size()
-        while file.tell() < max_offset:
+        while file.tell() < self.get_max_offset():
             box = read_box(file)
             self.box_list.append(box)
 

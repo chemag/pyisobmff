@@ -4,6 +4,7 @@ from .box import FullBox
 from .box import Quantity
 from .box import read_uint
 from .box import read_fixed_size_string
+from .box import read_bytes
 from .box import read_box
 
 
@@ -16,9 +17,7 @@ class ItemPropertiesBox(Box):
 
     def read(self, file):
         self.property_container = read_box(file)
-        offset = file.tell()
-        max_offset = offset + self.get_payload_size()
-        while file.tell() < max_offset:
+        while file.tell() < self.get_max_offset():
             box = read_box(file)
             self.association.append(box)
 
@@ -39,9 +38,7 @@ class ItemPropertyContainer(Box):
 
     def read(self, file):
         self.property_container = read_box(file)
-        offset = file.tell()
-        max_offset = offset + self.get_payload_size()
-        while file.tell() < max_offset:
+        while file.tell() < self.get_max_offset():
             box = read_box(file)
             self.properties.append(box)
 
@@ -100,12 +97,12 @@ class ColorInformation(Box):
             self.reserved = byte % 0x7F
         elif self.colour_type == "rICC":
             offset = file.tell()
-            max_offset = offset + self.get_payload_size()
-            self.ICC_profile = read_bytes(max_offset - offset)
+            max_offset = self.get_max_offset()
+            self.ICC_profile = read_bytes(file, max_offset - offset)
         elif self.colour_type == "prof":
             offset = file.tell()
-            max_offset = offset + self.get_payload_size()
-            self.ICC_profile = read_bytes(max_offset - offset)
+            max_offset = self.get_max_offset()
+            self.ICC_profile = read_bytes(file, max_offset - offset)
 
     def __repr__(self):
         repl = ()
@@ -126,15 +123,13 @@ class ColorInformation(Box):
 class PixelInformation(Box):
     box_type = "pixi"
 
-    def read(self, file):
-        print(f"pixi: {file.read(self.get_payload_size())}")
+    # TODO(chema): unimplemented
 
 
 class RelativeInformation(Box):
     box_type = "rloc"
 
-    def read(self, file):
-        print(f"rloc: {file.read(self.get_payload_size())}")
+    # TODO(chema): unimplemented
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.4.2

@@ -14,9 +14,7 @@ class MovieBox(Box):
     box_list = []
 
     def read(self, file):
-        offset = file.tell()
-        max_offset = offset + self.get_payload_size()
-        while file.tell() < max_offset:
+        while file.tell() < self.get_max_offset():
             box = read_box(file)
             self.box_list.append(box)
 

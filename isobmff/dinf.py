@@ -15,9 +15,7 @@ class DataInformationBox(Box):
     box_list = []
 
     def read(self, file):
-        offset = file.tell()
-        max_offset = offset + self.get_payload_size()
-        while file.tell() < max_offset:
+        while file.tell() < self.get_max_offset():
             box = read_box(file)
             self.box_list.append(box)
 
@@ -63,10 +61,8 @@ class DataEntryUrlBox(FullBox):
         self.location = None
 
     def read(self, file):
-        offset = file.tell()
-        max_offset = offset + self.get_payload_size()
-        max_length = max_offset - offset
-        self.location = read_utf8string(file, max_length)
+        max_len = self.get_max_offset() - file.tell()
+        self.location = read_utf8string(file, max_len)
 
     def __repr__(self):
         repl = ()
@@ -85,8 +81,10 @@ class DataEntryUrnBox(FullBox):
         self.location = None
 
     def read(self, file):
-        self.name = read_utf8string(file)
-        self.location = read_utf8string(file)
+        max_len = self.get_max_offset() - file.tell()
+        self.name = read_utf8string(file, max_len)
+        max_len = self.get_max_offset() - file.tell()
+        self.location = read_utf8string(file, max_len)
 
     def __repr__(self):
         repl = ()

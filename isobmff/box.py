@@ -32,26 +32,24 @@ class Box(object):
     def __repr__(self):
         return self.repr()
 
-    def get_payload_size(self):
+    def get_max_offset(self):
         """get box size excluding header"""
-        return self.size - 8 if self.largesize is None else self.largesize - 16
+        return self.offset + (self.size if self.largesize is None else self.largesize)
 
     # read the remaining bytes as simple bytes
     def read(self, file):
-        remaining_size = self.get_payload_size()
-        if remaining_size > 0:
-            self.contents = file.read(remaining_size)
+        offset = file.tell()
+        max_offset = self.get_max_offset()
+        self.contents = file.read(max_offset - offset)
 
     # read the remaining bytes as boxes
     def read_box(self, file):
-        read_size = self.get_payload_size()
-        while read_size > 0:
+        while file.tell() < max_offset:
             box = read_box(file)
             if not box:
                 break
             # TODO: Divide by Quantity as it is setattr or append to array
             setattr(self, box.box_type, box)
-            read_size -= box.size
 
     def write(self, file):
         """write box to file"""
@@ -78,10 +76,6 @@ class FullBox(Box):
     def __repr__(self):
         return self.repr()
 
-    def get_payload_size(self):
-        """get box size excluding header"""
-        return self.size - 12
-
 
 class UnimplementedBox(Box):
     def __init__(self, offset, box_type, size, largesize):
@@ -92,8 +86,9 @@ class UnimplementedBox(Box):
         return super().__repr__()
 
     def read(self, file):
-        remaining_size = self.get_payload_size()
-        self.content = file.read(remaining_size)
+        offset = file.tell()
+        max_offset = self.get_max_offset()
+        self.content = file.read(max_offset - offset)
 
 
 class Quantity(Enum):
@@ -122,12 +117,12 @@ def read_fixed_size_string(file, length):
     return file.read(length).decode("ascii")
 
 
-def read_utf8string(file, max_len=None):
+def read_utf8string(file, max_len):
     if max_len == 0:
         return ""
     bstr = file.read(1)
     nbytes = 1
-    while bstr[-1] != 0 and (max_len is None or nbytes < max_len):
+    while bstr[-1] != 0 and nbytes < max_len:
         bstr += file.read(1)
     return bstr.decode("ascii")
 
