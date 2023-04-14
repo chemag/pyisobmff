@@ -22,6 +22,7 @@ from . import meta
 from . import minf
 from . import moof
 from . import moov
+from . import mp4
 from . import pitm
 from . import sidx
 from . import stbl
