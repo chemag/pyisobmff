@@ -147,18 +147,23 @@ class AudioSampleEntry(SampleEntry):
             box = read_box(file, self.debug)
             self.box_list.append(box)
 
-    def __repr__(self):
-        repl = ()
-        for idx, val in self.reserved1:
-            repl += (f"reserved1: {val}",)
-        repl += (f"channelcount: {self.channelcount}",)
-        repl += (f"samplesize: {self.samplesize}",)
-        repl += (f"pre_defined: {self.pre_defined}",)
-        repl += (f"reserved2: {self.reserved2}",)
-        repl += (f"samplerate: {self.samplerate}",)
+    def repr(self, repl=None):
+        new_repl = ()
+        for idx, val in enumerate(self.reserved1):
+            new_repl += (f"reserved1: {val}",)
+        new_repl += (f"channelcount: {self.channelcount}",)
+        new_repl += (f"samplesize: {self.samplesize}",)
+        new_repl += (f"pre_defined: {self.pre_defined}",)
+        new_repl += (f"reserved2: {self.reserved2}",)
+        new_repl += (f"samplerate: {self.samplerate}",)
         for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+            new_repl += (repr(box),)
+        if repl is not None:
+            new_repl += repl
+        return super().repr(new_repl)
+
+    def __repr__(self):
+        return self.repr()
 
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
