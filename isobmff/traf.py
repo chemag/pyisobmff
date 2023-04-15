@@ -9,7 +9,7 @@ from .box import read_sint
 
 # ISO/IEC 14496-12:2022, Section 8.8.6
 class TrackFragmentBox(Box):
-    box_type = "traf"
+    box_type = b"traf"
     box_list = []
 
     def read(self, file):
@@ -26,7 +26,7 @@ class TrackFragmentBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.8.7
 class TrackFragmentHeaderBox(FullBox):
-    box_type = "tfhd"
+    box_type = b"tfhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     FLAGS = {
@@ -89,7 +89,7 @@ class TrackFragmentHeaderBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.8.8
 class TrackRunBox(FullBox):
-    box_type = "trun"
+    box_type = b"trun"
     FLAGS = {
         "data-offset-present": 0x000001,
         "first-sample-flags-present": 0x000004,
@@ -173,7 +173,7 @@ class TrackRunBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.8.12
 class TrackFragmentBaseMediaDecodeTimeBox(FullBox):
-    box_type = "tfdt"
+    box_type = b"tfdt"
 
     def read(self, file):
         if self.version == 1:

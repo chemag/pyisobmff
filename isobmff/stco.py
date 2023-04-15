@@ -6,7 +6,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.7.5
 class ChunkOffsetBox(FullBox):
-    box_type = "stco"
+    box_type = b"stco"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     entries = []
@@ -27,7 +27,7 @@ class ChunkOffsetBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.7.5
 class ChunkLargeOffsetBox(FullBox):
-    box_type = "co64"
+    box_type = b"co64"
     entries = []
 
     def read(self, file):

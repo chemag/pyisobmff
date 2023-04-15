@@ -10,7 +10,7 @@ from .box import int_to_fixed_point_16_16
 
 # ISO/IEC 14496-12:2022, Section 8.3.1
 class TrackBox(Box):
-    box_type = "trak"
+    box_type = b"trak"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     box_list = []
@@ -29,7 +29,7 @@ class TrackBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.3.2
 class TrackHeaderBox(FullBox):
-    box_type = "tkhd"
+    box_type = b"tkhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     reserved2 = []

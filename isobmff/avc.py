@@ -8,7 +8,7 @@ from .stbl import VisualSampleEntry
 
 # ISO/IEC 14496-15:2022, Section 5.4.2.1.2
 class AVCSampleEntry(VisualSampleEntry):
-    box_type = "avc1"
+    box_type = b"avc1"
 
     def read(self, file):
         super().read(file)
@@ -22,12 +22,12 @@ class AVCSampleEntry(VisualSampleEntry):
 
 # ISO/IEC 14496-15:2022, Section 5.4.2.1.2
 class AVC3SampleEntry(AVCSampleEntry):
-    box_type = "avc3"
+    box_type = b"avc3"
 
 
 # ISO/IEC 14496-15:2022, Section 5.4.2.1.2
 class AVC2SampleEntry(VisualSampleEntry):
-    box_type = "avc2"
+    box_type = b"avc2"
 
     def read(self, file):
         super().read(file)
@@ -41,12 +41,12 @@ class AVC2SampleEntry(VisualSampleEntry):
 
 # ISO/IEC 14496-15:2022, Section 5.4.2.1.2
 class AVC4SampleEntry(AVC2SampleEntry):
-    box_type = "avc4"
+    box_type = b"avc4"
 
 
 # ISO/IEC 14496-15:2022, Section 5.4.2.1.2
 class AVCConfigurationBox(Box):
-    box_type = "avcC"
+    box_type = b"avcC"
 
     def read(self, file):
         self.avc_config = AVCDecoderConfigurationRecord(

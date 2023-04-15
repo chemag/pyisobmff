@@ -5,7 +5,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.11.3.2
 class ItemLocationBox(FullBox):
-    box_type = "iloc"
+    box_type = b"iloc"
     is_mandatory = False
     items = []
 

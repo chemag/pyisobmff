@@ -7,7 +7,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.8.1
 class MovieExtendsBox(Box):
-    box_type = "mvex"
+    box_type = b"mvex"
     box_list = []
 
     def read(self, file):
@@ -26,7 +26,7 @@ class MovieExtendsBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.8.2
 class MovieExtendsHeaderBox(FullBox):
-    box_type = "mehd"
+    box_type = b"mehd"
 
     def read(self, file):
         if self.version == 1:
@@ -42,7 +42,7 @@ class MovieExtendsHeaderBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.8.3
 class TrackExtendsBox(FullBox):
-    box_type = "trex"
+    box_type = b"trex"
 
     def read(self, file):
         self.track_ID = read_uint(file, 4)

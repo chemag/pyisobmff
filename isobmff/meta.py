@@ -8,7 +8,7 @@ from .box import Quantity
 # Page 80: "The MetaBox is unusual in that it is a container box
 # yet extends FullBox, not Box."
 class MetaBox(FullBox):
-    box_type = "meta"
+    box_type = b"meta"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
     box_list = []

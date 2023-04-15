@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import read_box
-from .box import read_fixed_size_string
+from .box import read_fourcc
 
 
 # ISO/IEC 23008-12:2022, Section 4.4
 class ExtendedTypeBox(Box):
-    box_type = "etyp"
+    box_type = b"etyp"
     compatible_combinations = []
 
     def read(self, file):
@@ -24,12 +24,12 @@ class ExtendedTypeBox(Box):
 
 # ISO/IEC 23008-12:2022, Section 4.4
 class TypeCombinationBox(Box):
-    box_type = "tyco"
+    box_type = b"tyco"
     compatible_brands = []
 
     def read(self, file):
         while file.tell() < self.get_max_offset():
-            box_type = read_fixed_size_string(file, 4)
+            box_type = read_fourcc(file)
             self.compatible_brands.append(box_type)
 
     def __repr__(self):

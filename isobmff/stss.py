@@ -5,7 +5,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.6.2
 class SyncSampleBox(FullBox):
-    box_type = "stss"
+    box_type = b"stss"
     is_mandatory = False
     entries = []
 

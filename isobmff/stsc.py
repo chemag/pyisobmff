@@ -6,7 +6,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.7.4
 class SampleToChunkBox(FullBox):
-    box_type = "stsc"
+    box_type = b"stsc"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     entries = []

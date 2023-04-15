@@ -20,7 +20,7 @@ class ItemFullProperty(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.11.14.2
 class ItemPropertiesBox(Box):
-    box_type = "iprp"
+    box_type = b"iprp"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
     association = []
@@ -43,7 +43,7 @@ class ItemPropertiesBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.11.14.2
 class ItemPropertyContainer(Box):
-    box_type = "ipco"
+    box_type = b"ipco"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     properties = []
@@ -64,7 +64,7 @@ class ItemPropertyContainer(Box):
 
 # ISO/IEC 23008-12:2022, Section 6.5.3.2
 class ImageSpatialExtents(FullBox):
-    box_type = "ispe"
+    box_type = b"ispe"
 
     def read(self, file):
         self.width = read_uint(file, 4)
@@ -79,7 +79,7 @@ class ImageSpatialExtents(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 12.1.4.2
 class PixelAspectRatio(Box):
-    box_type = "pasp"
+    box_type = b"pasp"
 
     def read(self, file):
         self.hSpacing = read_uint(file, 4)
@@ -94,7 +94,7 @@ class PixelAspectRatio(Box):
 
 # ISO/IEC 14496-12:2022, Section 12.1.5
 class ColorInformation(Box):
-    box_type = "colr"
+    box_type = b"colr"
 
     def read(self, file):
         self.colour_type = read_fixed_size_string(file, 4)
@@ -142,7 +142,7 @@ class ColorInformation(Box):
 
 # ISO/IEC 23008-12:2022, Section 6.5.6
 class PixelInformationProperty(ItemFullProperty):
-    box_type = "pixi"
+    box_type = b"pixi"
     channels = []
 
     def read(self, file):
@@ -163,7 +163,7 @@ class PixelInformationProperty(ItemFullProperty):
 
 # ISO/IEC 23008-12:2022, Section 6.5.7
 class RelativeInformation(ItemFullProperty):
-    box_type = "rloc"
+    box_type = b"rloc"
 
     def read(self, file):
         self.horizontal_offset = read_uint(file, 4)
@@ -178,7 +178,7 @@ class RelativeInformation(ItemFullProperty):
 
 # ISO/IEC 14496-12:2022, Section 8.11.14.2
 class ItemPropertyAssociationBox(FullBox):
-    box_type = "ipma"
+    box_type = b"ipma"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     entries = []

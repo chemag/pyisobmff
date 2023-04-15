@@ -8,7 +8,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.8.4
 class MovieFragmentBox(Box):
-    box_type = "moof"
+    box_type = b"moof"
     box_list = []
 
     def read(self, file):
@@ -28,7 +28,7 @@ class MovieFragmentBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.8.5
 class MovieFragmentHeaderBox(FullBox):
-    box_type = "mfhd"
+    box_type = b"mfhd"
 
     def read(self, file):
         self.sequence_number = read_uint(file, 4)

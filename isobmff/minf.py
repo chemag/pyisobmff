@@ -8,7 +8,7 @@ from .box import read_uint, read_sint
 
 # ISO/IEC 14496-12:2022, Section 8.4.4.2
 class MediaInformationBox(Box):
-    box_type = "minf"
+    box_type = b"minf"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     box_list = []
@@ -27,7 +27,7 @@ class MediaInformationBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 12.1.2
 class VideoMediaHeaderBox(FullBox):
-    box_type = "vmhd"
+    box_type = b"vmhd"
     is_mandatory = True
     opcolor = []
 
@@ -46,7 +46,7 @@ class VideoMediaHeaderBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 12.2.2
 class SoundMediaHeaderBox(FullBox):
-    box_type = "smhd"
+    box_type = b"smhd"
     is_mandatory = True
 
     def read(self, file):
@@ -62,7 +62,7 @@ class SoundMediaHeaderBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 12.4.3
 class HintMediaHeaderBox(FullBox):
-    box_type = "hmhd"
+    box_type = b"hmhd"
     is_mandatory = True
 
     def read(self, file):
@@ -84,10 +84,10 @@ class HintMediaHeaderBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.4.5.2
 class NullMediaHeaderBox(FullBox):
-    box_type = "nmhd"
+    box_type = b"nmhd"
     is_mandatory = True
 
 
 # ISO/IEC 14496-12:2022, Section 12.6
 class SubtitleMediaHeaderBox(FullBox):
-    box_type = "sthd"
+    box_type = b"sthd"

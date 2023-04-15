@@ -5,7 +5,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.11.4
 class PrimaryItemBox(FullBox):
-    box_type = "pitm"
+    box_type = b"pitm"
     is_mandatory = False
 
     def read(self, file):

@@ -35,7 +35,7 @@ class MHADecoderConfigurationRecord(object):
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
 class MHAConfigurationBox(Box):
-    box_type = "mhaC"
+    box_type = b"mhaC"
 
     def read(self, file):
         self.MHAConfig = MHADecoderConfigurationRecord(max_offset=self.get_max_offset())
@@ -54,13 +54,13 @@ class MHAConfigurationBox(Box):
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
 class MPEG4ExtensionDescriptorsBox(Box):
-    box_type = "m4ds"
+    box_type = b"m4ds"
     # Descriptor Descr[0 .. 255];
 
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
 class MHASampleEntry(AudioSampleEntry):
-    box_type = "mha1"
+    box_type = b"mha1"
     box_list = []
 
     def read(self, file):
@@ -78,14 +78,14 @@ class MHASampleEntry(AudioSampleEntry):
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
 class MHA2SampleEntry(MHASampleEntry):
-    box_type = "mha2"
+    box_type = b"mha2"
 
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.6.2
 class MHMSampleEntry(MHASampleEntry):
-    box_type = "mhm1"
+    box_type = b"mhm1"
 
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.6.2
 class MHM2SampleEntry(MHASampleEntry):
-    box_type = "mhm2"
+    box_type = b"mhm2"

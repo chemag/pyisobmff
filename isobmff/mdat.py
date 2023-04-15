@@ -3,7 +3,7 @@ from .box import Box
 
 
 class MediaDataBox(Box):
-    box_type = "mdat"
+    box_type = b"mdat"
     is_mandatory = False
 
     def read(self, file):

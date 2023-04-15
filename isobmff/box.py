@@ -135,6 +135,10 @@ def read_fixed_size_string(file, length):
     return file.read(length).decode("ascii")
 
 
+def read_fourcc(file):
+    return file.read(4)
+
+
 def read_utf8string(file, max_len):
     if max_len == 0:
         return ""
@@ -183,7 +187,7 @@ def read_box(file, debug):
     if size == "":
         return None
     try:
-        box_type = read_fixed_size_string(file, 4)
+        box_type = read_fourcc(file)
     except:
         raise Exception(f"error: cannot read box type at location 0x{offset+4:08x}")
     if debug > 1:
@@ -223,7 +227,7 @@ def read_box(file, debug):
         # unimplemented box
         if debug > 0:
             print(
-                f"warning: unimplemented box offset: 0x{offset:08x} type: {ascii(box_type)} size: 0x{size:x} next: 0x{size+offset:08x}"
+                f"warning: unimplemented box offset: 0x{offset:08x} type: {box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
             )
         box = UnimplementedBox(offset, box_type, size, largesize, debug)
         box.read(file)

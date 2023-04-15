@@ -5,7 +5,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.16.3
 class SegmentIndexBox(FullBox):
-    box_type = "sidx"
+    box_type = b"sidx"
     references = []
 
     def read(self, file):

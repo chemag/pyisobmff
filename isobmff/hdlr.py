@@ -9,7 +9,7 @@ from .box import read_bytes
 
 # ISO/IEC 14496-12:2022, Section 8.4.3
 class HandlerReferenceBox(FullBox):
-    box_type = "hdlr"
+    box_type = b"hdlr"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 

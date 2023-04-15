@@ -6,7 +6,7 @@ from .box import read_sint
 
 # ISO/IEC 14496-12:2022, Section 8.6.1.2
 class TimeToSampleBox(FullBox):
-    box_type = "stts"
+    box_type = b"stts"
     is_mandatory = True
     entries = []
 
@@ -28,7 +28,7 @@ class TimeToSampleBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.6.1.3
 class CompositionOffsetBox(FullBox):
-    box_type = "ctts"
+    box_type = b"ctts"
     entries = []
 
     def read(self, file):

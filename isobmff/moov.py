@@ -8,7 +8,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.2.1
 class MovieBox(Box):
-    box_type = "moov"
+    box_type = b"moov"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     box_list = []
@@ -27,7 +27,7 @@ class MovieBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.2.2
 class MovieHeaderBox(FullBox):
-    box_type = "mvhd"
+    box_type = b"mvhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     reserved2 = []

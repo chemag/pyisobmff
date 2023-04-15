@@ -8,7 +8,7 @@ from .stbl import VisualSampleEntry
 
 # ISO/IEC 14496-15:2022, Section 8.4.1.1.2
 class HEVCSampleEntry(VisualSampleEntry):
-    box_type = "hvc1"
+    box_type = b"hvc1"
     is_mandatory = True
     quantity = Quantity.ONE_OR_MORE
 
@@ -30,12 +30,12 @@ class HEV1SampleEntry(VisualSampleEntry):
     # all types of parameter sets, and 0 for all other arrays.
     # When the sample entry name is 'hev1', the default value
     # of array_completeness is 0 for all arrays.
-    box_type = "hev1"
+    box_type = b"hev1"
 
 
 # ISO/IEC 14496-15:2022, Section 8.4.1.1.2
 class HEVCConfigurationBox(Box):
-    box_type = "hvcC"
+    box_type = b"hvcC"
 
     def read(self, file):
         self.hevc_config = HEVCDecoderConfigurationRecord()

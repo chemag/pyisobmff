@@ -9,7 +9,7 @@ from .box import read_fixed_size_string
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.1
 class SampleTableBox(Box):
-    box_type = "stbl"
+    box_type = b"stbl"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     box_list = []
@@ -28,7 +28,7 @@ class SampleTableBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
 class SampleDescriptionBox(FullBox):
-    box_type = "stsd"
+    box_type = b"stsd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     samples = []
@@ -72,13 +72,13 @@ class SampleEntry(Box):
 # ISO/IEC 14496-12:2022, Section 12.4.4.2
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class HintSampleEntry(SampleEntry):
-    box_type = "hint"
+    box_type = b"hint"
 
 
 # ISO/IEC 14496-12:2022, Section 12.1.3.2
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class VisualSampleEntry(SampleEntry):
-    box_type = "vide"
+    box_type = b"vide"
     box_list = []
     pre_defined2 = []
 
@@ -129,7 +129,7 @@ class VisualSampleEntry(SampleEntry):
 # ISO/IEC 14496-12:2022, Section 12.2.3.2
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class AudioSampleEntry(SampleEntry):
-    box_type = "soun"
+    box_type = b"soun"
     box_list = []
     reserved1 = []
 
@@ -168,7 +168,7 @@ class AudioSampleEntry(SampleEntry):
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
 class BitRateBox(Box):
-    box_type = "btrt"
+    box_type = b"btrt"
 
     def read(self, file):
         self.buffer_size_db = read_uint(file, 4)
@@ -190,7 +190,7 @@ class SubtitleSampleEntry(SampleEntry):
 
 # ISO/IEC 14496-12:2022, Section 12.6
 class XMLSubtitleSampleEntry(SubtitleSampleEntry):
-    box_type = "stpp"
+    box_type = b"stpp"
 
     def read(self, file):
         super().read(file)
@@ -211,7 +211,7 @@ class XMLSubtitleSampleEntry(SubtitleSampleEntry):
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
 class TextConfigBox(SubtitleSampleEntry):
-    box_type = "txtC"
+    box_type = b"txtC"
 
     def read(self, file):
         super().read(file)
@@ -231,7 +231,7 @@ class PlainTextSampleEntry(SampleEntry):
 
 # ISO/IEC 14496-12:2022, Section 12.5.3.2
 class SimpleTextSampleEntry(PlainTextSampleEntry):
-    box_type = "stxt"
+    box_type = b"stxt"
     text_config_box = None
 
     def read(self, file):

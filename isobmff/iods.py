@@ -4,7 +4,7 @@ from .box import FullBox
 
 # ISO/IEC 14496-12:2022, Section 6.2.2
 class ObjectDescriptorBox(FullBox):
-    box_type = "iods"
+    box_type = b"iods"
     # TODO(chema): not clear how to implement ObjectDescriptor
     # ISO/IEC 14496-1:2014 Section 7.2.6.3
     # class ObjectDescriptor extends ObjectDescriptorBase : bit(8) tag=ObjectDescrTag {

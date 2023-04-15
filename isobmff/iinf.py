@@ -8,7 +8,7 @@ from .box import read_utf8string
 
 # ISO/IEC 14496-12:2022, Section 8.11.6.2
 class ItemInformationBox(FullBox):
-    box_type = "iinf"
+    box_type = b"iinf"
     is_mandatory = False
     item_infos = []
 
@@ -32,7 +32,7 @@ class ItemInformationBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.11.6.2
 class ItemInformationEntry(FullBox):
-    box_type = "infe"
+    box_type = b"infe"
 
     def read(self, file):
         if self.version == 0 or self.version == 1:

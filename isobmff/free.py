@@ -5,7 +5,7 @@ from .box import read_bytes
 
 # ISO/IEC 14496-12:2022, Section 8.1.2
 class FreeBox(Box):
-    box_type = "free"
+    box_type = b"free"
     is_mandatory = False
 
     def read(self, file):
@@ -21,4 +21,4 @@ class FreeBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.1.2
 class SkipBox(FreeBox):
-    box_type = "skip"
+    box_type = b"skip"

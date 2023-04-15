@@ -8,14 +8,14 @@ from .box import read_utf8string
 
 # ISO/IEC 14496-12:2022, Section 8.12.2
 class ProtectionSchemeInfoBox(Box):
-    box_type = "sinf"
+    box_type = b"sinf"
     is_mandatory = False
     quantity = Quantity.ONE_OR_MORE
 
 
 # ISO/IEC 14496-12:2022, Section 8.12.3
 class OriginalFormatBox(Box):
-    box_type = "frma"
+    box_type = b"frma"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
@@ -30,7 +30,7 @@ class OriginalFormatBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.12.6
 class SchemeTypeBox(FullBox):
-    box_type = "schm"
+    box_type = b"schm"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
 
@@ -50,6 +50,6 @@ class SchemeTypeBox(FullBox):
 
 
 class SchemeInformationBox(Box):
-    box_type = "schi"
+    box_type = b"schi"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE

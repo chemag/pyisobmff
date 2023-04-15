@@ -8,7 +8,7 @@ from .box import read_box
 
 # ISO/IEC 14496-12:2022, Section 8.4.1.1
 class MediaBox(Box):
-    box_type = "mdia"
+    box_type = b"mdia"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     box_list = []
@@ -27,7 +27,7 @@ class MediaBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.4.2.1
 class MediaHeaderBox(FullBox):
-    box_type = "mdhd"
+    box_type = b"mdhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     # ISO-639-2/T language code

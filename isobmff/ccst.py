@@ -4,7 +4,7 @@ from .box import read_uint
 
 # ISO/IEC 23008-12:2022, Section 7.2.3.2
 class ccst(FullBox):
-    box_type = "ccst"
+    box_type = b"ccst"
     is_mandatory = False
 
     def read(self, file):

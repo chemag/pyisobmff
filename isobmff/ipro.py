@@ -7,7 +7,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.11.5.2
 class ItemProtectionBox(FullBox):
-    box_type = "ipro"
+    box_type = b"ipro"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
     protection_informations = []

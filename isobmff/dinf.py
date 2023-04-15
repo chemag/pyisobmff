@@ -9,7 +9,7 @@ from .box import read_utf8string
 
 # ISO/IEC 14496-12:2022, Section 8.7.1.2
 class DataInformationBox(Box):
-    box_type = "dinf"
+    box_type = b"dinf"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     box_list = []
@@ -28,7 +28,7 @@ class DataInformationBox(Box):
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
 class DataReferenceBox(FullBox):
-    box_type = "dref"
+    box_type = b"dref"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
     data_entry = []
@@ -56,7 +56,7 @@ class DataEntryBaseBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
 class DataEntryUrlBox(DataEntryBaseBox):
-    box_type = "url "
+    box_type = b"url "
     is_mandatory = True
 
     def read(self, file):
@@ -71,7 +71,7 @@ class DataEntryUrlBox(DataEntryBaseBox):
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
 class DataEntryUrnBox(DataEntryBaseBox):
-    box_type = "urn "
+    box_type = b"urn "
     is_mandatory = True
 
     def read(self, file):
@@ -89,7 +89,7 @@ class DataEntryUrnBox(DataEntryBaseBox):
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
 class DataEntryImdaBox(DataEntryBaseBox):
-    box_type = "imdt"
+    box_type = b"imdt"
     is_mandatory = False
 
     def read(self, file):
@@ -103,5 +103,5 @@ class DataEntryImdaBox(DataEntryBaseBox):
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
 class DataEntrySeqNumImdaBox(DataEntryBaseBox):
-    box_type = "snim"
+    box_type = b"snim"
     is_mandatory = False

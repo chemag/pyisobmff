@@ -5,7 +5,7 @@ from .box import read_uint
 
 # ISO/IEC 14496-12:2022, Section 8.7.3
 class SampleSizeBox(FullBox):
-    box_type = "stsz"
+    box_type = b"stsz"
     is_mandatory = False
     entries = []
 

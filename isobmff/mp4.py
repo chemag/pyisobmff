@@ -10,12 +10,12 @@ from .stbl import SampleEntry
 
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class EDSBox(FullBox):
-    box_type = "esds"
+    box_type = b"esds"
 
 
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class MP4VisualSampleEntry(VisualSampleEntry):
-    box_type = "mp4v"
+    box_type = b"mp4v"
 
     def read(self, file):
         super().read(file)
@@ -29,7 +29,7 @@ class MP4VisualSampleEntry(VisualSampleEntry):
 
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class MP4AudioSampleEntry(AudioSampleEntry):
-    box_type = "mp4a"
+    box_type = b"mp4a"
 
     def read(self, file):
         super().read(file)
@@ -43,7 +43,7 @@ class MP4AudioSampleEntry(AudioSampleEntry):
 
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class MpegSampleEntry(SampleEntry):
-    box_type = "mp4s"
+    box_type = b"mp4s"
 
     def read(self, file):
         super().read(file)
