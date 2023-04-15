@@ -95,3 +95,8 @@ class MHA2SampleEntry(MHASampleEntry):
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.6.2
 class MHMSampleEntry(MHASampleEntry):
     box_type = "mhm1"
+
+
+# ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.6.2
+class MHM2SampleEntry(MHASampleEntry):
+    box_type = "mhm2"
