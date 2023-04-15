@@ -38,3 +38,26 @@ class MovieExtendsHeaderBox(FullBox):
         repl = ()
         repl += (f"fragment_duration: {self.fragment_duration}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 8.8.3
+class TrackExtendsBox(FullBox):
+    box_type = "trex"
+
+    def read(self, file):
+        self.track_ID = read_uint(file, 4)
+        self.default_sample_description_index = read_uint(file, 4)
+        self.default_sample_duration = read_uint(file, 4)
+        self.default_sample_size = read_uint(file, 4)
+        self.default_sample_flags = read_uint(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"track_ID: {self.track_ID}",)
+        repl += (
+            f"default_sample_description_index: {self.default_sample_description_index}",
+        )
+        repl += (f"default_sample_duration: {self.default_sample_duration}",)
+        repl += (f"default_sample_size: {self.default_sample_size}",)
+        repl += (f"default_sample_flags: {self.default_sample_flags}",)
+        return super().repr(repl)
