@@ -86,3 +86,8 @@ class HintMediaHeaderBox(FullBox):
 class NullMediaHeaderBox(FullBox):
     box_type = "nmhd"
     is_mandatory = True
+
+
+# ISO/IEC 14496-12:2022, Section 12.6
+class SubtitleMediaHeaderBox(FullBox):
+    box_type = "sthd"
