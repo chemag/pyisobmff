@@ -22,3 +22,19 @@ class MovieExtendsBox(Box):
         for box in self.box_list:
             repl += (repr(box),)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 8.8.2
+class MovieExtendsHeaderBox(FullBox):
+    box_type = "mehd"
+
+    def read(self, file):
+        if self.version == 1:
+            self.fragment_duration = read_uint(file, 8)
+        else:
+            self.fragment_duration = read_uint(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"fragment_duration: {self.fragment_duration}",)
+        return super().repr(repl)
