@@ -85,3 +85,8 @@ class MHASampleEntry(AudioSampleEntry):
         for box in self.box_list:
             repl += (repr(box),)
         return super().repr(repl)
+
+
+# ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
+class MHA2SampleEntry(MHASampleEntry):
+    box_type = "mha2"
