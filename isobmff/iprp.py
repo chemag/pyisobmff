@@ -105,6 +105,12 @@ class ColorInformation(Box):
             byte = read_uint(file, 1)
             self.full_range_flag = byte >> 7
             self.reserved = byte % 0x7F
+        elif self.colour_type == "nclc":
+            # original apple quicktime spec
+            # https://developer.apple.com/library/archive/technotes/tn2162/_index.html#//apple_ref/doc/uid/DTS40013070-CH1-TNTAG10
+            self.colour_primaries = read_uint(file, 2)
+            self.transfer_characteristics = read_uint(file, 2)
+            self.matrix_coefficients = read_uint(file, 2)
         elif self.colour_type == "rICC":
             offset = file.tell()
             max_offset = self.get_max_offset()
@@ -123,6 +129,10 @@ class ColorInformation(Box):
             repl += (f"matrix_coefficients: {self.matrix_coefficients}",)
             repl += (f"full_range_flag: {self.full_range_flag}",)
             repl += (f"reserved: {self.reserved}",)
+        elif self.colour_type == "nclc":
+            repl += (f"colour_primaries: {self.colour_primaries}",)
+            repl += (f"transfer_characteristics: {self.transfer_characteristics}",)
+            repl += (f"matrix_coefficients: {self.matrix_coefficients}",)
         elif self.colour_type == "rICC":
             repl += (f'ICC_profile: "{self.ICC_profile}"',)
         elif self.colour_type == "prof":
