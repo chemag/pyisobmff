@@ -132,6 +132,9 @@ class TrackRunBox(FullBox):
                 else:
                     sample["sample_composition_time_offset"] = read_sint(file, 4)
             self.samples.append(sample)
+            # consume the full box
+            max_offset = self.get_max_offset()
+            file.seek(max_offset)
 
     def __repr__(self):
         repl = ()
