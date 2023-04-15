@@ -47,20 +47,9 @@ class MHAConfigurationBox(Box):
         return super().repr(repl)
 
 
-# ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
-class MPEG4BitRateBox(BitRateBox):
-    def read(self, file):
-        super().read(file)
-        self.bufferSizeDB = read_uint(file, 4)
-        self.maxBitrate = read_uint(file, 4)
-        self.avgBitrate = read_uint(file, 4)
-
-    def __repr__(self):
-        repl = ()
-        repl += (f"bufferSizeDB: {self.bufferSizeDB}",)
-        repl += (f"maxBitrate: {self.maxBitrate}",)
-        repl += (f"avgBitrate: {self.avgBitrate}",)
-        return super().repr(repl)
+## ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
+# class MPEG4BitRateBox(BitRateBox):
+#    pass
 
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
