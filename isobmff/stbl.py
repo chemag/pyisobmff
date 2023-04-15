@@ -176,3 +176,29 @@ class BitRateBox(Box):
         repl += (f"max_bitrate: {self.max_bitrate}",)
         repl += (f"avg_bitrate: {self.avg_bitrate}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 12.6
+class SubtitleSampleEntry(SampleEntry):
+    pass
+
+
+# ISO/IEC 14496-12:2022, Section 12.6
+class XMLSubtitleSampleEntry(SubtitleSampleEntry):
+    box_type = "stpp"
+
+    def read(self, file):
+        super().read(file)
+        max_len = self.get_max_offset() - file.tell()
+        self.namespace = read_utf8string(file, max_len)
+        max_len = self.get_max_offset() - file.tell()
+        self.schema_location = read_utf8string(file, max_len)
+        max_len = self.get_max_offset() - file.tell()
+        self.auxiliary_mime_types = read_utf8string(file, max_len)
+
+    def repr(self, repl=None):
+        new_repl = ()
+        new_repl += (f"namespace: {self.namespace}",)
+        new_repl += (f"schema_location: {self.schema_location}",)
+        new_repl += (f"auxiliary_mime_types: {self.auxiliary_mime_types}",)
+        return super().repr(repl)
