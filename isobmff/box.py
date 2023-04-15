@@ -49,8 +49,6 @@ class Box(object):
             box = read_box(file, self.debug)
             if not box:
                 break
-            # TODO: Divide by Quantity as it is setattr or append to array
-            setattr(self, box.box_type, box)
 
     def write(self, file):
         """write box to file"""

@@ -20,5 +20,4 @@ class MediaFile(object):
                 box = read_box(file, self.debug)
                 if not box:
                     break
-                setattr(self, box.box_type, box)
                 self.box_list.append(box)
