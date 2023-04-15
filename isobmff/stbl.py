@@ -202,3 +202,18 @@ class XMLSubtitleSampleEntry(SubtitleSampleEntry):
         new_repl += (f"schema_location: {self.schema_location}",)
         new_repl += (f"auxiliary_mime_types: {self.auxiliary_mime_types}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 12.3.3.2
+class TextConfigBox(SubtitleSampleEntry):
+    box_type = "txtC"
+
+    def read(self, file):
+        super().read(file)
+        max_len = self.get_max_offset() - file.tell()
+        self.text_config = read_utf8string(file, max_len)
+
+    def repr(self, repl=None):
+        new_repl = ()
+        new_repl += (f"text_config: {self.text_config}",)
+        return super().repr(repl)
