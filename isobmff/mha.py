@@ -90,3 +90,8 @@ class MHASampleEntry(AudioSampleEntry):
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
 class MHA2SampleEntry(MHASampleEntry):
     box_type = "mha2"
+
+
+# ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.6.2
+class MHMSampleEntry(MHASampleEntry):
+    box_type = "mhm1"
