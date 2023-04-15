@@ -10,9 +10,16 @@ class TimeToSampleBox(FullBox):
     entries = []
 
     def read(self, file):
-        self.entry_count = read_uint(file, 4)
-        for _ in range(self.entry_count):
+        entry_count = read_uint(file, 4)
+        for _ in range(entry_count):
             entry = {}
             entry["sample_count"] = read_uint(file, 4)
             entry["sample_delta"] = read_uint(file, 4)
             self.entries.append(entry)
+
+    def __repr__(self):
+        repl = ()
+        for idx, val in enumerate(self.entries):
+            repl += (f'entry[{idx}]["sample_count"]: {val["sample_count"]}',)
+            repl += (f'entry[{idx}]["sample_delta"]: {val["sample_delta"]}',)
+        return super().repr(repl)
