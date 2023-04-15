@@ -78,6 +78,23 @@ class FullBox(Box):
         return self.repr()
 
 
+# generic container Box
+class ContainerBox(Box):
+    # used to implement generic container boxes more easily
+    box_list = []
+
+    def read(self, file):
+        while file.tell() < self.get_max_offset():
+            box = read_box(file, self.debug)
+            self.box_list.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
+
+
 class UnimplementedBox(Box):
     def __init__(self, offset, box_type, size, largesize, debug):
         self.box_type = box_type
