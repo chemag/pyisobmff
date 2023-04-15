@@ -146,10 +146,10 @@ class PixelInformationProperty(ItemFullProperty):
     channels = []
 
     def read(self, file):
-        num_channels = read_fixed_size_string(file, 1)
+        num_channels = read_uint(file, 1)
         for _ in range(num_channels):
             channel = {}
-            channel.bits_per_channel = read_fixed_size_string(file, 1)
+            channel["bits_per_channel"] = read_uint(file, 1)
             self.channels.append(channel)
 
     def __repr__(self):
@@ -166,8 +166,8 @@ class RelativeInformation(ItemFullProperty):
     box_type = "rloc"
 
     def read(self, file):
-        self.horizontal_offset = read_fixed_size_string(file, 4)
-        self.vertical_offset = read_fixed_size_string(file, 4)
+        self.horizontal_offset = read_uint(file, 4)
+        self.vertical_offset = read_uint(file, 4)
 
     def __repr__(self):
         repl = ()
