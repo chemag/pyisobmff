@@ -15,6 +15,22 @@ class MetaBox(FullBox):
 
     def read(self, file):
         while file.tell() < self.get_max_offset():
+            if not self.box_list:
+                if file.peek()[:4] == b"hdlr":
+                    # This is a relatively common issue on isobmff streams
+                    # where the MetaBox is actually a Box, not a FullBox.
+                    # This means we read the FullBox flags and version
+                    # fields incorrectly (from the hdlr box size field).
+                    # We need to:
+                    # (1) reset the flags and version fields.
+                    self.version = 0
+                    self.flags = 0
+                    # (2) seek back the wrongly-read 4x bytes.
+                    file.seek(file.tell() - 4)
+                    # example: videolan/samples/mov/editlist/20210910_114302.mp4
+                else:
+                    # Well-defined stream: keep reading
+                    pass
             box = read_box(file, self.debug)
             self.box_list.append(box)
 
