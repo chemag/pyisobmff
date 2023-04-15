@@ -67,3 +67,21 @@ class MPEG4BitRateBox(BitRateBox):
 class MPEG4ExtensionDescriptorsBox(Box):
     box_type = "m4ds"
     # Descriptor Descr[0 .. 255];
+
+
+# ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
+class MHASampleEntry(AudioSampleEntry):
+    box_type = "mha1"
+    box_list = []
+
+    def read(self, file):
+        super().read(file)
+        while file.tell() < self.get_max_offset():
+            box = read_box(file, self.debug)
+            self.box_list.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
