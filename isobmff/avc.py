@@ -41,8 +41,8 @@ class AVC2SampleEntry(VisualSampleEntry):
 
 
 # ISO/IEC 14496-15:2022, Section 5.4.2.1.2
-class AVC3SampleEntry(AVCSampleEntry):
-    box_type = "avc3"
+class AVC4SampleEntry(AVC2SampleEntry):
+    box_type = "avc4"
 
 
 # ISO/IEC 14496-15:2022, Section 5.4.2.1.2
