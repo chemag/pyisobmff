@@ -14,7 +14,8 @@ class FreeBox(Box):
 
     def __repr__(self):
         repl = ()
-        repl += (f'contents: "{self.contents}"',)
+        if self.debug > 2:
+            repl += (f'contents: "{self.contents}"',)
         return super().repr(repl)
 
 

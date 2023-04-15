@@ -20,8 +20,9 @@ class MovieFragmentBox(Box):
 
     def __repr__(self):
         repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
+        if self.debug > 2:
+            for box in self.box_list:
+                repl += (repr(box),)
         return super().repr(repl)
 
 

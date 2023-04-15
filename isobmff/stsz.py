@@ -21,6 +21,7 @@ class SampleSizeBox(FullBox):
     def __repr__(self):
         repl = ()
         repl += (f"sample_size: {self.sample_size}",)
-        for idx, val in enumerate(self.entries):
-            repl += (f"entries[{idx}]: {val}",)
+        if self.debug > 2:
+            for idx, val in enumerate(self.entries):
+                repl += (f"entries[{idx}]: {val}",)
         return super().repr(repl)

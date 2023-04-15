@@ -146,27 +146,28 @@ class TrackRunBox(FullBox):
             "first-sample-flags-present"
         ]:
             repl += (f"first_sample_flags: {self.first_sample_flags}",)
-        for idx, val in enumerate(self.samples):
-            if (self.flags & self.FLAGS["sample-duration-present"]) == self.FLAGS[
-                "sample-duration-present"
-            ]:
-                repl += (
-                    f'samples[{idx}]["sample_duration"]: {val["sample_duration"]}',
-                )
-            if (self.flags & self.FLAGS["sample-size-present"]) == self.FLAGS[
-                "sample-size-present"
-            ]:
-                repl += (f'samples[{idx}]["sample_size"]: {val["sample_size"]}',)
-            if (self.flags & self.FLAGS["sample-flags-present"]) == self.FLAGS[
-                "sample-flags-present"
-            ]:
-                repl += (f'samples[{idx}]["sample_flags"]: {val["sample_flags"]}',)
-            if (
-                self.flags & self.FLAGS["sample-composition-time-offsets-present"]
-            ) == self.FLAGS["sample-composition-time-offsets-present"]:
-                repl += (
-                    f'samples[{idx}]["sample_composition_time_offset"]: {val["sample_composition_time_offset"]}',
-                )
+        if self.debug > 2:
+            for idx, val in enumerate(self.samples):
+                if (self.flags & self.FLAGS["sample-duration-present"]) == self.FLAGS[
+                    "sample-duration-present"
+                ]:
+                    repl += (
+                        f'samples[{idx}]["sample_duration"]: {val["sample_duration"]}',
+                    )
+                if (self.flags & self.FLAGS["sample-size-present"]) == self.FLAGS[
+                    "sample-size-present"
+                ]:
+                    repl += (f'samples[{idx}]["sample_size"]: {val["sample_size"]}',)
+                if (self.flags & self.FLAGS["sample-flags-present"]) == self.FLAGS[
+                    "sample-flags-present"
+                ]:
+                    repl += (f'samples[{idx}]["sample_flags"]: {val["sample_flags"]}',)
+                if (
+                    self.flags & self.FLAGS["sample-composition-time-offsets-present"]
+                ) == self.FLAGS["sample-composition-time-offsets-present"]:
+                    repl += (
+                        f'samples[{idx}]["sample_composition_time_offset"]: {val["sample_composition_time_offset"]}',
+                    )
         return super().repr(repl)
 
 
