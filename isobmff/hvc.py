@@ -23,6 +23,17 @@ class HEVCSampleEntry(VisualSampleEntry):
 
 
 # ISO/IEC 14496-15:2022, Section 8.4.1.1.2
+class HEV1SampleEntry(VisualSampleEntry):
+    # Section 8.4.1.1.1
+    # When the sample entry name is 'hvc1', the default and
+    # mandatory value of array_completeness is 1 for arrays of
+    # all types of parameter sets, and 0 for all other arrays.
+    # When the sample entry name is 'hev1', the default value
+    # of array_completeness is 0 for all arrays.
+    box_type = "hev1"
+
+
+# ISO/IEC 14496-15:2022, Section 8.4.1.1.2
 class HEVCConfigurationBox(Box):
     box_type = "hvcC"
 
