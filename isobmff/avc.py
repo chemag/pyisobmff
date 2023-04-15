@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import Box
-from .box import Quantity
 from .box import read_box
 from .box import read_uint
 from .box import read_bytes
@@ -50,7 +49,9 @@ class AVCConfigurationBox(Box):
     box_type = "avcC"
 
     def read(self, file):
-        self.avc_config = AVCDecoderConfigurationRecord()
+        self.avc_config = AVCDecoderConfigurationRecord(
+            max_offset=self.get_max_offset()
+        )
         self.avc_config.read(file)
 
     def __repr__(self):
@@ -65,7 +66,14 @@ class AVCDecoderConfigurationRecord(object):
     pps = []
     sps_ext = []
 
+    def __init__(self, max_offset):
+        self.max_offset = max_offset
+
     def read(self, file):
+        if file.tell() >= self.max_offset:
+            # out of data in the box: let's punt here
+            self.reserved1 = None
+            return
         self.configurationVersion = read_uint(file, 1)
         self.AVCProfileIndication = read_uint(file, 1)
         self.profile_compatibility = read_uint(file, 1)
@@ -83,6 +91,11 @@ class AVCDecoderConfigurationRecord(object):
         for _ in range(numOfPictureParameterSets):
             pictureParameterSetLength = read_uint(file, 2)
             self.pps.append(read_bytes(file, pictureParameterSetLength))
+        # ensure there are enough bytes for the remaining fields
+        if file.tell() >= self.max_offset:
+            # out of data in the box: let's punt here
+            self.reserved3 = None
+            return
         if self.AVCProfileIndication not in [66, 77, 88]:
             byte = read_uint(file, 1)
             self.reserved3 = (byte >> 2) & 0x3F
@@ -100,6 +113,8 @@ class AVCDecoderConfigurationRecord(object):
 
     def __repr__(self):
         repl = ()
+        if self.reserved1 is None:
+            return "\n".join(repl)
         repl += (f"configurationVersion: {self.configurationVersion}",)
         repl += (f"AVCProfileIndication: {self.AVCProfileIndication}",)
         repl += (f"profile_compatibility: {self.profile_compatibility}",)
@@ -111,7 +126,7 @@ class AVCDecoderConfigurationRecord(object):
             repl += (f'sps[{idx}]: "{val}"',)
         for idx, val in enumerate(self.pps):
             repl += (f'pps[{idx}]: "{val}"',)
-        if self.AVCProfileIndication not in [66, 77, 88]:
+        if self.reserved3 is not None and self.AVCProfileIndication not in [66, 77, 88]:
             repl += (f"reserved3: {bin(self.reserved3)}",)
             repl += (f"chroma_format: {self.chroma_format}",)
             repl += (f"reserved4: {bin(self.reserved4)}",)
