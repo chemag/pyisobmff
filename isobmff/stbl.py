@@ -5,6 +5,7 @@ from .box import Quantity
 from .box import read_box
 from .box import read_uint, read_sint
 from .box import read_fixed_size_string
+from .box import read_utf8string
 
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.1
