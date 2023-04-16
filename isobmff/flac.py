@@ -46,3 +46,8 @@ class FlacSpecificBox(Box):
         for idx, val in enumerate(self.metadata_blocks):
             repl += (f"metadata_block[{idx}]: {val}",)
         return super().repr(repl)
+
+
+# https://github.com/xiph/flac/blob/master/doc/isoflac.txt, Section 3.3.1
+class FlacSampleEntry(AudioSampleEntry):
+    box_type = b"fLaC"
