@@ -30,6 +30,7 @@ from . import moof
 from . import moov
 from . import mp4
 from . import mvex
+from . import opus
 from . import pitm
 from . import qtff
 from . import sidx
