@@ -4,6 +4,7 @@ __init__
 """
 from __future__ import absolute_import
 from .media_file import MediaFile
+from . import ac3
 from . import avc
 from . import box
 from . import ccst
