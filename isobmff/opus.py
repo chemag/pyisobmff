@@ -4,6 +4,7 @@ from .box import read_uint
 from .box import read_sint
 from .box import ntohl
 from .box import ntohs
+from .stbl import AudioSampleEntry
 
 
 # https://opus-codec.org/docs/opus_in_isobmff.html, Section 4.3.2
@@ -43,3 +44,8 @@ class OpusSpecificBox(Box):
                 f'channel_mapping[{idx}]["channel_mapping"]: {val["channel_mapping"]}',
             )
         return super().repr(repl)
+
+
+# https://opus-codec.org/docs/opus_in_isobmff.html, Section 4.3.2
+class OpusSampleEntry(AudioSampleEntry):
+    box_type = b"Opus"
