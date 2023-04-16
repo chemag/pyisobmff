@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import struct
 from enum import Enum
 
 
@@ -157,6 +158,14 @@ def read_bytes(file, length):
 
 def indent(rep):
     return re.sub(r"^", "  ", rep, flags=re.M)
+
+
+def ntohl(num):
+    return struct.unpack(">I", struct.pack("=I", num))[0]
+
+
+def ntohs(num):
+    return struct.unpack(">H", struct.pack("=H", num))[0]
 
 
 def int_to_fixed_point_16_16(num):
