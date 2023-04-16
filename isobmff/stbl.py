@@ -51,20 +51,22 @@ class SampleDescriptionBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
 class SampleEntry(Box):
-    reserved = []
+    reserved0 = []
 
     def read(self, file):
         for _ in range(6):
             reserved = read_uint(file, 1)
-            self.reserved.append(reserved)
+            self.reserved0.append(reserved)
         self.data_reference_index = read_uint(file, 2)
 
     def repr(self, repl=None):
         new_repl = ()
-        for idx, val in enumerate(self.reserved):
-            new_repl += (f"reserved: {val}",)
+        for idx, val in enumerate(self.reserved0):
+            new_repl += (f"reserved0[{idx}]: {val}",)
         new_repl += (f"data_reference_index: {self.data_reference_index}",)
-        return super().repr(repl)
+        if repl is not None:
+            new_repl += repl
+        return super().repr(new_repl)
 
     def __repr__(self):
         return self.repr()
@@ -151,12 +153,12 @@ class AudioSampleEntry(SampleEntry):
     def repr(self, repl=None):
         new_repl = ()
         for idx, val in enumerate(self.reserved1):
-            new_repl += (f"reserved1: {val}",)
+            new_repl += (f"reserved1[{idx}]: {val}",)
         new_repl += (f"channelcount: {self.channelcount}",)
         new_repl += (f"samplesize: {self.samplesize}",)
         new_repl += (f"pre_defined: {self.pre_defined}",)
         new_repl += (f"reserved2: {self.reserved2}",)
-        new_repl += (f"samplerate: {self.samplerate}",)
+        new_repl += (f"samplerate: {self.samplerate >> 16}",)
         for box in self.box_list:
             new_repl += (repr(box),)
         if repl is not None:
