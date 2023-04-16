@@ -39,3 +39,49 @@ class AC4SampleEntry(Box):
         for box in self.box_list:
             repl += (repr(box),)
         return super().repr(repl)
+
+
+# ETSI TS 102 366 v1.4.1, Section E.6.1
+class AC4DsiV1(object):
+    presentations = []
+
+    def __init__(self, max_offset):
+        self.max_offset = max_offset
+
+    def read(self, file):
+        total_bytes = read_uint(file, 3)
+        self.ac4_dsi_version = total_bytes >> 21
+        self.bitstream_version = (total_bytes >> 14) & 0x7F
+        self.fs_index = (total_bytes >> 13) & 0x01
+        self.frame_rate_index = (total_bytes >> 9) & 0x0F
+        self.n_presentations = total_bytes & 0x01FF
+        # TODO(chema): Starting here, the reading is not
+        # byte-aligned across classes. For example, if
+        # bitstream_version > 1, then the next block is
+        # either 1, 18, or 146-bit long
+        offset = file.tell()
+        self.remaining = read_bytes(file, self.max_offset - offset)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"ac4_dsi_version: {self.ac4_dsi_version}",)
+        repl += (f"bitstream_version: {self.bitstream_version}",)
+        repl += (f"fs_index: {self.fs_index}",)
+        repl += (f"frame_rate_index: {self.frame_rate_index}",)
+        repl += (f"n_presentations: {self.n_presentations}",)
+        repl += (f"remaining: {self.remaining}",)
+        return "\n".join(repl)
+
+
+# ETSI TS 102 366 v1.4.1, Section E.5
+class AC4SpecificBox(Box):
+    box_type = b"dac4"
+
+    def read(self, file):
+        self.ac4_dsi_v1 = AC4DsiV1(max_offset=self.get_max_offset())
+        self.ac4_dsi_v1.read(file)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"ac4_dsi_v1: {self.ac4_dsi_v1}",)
+        return super().repr(repl)
