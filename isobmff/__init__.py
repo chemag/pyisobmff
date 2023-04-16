@@ -7,6 +7,7 @@ from .media_file import MediaFile
 from . import ac3
 from . import ac4
 from . import avc
+from . import avs
 from . import box
 from . import ccst
 from . import dinf
