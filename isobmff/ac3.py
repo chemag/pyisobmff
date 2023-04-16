@@ -37,3 +37,29 @@ class AC3SampleEntry(Box):
         for box in self.box_list:
             repl += (repr(box),)
         return super().repr(repl)
+
+
+# ETSI TS 102 366 v1.4.1, Section F.4
+class AC3SpecificBox(Box):
+    box_type = b"dac3"
+
+    def read(self, file):
+        total_bytes = read_uint(file, 3)
+        self.fscod = total_bytes >> 22
+        self.bsid = (total_bytes >> 17) & 0x1F
+        self.bsmod = (total_bytes >> 14) & 0x07
+        self.acmod = (total_bytes >> 11) & 0x07
+        self.lfeon = (total_bytes >> 10) & 0x01
+        self.bit_rate_code = (total_bytes >> 5) & 0x1F
+        self.reserved = total_bytes & 0x1F
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"fscod: {self.fscod}",)
+        repl += (f"bsid: {self.bsid}",)
+        repl += (f"bsmod: {self.bsmod}",)
+        repl += (f"acmod: {self.acmod}",)
+        repl += (f"lfeon: {self.lfeon}",)
+        repl += (f"bit_rate_code: {self.bit_rate_code}",)
+        repl += (f"reserved: {self.reserved}",)
+        return super().repr(repl)
