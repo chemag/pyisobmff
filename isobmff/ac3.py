@@ -96,3 +96,58 @@ class EC3SampleEntry(Box):
         for box in self.box_list:
             repl += (repr(box),)
         return super().repr(repl)
+
+
+# ETSI TS 102 366 v1.4.1, Section F.6
+class EC3SpecificBox(Box):
+    box_type = b"dec3"
+    subs = []
+
+    def read(self, file):
+        half = read_uint(file, 2)
+        self.data_rate = half >> 13
+        num_ind_sub = half & 0x07
+        for _ in range(num_ind_sub):
+            sub = {}
+            byte1 = read_uint(file, 1)
+            sub["fscod"] = byte1 >> 6
+            sub["bsid"] = (byte1 >> 1) & 0x1F
+            sub["reserved1"] = byte1 & 0x01
+            byte2 = read_uint(file, 1)
+            sub["avsc"] = byte2 >> 7
+            sub["bsmod"] = (byte2 >> 4) & 0x07
+            sub["acmod"] = (byte2 >> 1) & 0x07
+            sub["lfeon"] = byte2 & 0x01
+            byte3 = read_uint(file, 1)
+            sub["reserved2"] = byte3 >> 5
+            sub["num_dep_sub"] = (byte3 >> 1) & 0x0F
+            rem = byte3 & 0x01
+            if sub["num_dep_sub"] > 0:
+                byte4 = read_uint(file, 1)
+                rem = (rem << 8) | byte4
+                sub["chan_loc"] = rem
+            else:
+                sub["reserved3"] = rem
+            self.subs.append(sub)
+        max_len = self.get_max_offset() - file.tell()
+        self.reserved4 = read_uint(file, max_len)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"data_rate: {self.data_rate}",)
+        for idx, val in enumerate(self.subs):
+            repl += (f'sub[{idx}]["fscod"]: {val["fscod"]}',)
+            repl += (f'sub[{idx}]["bsid"]: {val["bsid"]}',)
+            repl += (f'sub[{idx}]["reserved1"]: {val["reserved1"]}',)
+            repl += (f'sub[{idx}]["avsc"]: {val["avsc"]}',)
+            repl += (f'sub[{idx}]["bsmod"]: {val["bsmod"]}',)
+            repl += (f'sub[{idx}]["acmod"]: {val["acmod"]}',)
+            repl += (f'sub[{idx}]["lfeon"]: {val["lfeon"]}',)
+            repl += (f'sub[{idx}]["reserved2"]: {val["reserved2"]}',)
+            repl += (f'sub[{idx}]["num_dep_sub"]: {val["num_dep_sub"]}',)
+            if "reserved3" in val:
+                repl += (f'sub[{idx}]["reserved3"]: {val["reserved3"]}',)
+            else:
+                repl += (f'sub[{idx}]["chan_loc"]: {val["chan_loc"]}',)
+        repl += (f"reserved4: {self.reserved4}",)
+        return super().repr(repl)
