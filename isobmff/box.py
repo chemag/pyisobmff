@@ -137,6 +137,10 @@ def read_fourcc(file):
     return file.read(4)
 
 
+def read_extended_type(file):
+    return file.read(16)
+
+
 def read_utf8string(file, max_len):
     if max_len == 0:
         return ""
@@ -179,6 +183,7 @@ def get_class_type(cls):
     return "Unknown"
 
 
+# TODO(chema): move function to Box/BoxHeader/FullBox/FullBoxHeader
 def read_box(file, debug):
     offset = file.tell()
     size = read_uint(file, 4)
@@ -195,10 +200,15 @@ def read_box(file, debug):
         raise Exception(f"ERROR: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)")
     elif size == 1:
         largesize = read_uint(file, 8)
+    full_box_type = box_type
+    if box_type == b"uuid":
+        extended_type = read_extended_type(file)
+        full_box_type = extended_type
+
     box_classes = get_class_list(Box)
     box = None
     for box_class in box_classes:
-        if box_class.box_type == box_type:
+        if box_class.box_type == full_box_type:
             class_type = get_class_type(box_class)
             if class_type == "Box":
                 box = box_class(
@@ -225,8 +235,8 @@ def read_box(file, debug):
         # unimplemented box
         if debug > 0:
             print(
-                f"warning: unimplemented box offset: 0x{offset:08x} type: {box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
+                f"warning: unimplemented box offset: 0x{offset:08x} type: {full_box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
             )
-        box = UnimplementedBox(offset, box_type, size, largesize, debug)
+        box = UnimplementedBox(offset, full_box_type, size, largesize, debug)
         box.read(file)
     return box
