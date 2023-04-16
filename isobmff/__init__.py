@@ -12,6 +12,7 @@ from . import ccst
 from . import dinf
 from . import edts
 from . import etyp
+from . import flac
 from . import free
 from . import ftyp
 from . import hdlr
