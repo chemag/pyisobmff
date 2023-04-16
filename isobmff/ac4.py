@@ -85,3 +85,35 @@ class AC4SpecificBox(Box):
         repl = ()
         repl += (f"ac4_dsi_v1: {self.ac4_dsi_v1}",)
         return super().repr(repl)
+
+
+# ETSI TS 102 366 v1.4.1, Section E.5a
+class AC4PresentationLabelBox(FullBox):
+    box_type = b"lac4"
+    presentations = []
+
+    def read(self, file):
+        half = read_uint(file, 2)
+        self.reserved = half >> 9
+        num_presentation_labels = half & 0x01FF
+        for _ in range(num_presentation_labels):
+            presentation = {}
+            half = read_uint(file, 2)
+            presentation["reserved"] = half >> 9
+            presentation["presentation_id"] = half & 0x01FF
+            max_len = self.get_max_offset() - file.tell()
+            presentation["presentation_label"] = read_utf8string(file, max_len)
+            self.presentations.append(presentation)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"reserved: {self.reserved}",)
+        for idx, val in enumerate(self.presentations):
+            repl += (f'presentation[{idx}]["reserved"]: {val["reserved"]}',)
+            repl += (
+                f'presentation[{idx}]["presentation_id"]: {val["presentation_id"]}',
+            )
+            repl += (
+                f'presentation[{idx}]["presentation_label"]: {val["presentation_label"]}',
+            )
+        return super().repr(repl)
