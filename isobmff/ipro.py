@@ -16,7 +16,7 @@ class ItemProtectionBox(FullBox):
         protection_count = read_uint(file, 2)
         for _ in range(protection_count):
             box = read_box(file, self.debug)
-            if not box:
+            if box is None:
                 break
             if box.box_type == "sinf":
                 self.protection_informations.append(box)

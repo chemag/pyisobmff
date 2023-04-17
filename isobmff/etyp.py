@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import Box
-from .box import read_box
 from .box import read_fourcc
 
 
@@ -11,9 +10,8 @@ class ExtendedTypeBox(Box):
 
     def read(self, file):
         while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
             # TODO(chema): only tyco allowed here
-            self.compatible_combinations.append(box)
+            self.compatible_combinations = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()

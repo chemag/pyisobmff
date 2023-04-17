@@ -2,7 +2,6 @@
 from .box import Box
 from .box import FullBox
 from .box import Quantity
-from .box import read_box
 from .box import read_uint
 
 
@@ -14,9 +13,7 @@ class MovieFragmentBox(Box):
     def read(self, file):
         # must have 1 MovieFragmentHeaderBox
         # must have 1+ TrackFragmentBoxes
-        while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
-            self.box_list.append(box)
+        self.box_list = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()

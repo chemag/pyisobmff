@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import FullBox
-from .box import read_box
 from .box import read_uint
 from .box import read_bytes
 from .box import read_utf8string
@@ -22,9 +21,7 @@ class AC4SampleEntry(Box):
         self.reserved3 = read_uint(file, 4)
         self.sampling_frequency = read_uint(file, 2)
         self.reserved4 = read_uint(file, 2)
-        while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
-            self.box_list.append(box)
+        self.box_list = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()

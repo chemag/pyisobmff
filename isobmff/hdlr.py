@@ -4,7 +4,6 @@ from .box import Quantity
 from .box import read_uint
 from .box import read_fixed_size_string
 from .box import read_utf8string
-from .box import read_bytes
 
 
 # ISO/IEC 14496-12:2022, Section 8.4.3
@@ -22,8 +21,7 @@ class HandlerReferenceBox(FullBox):
         max_len = self.get_max_offset() - file.tell()
         self.name = read_utf8string(file, max_len)
         # ensure we read all the way to the end of the box
-        max_len = self.get_max_offset() - file.tell()
-        garbage = read_bytes(file, max_len)
+        self.read_as_bytes(file)
 
     def __repr__(self):
         repl = ()

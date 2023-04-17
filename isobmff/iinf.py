@@ -17,7 +17,7 @@ class ItemInformationBox(FullBox):
         entry_count = read_uint(file, count_size)
         for _ in range(entry_count):
             box = read_box(file, self.debug)
-            if not box:
+            if box is None:
                 break
             if box.box_type == "infe":
                 self.item_infos.append(box)

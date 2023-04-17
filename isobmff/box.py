@@ -38,18 +38,27 @@ class Box(object):
         """get box size excluding header"""
         return self.offset + (self.size if self.largesize is None else self.largesize)
 
-    # read the remaining bytes as simple bytes
+    # default read() operation
+    # read the remaining bytes as just bytes
     def read(self, file):
+        self.read_as_bytes(file)
+
+    # read the remaining bytes as simple bytes
+    def read_as_bytes(self, file):
         offset = file.tell()
         max_offset = self.get_max_offset()
         self.contents = file.read(max_offset - offset)
 
     # read the remaining bytes as boxes
-    def read_box(self, file):
+    def read_box_list(self, file):
+        box_list = []
+        max_offset = self.get_max_offset()
         while file.tell() < max_offset:
             box = read_box(file, self.debug)
-            if not box:
+            if box is None:
                 break
+            box_list.append(box)
+        return box_list
 
     def write(self, file):
         """write box to file"""
@@ -83,9 +92,7 @@ class ContainerBox(Box):
     box_list = []
 
     def read(self, file):
-        while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
-            self.box_list.append(box)
+        self.box_list = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()
@@ -103,9 +110,7 @@ class UnimplementedBox(Box):
         return super().__repr__()
 
     def read(self, file):
-        offset = file.tell()
-        max_offset = self.get_max_offset()
-        self.content = file.read(max_offset - offset)
+        self.read_as_bytes(file)
 
 
 class Quantity(Enum):
@@ -237,7 +242,7 @@ def read_box(file, debug):
             else:
                 print(f"ERROR: INVALID BOX TYPE (offset: 0x{offset:08x})")
                 break
-            # read any data left
+            # read the box
             box.read(file)
             break
     else:

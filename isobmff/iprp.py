@@ -28,10 +28,8 @@ class ItemPropertiesBox(Box):
     def read(self, file):
         # must be ItemPropertyContainerBox
         self.property_container = read_box(file, self.debug)
-        while file.tell() < self.get_max_offset():
-            # must be ItemPropertyAssociationBox
-            box = read_box(file, self.debug)
-            self.association.append(box)
+        # must be ItemPropertyAssociationBox
+        self.association = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()
@@ -49,11 +47,9 @@ class ItemPropertyContainer(Box):
     properties = []
 
     def read(self, file):
-        while file.tell() < self.get_max_offset():
-            # boxes derived from ItemProperty, ItemFullProperty,
-            # or FreeSpaceBox
-            box = read_box(file, self.debug)
-            self.properties.append(box)
+        # boxes derived from ItemProperty, ItemFullProperty,
+        # or FreeSpaceBox
+        self.properties = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()

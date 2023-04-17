@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import Box
-from .box import read_box
 from .box import read_uint
 from .box import read_bytes
 from .stbl import VisualSampleEntry
@@ -20,9 +19,7 @@ class AC3SampleEntry(Box):
         self.reserved3 = read_uint(file, 4)
         self.sampling_rate = read_uint(file, 2)
         self.reserved4 = read_uint(file, 2)
-        while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
-            self.box_list.append(box)
+        self.box_list = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()
@@ -79,9 +76,7 @@ class EC3SampleEntry(Box):
         self.reserved3 = read_uint(file, 4)
         self.sampling_rate = read_uint(file, 2)
         self.reserved4 = read_uint(file, 2)
-        while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
-            self.box_list.append(box)
+        self.box_list = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()

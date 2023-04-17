@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import Box
-from .box import read_bytes
 
 
 # ISO/IEC 14496-12:2022, Section 8.1.2
@@ -9,8 +8,7 @@ class FreeBox(Box):
     is_mandatory = False
 
     def read(self, file):
-        max_len = self.get_max_offset() - file.tell()
-        self.contents = read_bytes(file, max_len)
+        self.read_as_bytes(file)
 
     def __repr__(self):
         repl = ()

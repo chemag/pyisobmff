@@ -32,6 +32,8 @@ class MetaBox(FullBox):
                     # Well-defined stream: keep reading
                     pass
             box = read_box(file, self.debug)
+            if box is None:
+                break
             self.box_list.append(box)
 
     def __repr__(self):

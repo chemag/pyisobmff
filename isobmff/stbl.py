@@ -16,9 +16,7 @@ class SampleTableBox(Box):
     box_list = []
 
     def read(self, file):
-        while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
-            self.box_list.append(box)
+        self.box_list = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()
@@ -100,9 +98,7 @@ class VisualSampleEntry(SampleEntry):
         self.compressorname = read_fixed_size_string(file, 32)
         self.depth = read_uint(file, 2)
         self.pre_defined3 = read_sint(file, 2)
-        while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
-            self.box_list.append(box)
+        self.box_list = self.read_box_list(file)
 
     def repr(self, repl=None):
         new_repl = ()
@@ -146,9 +142,7 @@ class AudioSampleEntry(SampleEntry):
         self.reserved2 = read_uint(file, 2)
         self.samplerate = read_uint(file, 4)
         # parse the boxes
-        while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
-            self.box_list.append(box)
+        self.box_list = self.read_box_list(file)
 
     def repr(self, repl=None):
         new_repl = ()

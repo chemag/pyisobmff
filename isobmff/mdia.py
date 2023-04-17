@@ -3,7 +3,6 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_uint
-from .box import read_box
 
 
 # ISO/IEC 14496-12:2022, Section 8.4.1.1
@@ -14,9 +13,7 @@ class MediaBox(Box):
     box_list = []
 
     def read(self, file):
-        while file.tell() < self.get_max_offset():
-            box = read_box(file, self.debug)
-            self.box_list.append(box)
+        self.box_list = self.read_box_list(file)
 
     def __repr__(self):
         repl = ()

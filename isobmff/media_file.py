@@ -18,6 +18,6 @@ class MediaFile(object):
         with open(file_name, "rb") as file:
             while True:
                 box = read_box(file, self.debug)
-                if not box:
+                if box is None:
                     break
                 self.box_list.append(box)
