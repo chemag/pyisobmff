@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from .box import read_box
 from .box import FullBox
 from .box import Quantity
 
@@ -31,7 +30,7 @@ class MetaBox(FullBox):
                 else:
                     # Well-defined stream: keep reading
                     pass
-            box = read_box(file, self.debug)
+            box = self.read_box(file)
             if box is None:
                 break
             self.box_list.append(box)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
-from .box import read_box
 from .box import read_uint
 from .box import read_fixed_size_string
 from .box import read_utf8string
@@ -16,7 +15,7 @@ class ItemInformationBox(FullBox):
         count_size = 2 if self.version == 0 else 4
         entry_count = read_uint(file, count_size)
         for _ in range(entry_count):
-            box = read_box(file, self.debug)
+            box = self.read_box(file)
             if box is None:
                 break
             if box.box_type == "infe":

@@ -2,7 +2,6 @@
 from .box import Box
 from .box import FullBox
 from .box import Quantity
-from .box import read_box
 from .box import read_uint, read_sint
 from .box import read_fixed_size_string
 from .box import read_utf8string
@@ -35,7 +34,7 @@ class SampleDescriptionBox(FullBox):
     def read(self, file):
         entry_count = read_uint(file, 4)
         for _ in range(entry_count):
-            box = read_box(file, self.debug)
+            box = self.read_box(file)
             if not box:
                 break
             self.samples.append(box)
@@ -238,7 +237,7 @@ class SimpleTextSampleEntry(PlainTextSampleEntry):
         max_len = self.get_max_offset() - file.tell()
         self.mime_format = read_utf8string(file, max_len)
         if file.tell() < self.get_max_offset():
-            self.text_config_box = read_box(file, self.debug)
+            self.text_config_box = self.read_box(file)
 
     def repr(self, repl=None):
         new_repl = ()

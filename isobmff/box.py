@@ -54,11 +54,15 @@ class Box(object):
         box_list = []
         max_offset = self.get_max_offset()
         while file.tell() < max_offset:
-            box = read_box(file, self.debug)
+            box = self.read_box(file)
             if box is None:
                 break
             box_list.append(box)
         return box_list
+
+    # read a single box
+    def read_box(self, file):
+        return read_box(file, self.path, self.debug, self)
 
     def write(self, file):
         """write box to file"""

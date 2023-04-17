@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import Quantity
-from .box import read_box
 from .box import read_uint
 from .stbl import VisualSampleEntry
 
@@ -14,7 +13,7 @@ class HEVCSampleEntry(VisualSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.config = read_box(file, self.debug)
+        self.config = self.read_box(file)
 
     def __repr__(self):
         repl = ()

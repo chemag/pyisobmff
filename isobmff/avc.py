@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .box import Box
-from .box import read_box
 from .box import read_uint
 from .box import read_bytes
 from .stbl import VisualSampleEntry
@@ -12,7 +11,7 @@ class AVCSampleEntry(VisualSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.config = read_box(file, self.debug)
+        self.config = self.read_box(file)
 
     def __repr__(self):
         repl = ()
@@ -31,7 +30,7 @@ class AVC2SampleEntry(VisualSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.avcconfig = read_box(file, self.debug)
+        self.avcconfig = self.read_box(file)
 
     def __repr__(self):
         repl = ()

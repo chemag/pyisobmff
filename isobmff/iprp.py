@@ -5,7 +5,6 @@ from .box import Quantity
 from .box import read_uint
 from .box import read_fixed_size_string
 from .box import read_bytes
-from .box import read_box
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.14.2
@@ -27,7 +26,7 @@ class ItemPropertiesBox(Box):
 
     def read(self, file):
         # must be ItemPropertyContainerBox
-        self.property_container = read_box(file, self.debug)
+        self.property_container = self.read_box(file)
         # must be ItemPropertyAssociationBox
         self.association = self.read_box_list(file)
 

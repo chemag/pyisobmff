@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
 from .box import Quantity
-from .box import read_box
 from .box import read_uint
 
 
@@ -15,7 +14,7 @@ class ItemProtectionBox(FullBox):
     def read(self, file):
         protection_count = read_uint(file, 2)
         for _ in range(protection_count):
-            box = read_box(file, self.debug)
+            box = self.read_box(file)
             if box is None:
                 break
             if box.box_type == "sinf":
