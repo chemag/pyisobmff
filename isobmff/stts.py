@@ -20,9 +20,10 @@ class TimeToSampleBox(FullBox):
 
     def __repr__(self):
         repl = ()
-        for idx, val in enumerate(self.entries):
-            repl += (f'entry[{idx}]["sample_count"]: {val["sample_count"]}',)
-            repl += (f'entry[{idx}]["sample_delta"]: {val["sample_delta"]}',)
+        if self.debug > 2:
+            for idx, val in enumerate(self.entries):
+                repl += (f'entry[{idx}]["sample_count"]: {val["sample_count"]}',)
+                repl += (f'entry[{idx}]["sample_delta"]: {val["sample_delta"]}',)
         return super().repr(repl)
 
 
@@ -44,7 +45,8 @@ class CompositionOffsetBox(FullBox):
 
     def __repr__(self):
         repl = ()
-        for idx, val in enumerate(self.entries):
-            repl += (f'entry[{idx}]["sample_count"]: {val["sample_count"]}',)
-            repl += (f'entry[{idx}]["sample_offset"]: {val["sample_offset"]}',)
+        if self.debug > 2:
+            for idx, val in enumerate(self.entries):
+                repl += (f'entry[{idx}]["sample_count"]: {val["sample_count"]}',)
+                repl += (f'entry[{idx}]["sample_offset"]: {val["sample_offset"]}',)
         return super().repr(repl)
