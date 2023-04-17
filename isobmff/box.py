@@ -14,8 +14,10 @@ class AbcBox(type):
 class Box(object):
     box_type = None
 
-    def __init__(self, offset, size, largesize, debug):
+    def __init__(self, offset, path, size, largesize, debug):
         self.offset = offset
+        self.path = path
+        self.subpath = {}
         self.size = size
         self.largesize = largesize
         self.debug = debug
@@ -24,6 +26,7 @@ class Box(object):
         new_repl = ()
         new_repl += (f"offset: 0x{self.offset:08x}",)
         new_repl += (f"box_type: {self.box_type}",)
+        new_repl += (f"path: {self.path}",)
         new_repl += (f"size: {self.size}",)
         if self.largesize is not None:
             new_repl += (f"largesize: {self.largesize}",)
@@ -73,8 +76,8 @@ class Box(object):
 class FullBox(Box):
     box_type = None
 
-    def __init__(self, offset, size, largesize, version, flags, debug):
-        super().__init__(offset, size, largesize, debug)
+    def __init__(self, offset, path, size, largesize, version, flags, debug):
+        super().__init__(offset, path, size, largesize, debug)
         self.version = version
         self.flags = flags
 
@@ -106,9 +109,9 @@ class ContainerBox(Box):
 
 
 class UnimplementedBox(Box):
-    def __init__(self, offset, box_type, size, largesize, debug):
+    def __init__(self, offset, path, box_type, size, largesize, debug):
         self.box_type = box_type
-        super().__init__(offset, size, largesize, debug)
+        super().__init__(offset, path, size, largesize, debug)
 
     def __repr__(self):
         return super().__repr__()
@@ -202,7 +205,8 @@ def get_class_type(cls):
 
 
 # TODO(chema): move function to Box/BoxHeader/FullBox/FullBoxHeader
-def read_box(file, debug):
+def read_box(file, path, debug, parent=None):
+    # 1. read the BoxHeader fields
     offset = file.tell()
     size = read_uint(file, 4)
     if size == "":
@@ -222,7 +226,21 @@ def read_box(file, debug):
     if box_type == b"uuid":
         extended_type = read_extended_type(file)
         full_box_type = extended_type
-
+    # 2. calculate the full path
+    if parent is None:
+        new_path = path + "/" + box_type.decode("ascii")
+    elif box_type.decode("ascii") not in parent.subpath:
+        new_path = path + "/" + box_type.decode("ascii")
+        parent.subpath[box_type.decode("ascii")] = 2
+    else:
+        new_path = (
+            path
+            + "/"
+            + box_type.decode("ascii")
+            + str(parent.subpath[box_type.decode("ascii")])
+        )
+        parent.subpath[box_type.decode("ascii")] += 1
+    # 3. find the right Box/FullBox
     box_classes = get_class_list(Box)
     box = None
     for box_class in box_classes:
@@ -230,13 +248,18 @@ def read_box(file, debug):
             class_type = get_class_type(box_class)
             if class_type == "Box":
                 box = box_class(
-                    offset=offset, size=size, largesize=largesize, debug=debug
+                    offset=offset,
+                    path=new_path,
+                    size=size,
+                    largesize=largesize,
+                    debug=debug,
                 )
             elif class_type == "FullBox":
                 version = read_uint(file, 1)
                 flags = read_uint(file, 3)
                 box = box_class(
                     offset=offset,
+                    path=new_path,
                     size=size,
                     largesize=largesize,
                     version=version,
@@ -255,6 +278,6 @@ def read_box(file, debug):
             print(
                 f"warning: unimplemented box offset: 0x{offset:08x} type: {full_box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
             )
-        box = UnimplementedBox(offset, full_box_type, size, largesize, debug)
+        box = UnimplementedBox(offset, new_path, full_box_type, size, largesize, debug)
         box.read(file)
     return box

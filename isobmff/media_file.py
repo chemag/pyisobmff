@@ -17,7 +17,7 @@ class MediaFile(object):
     def read(self, file_name):
         with open(file_name, "rb") as file:
             while True:
-                box = read_box(file, self.debug)
+                box = read_box(file, "", self.debug)
                 if box is None:
                     break
                 self.box_list.append(box)
