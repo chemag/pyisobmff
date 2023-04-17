@@ -37,6 +37,12 @@ class Box(object):
     def __repr__(self):
         return self.repr()
 
+    def get_parent_name(self):
+        name_list = self.path.split("/")
+        if len(name_list) >= 2:
+            return name_list[-2]
+        return "/"
+
     def get_max_offset(self):
         """get box size excluding header"""
         return self.offset + (self.size if self.largesize is None else self.largesize)
