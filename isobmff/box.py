@@ -5,11 +5,6 @@ import struct
 from enum import Enum
 
 
-class AbcBox(type):
-    # TODO: human readable implementation of __repr__
-    pass
-
-
 # ISO/IEC 14496-12:2022, Section 4.2.2
 class Box(object):
     box_type = None
