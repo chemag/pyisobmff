@@ -296,3 +296,21 @@ class URIInitBox(FullBox):
         repl = ()
         repl += (f"uri_initialization_data: {self.uri_initialization_data}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 12.3.3.2
+class URIMetaSampleEntry(MetaDataSampleEntry):
+    box_type = b"urim"
+
+    def read(self, file):
+        super().read(file)
+        self.the_label = URIBox(max_offset=self.get_max_offset())
+        self.uri_box.read(file)
+        self.init = URIInitBox(max_offset=self.get_max_offset())
+        self.init.read(file)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"uri_box: {self.uri_box}",)
+        repl += (f"init: {self.init}",)
+        return super().repr(repl)
