@@ -16,9 +16,14 @@ import isobmff
 
 __version__ = "0.1"
 
+FUNC_CHOICES = {
+    "parse": "parse isobmff input",
+}
+
 default_values = {
     "debug": 0,
     "dry_run": False,
+    "func": "parse",
     "listfile": None,
     "infile": None,
 }
@@ -77,6 +82,23 @@ def get_options(argv):
         help="Dry run",
     )
     parser.add_argument(
+        "--func",
+        type=str,
+        nargs="?",
+        default=default_values["func"],
+        choices=FUNC_CHOICES.keys(),
+        help="%s"
+        % (" | ".join("{}: {}".format(k, v) for k, v in FUNC_CHOICES.items())),
+    )
+    for key, val in FUNC_CHOICES.items():
+        parser.add_argument(
+            f"--{key}",
+            action="store_const",
+            dest="func",
+            const=f"{key}",
+            help=val,
+        )
+    parser.add_argument(
         "--listfile",
         type=str,
         default=default_values["listfile"],
@@ -96,8 +118,9 @@ def get_options(argv):
     if options.version:
         return options
     # implement help
-    # parser.print_help()
-    # sys.exit(0)
+    if options.func == "help":
+        parser.print_help()
+        sys.exit(0)
     return options
 
 
