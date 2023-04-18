@@ -4,7 +4,6 @@ from .box import FullBox
 from .box import read_uint
 from .box import read_bytes
 from .box import read_utf8string
-from .stbl import VisualSampleEntry
 
 
 # ETSI TS 103 190-2 v1.2.1, Section E.4

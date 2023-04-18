@@ -4,7 +4,6 @@ from .box import FullBox
 from .box import Quantity
 from .box import read_uint
 from .box import read_fixed_size_string
-from .box import read_bytes
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.14.2
