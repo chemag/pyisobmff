@@ -203,3 +203,24 @@ class TextConfigBox(FullBox):
         repl = ()
         repl += (f"text_config: {self.text_config}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 12.3.3.2
+class TextMetaDataSampleEntry(MetaDataSampleEntry):
+    box_type = b"mett"
+
+    def read(self, file):
+        super().read(file)
+        max_len = self.get_max_offset() - file.tell()
+        self.content_encoding = read_utf8string(file, max_len)
+        max_len = self.get_max_offset() - file.tell()
+        self.mime_format = read_utf8string(file, max_len)
+        self.box_list = self.read_box_list(file)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"content_encoding: {self.content_encoding}",)
+        repl += (f"mime_format: {self.mime_format}",)
+        for box in self.box_list:
+            repl += (repr(box),)
+        return super().repr(repl)
