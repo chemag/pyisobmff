@@ -106,13 +106,9 @@ class ColorInformation(Box):
             self.transfer_characteristics = read_uint(file, 2)
             self.matrix_coefficients = read_uint(file, 2)
         elif self.colour_type == "rICC":
-            offset = file.tell()
-            max_offset = self.get_max_offset()
-            self.ICC_profile = read_bytes(file, max_offset - offset)
+            self.ICC_profile = self.read_as_bytes(file)
         elif self.colour_type == "prof":
-            offset = file.tell()
-            max_offset = self.get_max_offset()
-            self.ICC_profile = read_bytes(file, max_offset - offset)
+            self.ICC_profile = self.read_as_bytes(file)
 
     def __repr__(self):
         repl = ()
