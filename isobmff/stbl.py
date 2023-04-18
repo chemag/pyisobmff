@@ -227,27 +227,6 @@ class TextMetaDataSampleEntry(MetaDataSampleEntry):
 
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
-class XMLSubtitleSampleEntry(SubtitleSampleEntry):
-    box_type = b"stpp"
-
-    def read(self, file):
-        super().read(file)
-        max_len = self.get_max_offset() - file.tell()
-        self.namespace = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
-        self.schema_location = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
-        self.auxiliary_mime_types = read_utf8string(file, max_len)
-
-    def __repr__(self):
-        repl = ()
-        repl += (f"namespace: {self.namespace}",)
-        repl += (f"schema_location: {self.schema_location}",)
-        repl += (f"auxiliary_mime_types: {self.auxiliary_mime_types}",)
-        return super().repr(repl)
-
-
-# ISO/IEC 14496-12:2022, Section 12.3.3.2
 class MimeBox(FullBox):
     box_type = b"mime"
 
