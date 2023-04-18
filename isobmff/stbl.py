@@ -314,3 +314,9 @@ class URIMetaSampleEntry(MetaDataSampleEntry):
         repl += (f"uri_box: {self.uri_box}",)
         repl += (f"init: {self.init}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 12.4.4.2
+# ISO/IEC 14496-14:2020, Section 6.7.2
+class HintSampleEntry(SampleEntry):
+    pass
