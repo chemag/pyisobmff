@@ -1,49 +1,18 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import FullBox
+from .box import ContainerBox
 from .box import Quantity
 from .box import read_uint, read_sint
 from .box import read_fixed_size_string
 from .box import read_utf8string
 
 
-# ISO/IEC 14496-12:2022, Section 8.5.2.1
-class SampleTableBox(Box):
+# ISO/IEC 14496-12:2022, Section 8.5.1.1
+class SampleTableBox(ContainerBox):
     box_type = b"stbl"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    box_list = []
-
-    def read(self, file):
-        self.box_list = self.read_box_list(file)
-
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
-
-
-# ISO/IEC 14496-12:2022, Section 8.5.2.2
-class SampleDescriptionBox(FullBox):
-    box_type = b"stsd"
-    is_mandatory = True
-    quantity = Quantity.EXACTLY_ONE
-    samples = []
-
-    def read(self, file):
-        entry_count = read_uint(file, 4)
-        for _ in range(entry_count):
-            box = self.read_box(file)
-            if not box:
-                break
-            self.samples.append(box)
-
-    def __repr__(self):
-        repl = ()
-        for box in self.samples:
-            repl += (repr(box),)
-        return super().repr(repl)
 
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
@@ -69,10 +38,43 @@ class SampleEntry(Box):
         return self.repr()
 
 
-# ISO/IEC 14496-12:2022, Section 12.4.4.2
-# ISO/IEC 14496-14:2020, Section 6.7.2
-class HintSampleEntry(SampleEntry):
-    box_type = b"hint"
+# ISO/IEC 14496-12:2022, Section 8.5.2.2
+class BitRateBox(Box):
+    box_type = b"btrt"
+
+    def read(self, file):
+        self.buffer_size_db = read_uint(file, 4)
+        self.max_bitrate = read_uint(file, 4)
+        self.avg_bitrate = read_uint(file, 4)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"buffer_size_db: {self.buffer_size_db}",)
+        repl += (f"max_bitrate: {self.max_bitrate}",)
+        repl += (f"avg_bitrate: {self.avg_bitrate}",)
+        return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 8.5.2.2
+class SampleDescriptionBox(FullBox):
+    box_type = b"stsd"
+    is_mandatory = True
+    quantity = Quantity.EXACTLY_ONE
+    samples = []
+
+    def read(self, file):
+        entry_count = read_uint(file, 4)
+        for _ in range(entry_count):
+            box = self.read_box(file)
+            if not box:
+                break
+            self.samples.append(box)
+
+    def __repr__(self):
+        repl = ()
+        for box in self.samples:
+            repl += (repr(box),)
+        return super().repr(repl)
 
 
 # ISO/IEC 14496-12:2022, Section 12.1.3.2
