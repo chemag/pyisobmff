@@ -43,6 +43,19 @@ class Box(object):
             return name_list[-2]
         return "/"
 
+    @classmethod
+    def get_path(cls, path, box_type, parent):
+        box_type_str = box_type.decode("ascii")
+        if parent is None:
+            new_path = path + "/" + box_type_str
+        elif box_type_str not in parent.subpath:
+            new_path = path + "/" + box_type_str
+            parent.subpath[box_type_str] = 2
+        else:
+            new_path = path + "/" + box_type_str + str(parent.subpath[box_type_str])
+            parent.subpath[box_type_str] += 1
+        return new_path
+
     def get_max_offset(self):
         """get box size excluding header"""
         return self.offset + (self.size if self.largesize is None else self.largesize)
@@ -233,19 +246,7 @@ def read_box(file, path, debug, parent=None):
         extended_type = read_extended_type(file)
         full_box_type = extended_type
     # 2. calculate the full path
-    if parent is None:
-        new_path = path + "/" + box_type.decode("ascii")
-    elif box_type.decode("ascii") not in parent.subpath:
-        new_path = path + "/" + box_type.decode("ascii")
-        parent.subpath[box_type.decode("ascii")] = 2
-    else:
-        new_path = (
-            path
-            + "/"
-            + box_type.decode("ascii")
-            + str(parent.subpath[box_type.decode("ascii")])
-        )
-        parent.subpath[box_type.decode("ascii")] += 1
+    new_path = Box.get_path(path, box_type, parent)
     # 3. find the right Box/FullBox
     box_classes = get_class_list(Box)
     box = None
