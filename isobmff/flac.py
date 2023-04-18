@@ -22,13 +22,13 @@ class FlacMetadataBlock(object):
         for _ in range(length):
             self.block_data.append(read_uint(file, 1))
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"last_metadata_block_flag: {self.last_metadata_block_flag}",)
-        repl += (f"block_type: {self.block_type}",)
+    def contents(self):
+        tuples = ()
+        tuples += (("last_metadata_block_flag", self.last_metadata_block_flag),)
+        tuples += (("block_type", self.block_type),)
         for idx, val in enumerate(self.block_data):
-            repl += (f"block[{idx}]: {val}",)
-        return "\n".join(repl)
+            tuples += ((f"block[{idx}]", val),)
+        return tuples
 
 
 class FlacSpecificBox(Box):
@@ -41,11 +41,11 @@ class FlacSpecificBox(Box):
             metadata_block.read(file)
             self.metadata_blocks.append(metadata_block)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         for idx, val in enumerate(self.metadata_blocks):
-            repl += (f"metadata_block[{idx}]: {val}",)
-        return super().repr(repl)
+            tuples += ((f"metadata_block[{idx}]", val.contents()),)
+        return tuples
 
 
 # https://github.com/xiph/flac/blob/master/doc/isoflac.txt, Section 3.3.1

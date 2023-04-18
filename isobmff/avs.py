@@ -13,10 +13,10 @@ class AvsSampleEntry(VisualSampleEntry):
         super().read(file)
         self.config = self.read_box(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"config: {self.config}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("config", self.config.contents()),)
+        return tuples
 
 
 # IEEE 1857.3-2013, Section 4.2.3.3.1
@@ -29,10 +29,10 @@ class AvsSequenceInfoBox(Box):
         )
         self.avs_config.read(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"avs_config: {self.avs_config}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("avs_config", self.avs_config.contents()),)
+        return tuples
 
 
 # IEEE 1857.3-2013, Section 4.2.3.3.1
@@ -66,19 +66,19 @@ class AVSDecoderConfigurationRecord(object):
                 read_bytes(file, sequenceHeaderLength)
             )
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = ()
         if self.reserved1 is None:
-            return "\n".join(repl)
-        repl += (f"configurationVersion: {self.configurationVersion}",)
-        repl += (f"AVSProfileIndication: {self.AVSProfileIndication}",)
-        repl += (f"AVSLevelIndication: {self.AVSLevelIndication}",)
-        repl += (f"reserved1: {bin(self.reserved1)}",)
-        repl += (f"lengthSizeMinusOne: {self.lengthSizeMinusOne}",)
-        repl += (f"reserved2: {bin(self.reserved2)}",)
+            return tuples
+        tuples += (("configurationVersion", self.configurationVersion),)
+        tuples += (("AVSProfileIndication", self.AVSProfileIndication),)
+        tuples += (("AVSLevelIndication", self.AVSLevelIndication),)
+        tuples += (("reserved1", bin(self.reserved1)),)
+        tuples += (("lengthSizeMinusOne", self.lengthSizeMinusOne),)
+        tuples += (("reserved2", bin(self.reserved2)),)
         for idx, val in enumerate(self.sequence_header_nal_units):
-            repl += (f'sequence_header_nal_unit[{idx}]: "{val}"',)
-        return "\n".join(repl)
+            tuples += ((f"sequence_header_nal_unit[{idx}]", val),)
+        return tuples
 
 
 # IEEE 1857.3-2013, Section 6.2.3.3.1

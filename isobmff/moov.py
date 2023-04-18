@@ -15,11 +15,11 @@ class MovieBox(Box):
     def read(self, file):
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.2.2
@@ -48,20 +48,20 @@ class MovieHeaderBox(FullBox):
             self.pre_defined.append(read_uint(file, 4))
         self.next_track_id = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"creation_time: {self.creation_time}",)
-        repl += (f"modification_time: {self.modification_time}",)
-        repl += (f"timescale: {self.timescale}",)
-        repl += (f"duration: {self.duration}",)
-        repl += (f"rate: 0x{self.creation_time:08x}",)
-        repl += (f"volume: 0x{self.volume:04x}",)
-        repl += (f"reserved1: {self.reserved1}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("creation_time", self.creation_time),)
+        tuples += (("modification_time", self.modification_time),)
+        tuples += (("timescale", self.timescale),)
+        tuples += (("duration", self.duration),)
+        tuples += (("rate", f"0x{self.creation_time:08x}"),)
+        tuples += (("volume", f"0x{self.volume:04x}"),)
+        tuples += (("reserved1", self.reserved1),)
         for idx, val in enumerate(self.reserved2):
-            repl += (f"reserved2[{idx}]: {val}",)
+            tuples += ((f"reserved2[{idx}]", val),)
         for idx, val in enumerate(self.matrix):
-            repl += (f"matrix[{idx}]: 0x{val:08x}",)
+            tuples += ((f"matrix[{idx}]", f"0x{val:08x}"),)
         for idx, val in enumerate(self.pre_defined):
-            repl += (f"pre_defined[{idx}]: {val}",)
-        repl += (f"next_track_id: {self.next_track_id}",)
-        return super().repr(repl)
+            tuples += (("pre_defined[{idx}]", val),)
+        tuples += (("next_track_id", self.next_track_id),)
+        return tuples

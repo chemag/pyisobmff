@@ -29,11 +29,10 @@ default_values = {
 }
 
 
-def parse_file(infile, debug, do_print=True):
+def parse_file(infile, debug):
     media_file = isobmff.MediaFile(debug)
     media_file.read(infile)
-    if do_print:
-        print(media_file)
+    return media_file
 
 
 def get_options(argv):
@@ -142,7 +141,7 @@ def main(argv):
                 infile = infile.strip()
                 print(f"### parsing {infile}")
                 try:
-                    parse_file(infile, options.debug, do_print=False)
+                    _ = parse_file(infile, options.debug)
                 except:
                     print(f"    error on {infile}")
                     error_list.append(infile)
@@ -152,7 +151,8 @@ def main(argv):
             for filename in error_list:
                 print(f"  {filename}")
         sys.exit()
-    parse_file(options.infile, options.debug)
+    media_file = parse_file(options.infile, options.debug)
+    print(media_file)
 
 
 if __name__ == "__main__":

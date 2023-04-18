@@ -18,10 +18,10 @@ class SampleSizeBox(FullBox):
                 entry["entry_size"] = read_uint(file, 4)
                 self.entries.append(entry)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"sample_size: {self.sample_size}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("sample_size", self.sample_size),)
         if self.debug > 2:
             for idx, val in enumerate(self.entries):
-                repl += (f"entries[{idx}]: {val}",)
-        return super().repr(repl)
+                tuples += ((f"entries[{idx}]", val),)
+        return tuples

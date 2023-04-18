@@ -25,17 +25,12 @@ class SampleEntry(Box):
             self.reserved0.append(reserved)
         self.data_reference_index = read_uint(file, 2)
 
-    def repr(self, repl=None):
-        new_repl = ()
+    def contents(self):
+        tuples = super().contents()
         for idx, val in enumerate(self.reserved0):
-            new_repl += (f"reserved0[{idx}]: {val}",)
-        new_repl += (f"data_reference_index: {self.data_reference_index}",)
-        if repl is not None:
-            new_repl += repl
-        return super().repr(new_repl)
-
-    def __repr__(self):
-        return self.repr()
+            tuples += ((f"reserved0[{idx}]", val),)
+        tuples += (("data_reference_index", self.data_reference_index),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
@@ -47,12 +42,12 @@ class BitRateBox(Box):
         self.max_bitrate = read_uint(file, 4)
         self.avg_bitrate = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"buffer_size_db: {self.buffer_size_db}",)
-        repl += (f"max_bitrate: {self.max_bitrate}",)
-        repl += (f"avg_bitrate: {self.avg_bitrate}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("buffer_size_db", self.buffer_size_db),)
+        tuples += (("max_bitrate", self.max_bitrate),)
+        tuples += (("avg_bitrate", self.avg_bitrate),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
@@ -70,11 +65,11 @@ class SampleDescriptionBox(FullBox):
                 break
             self.samples.append(box)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.samples:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.samples):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.1.3.2
@@ -100,29 +95,24 @@ class VisualSampleEntry(SampleEntry):
         self.pre_defined3 = read_sint(file, 2)
         self.box_list = self.read_box_list(file)
 
-    def repr(self, repl=None):
-        new_repl = ()
-        new_repl += (f"pre_defined1: {self.pre_defined1}",)
-        new_repl += (f"reserved1: {self.reserved1}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("pre_defined1", self.pre_defined1),)
+        tuples += (("reserved1", self.reserved1),)
         for idx, val in enumerate(self.pre_defined2):
-            new_repl += (f"pre_defined2[{idx}]: {val}",)
-        new_repl += (f"width: {self.width}",)
-        new_repl += (f"height: {self.height}",)
-        new_repl += (f"horizresolution: 0x{self.horizresolution:08x}",)
-        new_repl += (f"vertresolution: 0x{self.vertresolution:08x}",)
-        new_repl += (f"reserved2: {self.reserved2}",)
-        new_repl += (f"frame_count: {self.frame_count}",)
-        new_repl += (f'compressorname: "{self.compressorname.strip()}"',)
-        new_repl += (f"depth: 0x{self.depth:04x}",)
-        new_repl += (f"pre_defined3: {self.pre_defined3}",)
-        for box in self.box_list:
-            new_repl += (repr(box),)
-        if repl is not None:
-            new_repl += repl
-        return super().repr(new_repl)
-
-    def __repr__(self):
-        return self.repr()
+            tuples += ((f"pre_defined2[{idx}]", val),)
+        tuples += (("width", self.width),)
+        tuples += (("height", self.height),)
+        tuples += (("horizresolution", f"0x{self.horizresolution:08x}"),)
+        tuples += (("vertresolution", f"0x{self.vertresolution:08x}"),)
+        tuples += (("reserved2", self.reserved2),)
+        tuples += (("frame_count", self.frame_count),)
+        tuples += (("compressorname", self.compressorname.strip()),)
+        tuples += (("depth", f"0x{self.depth:04x}"),)
+        tuples += (("pre_defined3", self.pre_defined3),)
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.2.3.2
@@ -143,23 +133,18 @@ class AudioSampleEntry(SampleEntry):
         # parse the boxes
         self.box_list = self.read_box_list(file)
 
-    def repr(self, repl=None):
-        new_repl = ()
+    def contents(self):
+        tuples = super().contents()
         for idx, val in enumerate(self.reserved1):
-            new_repl += (f"reserved1[{idx}]: {val}",)
-        new_repl += (f"channelcount: {self.channelcount}",)
-        new_repl += (f"samplesize: {self.samplesize}",)
-        new_repl += (f"pre_defined: {self.pre_defined}",)
-        new_repl += (f"reserved2: {self.reserved2}",)
-        new_repl += (f"samplerate: {self.samplerate >> 16}",)
-        for box in self.box_list:
-            new_repl += (repr(box),)
-        if repl is not None:
-            new_repl += repl
-        return super().repr(new_repl)
-
-    def __repr__(self):
-        return self.repr()
+            tuples += ((f"reserved1[{idx}]", val),)
+        tuples += (("channelcount", self.channelcount),)
+        tuples += (("samplesize", self.samplesize),)
+        tuples += (("pre_defined", self.pre_defined),)
+        tuples += (("reserved2", self.reserved2),)
+        tuples += (("samplerate", self.samplerate >> 16),)
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
@@ -182,12 +167,12 @@ class XMLMetaDataSampleEntry(MetaDataSampleEntry):
         max_len = self.get_max_offset() - file.tell()
         self.schema_location = read_utf8string(file, max_len)
 
-    def __repl__(selfNone):
-        repl = ()
-        repl += (f"content_encoding: {self.content_encoding}",)
-        repl += (f"namespace: {self.namespace}",)
-        repl += (f"schema_location: {self.schema_location}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("content_encoding", self.content_encoding),)
+        tuples += (("namespace", self.namespace),)
+        tuples += (("schema_location", self.schema_location),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
@@ -199,10 +184,10 @@ class TextConfigBox(FullBox):
         max_len = self.get_max_offset() - file.tell()
         self.text_config = read_utf8string(file, max_len)
 
-    def __repl__(self):
-        repl = ()
-        repl += (f"text_config: {self.text_config}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("text_config", self.text_config_box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
@@ -217,13 +202,13 @@ class TextMetaDataSampleEntry(MetaDataSampleEntry):
         self.mime_format = read_utf8string(file, max_len)
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"content_encoding: {self.content_encoding}",)
-        repl += (f"mime_format: {self.mime_format}",)
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("content_encoding", self.content_encoding),)
+        tuples += (("mime_format", self.mime_format),)
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
@@ -235,10 +220,10 @@ class MimeBox(FullBox):
         max_len = self.get_max_offset() - file.tell()
         self.content_type = read_utf8string(file, max_len)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"content_type: {self.content_type}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("content_type", self.content_type),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
@@ -253,10 +238,10 @@ class URIBox(FullBox):
         max_len = self.get_max_offset() - file.tell()
         self.the_uri = read_utf8string(file, max_len)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"the_uri: {self.the_uri}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("the_uri", self.the_uri),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
@@ -271,10 +256,10 @@ class URIInitBox(FullBox):
         max_len = self.get_max_offset() - file.tell()
         self.uri_initialization_data = self.read_as_bytes(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"uri_initialization_data: {self.uri_initialization_data}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("uri_initialization_data", self.uri_initialization_data),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
@@ -288,11 +273,11 @@ class URIMetaSampleEntry(MetaDataSampleEntry):
         self.init = URIInitBox(max_offset=self.get_max_offset())
         self.init.read(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"uri_box: {self.uri_box}",)
-        repl += (f"init: {self.init}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("uri_box", self.uri_box),)
+        tuples += (("init", self.init),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.4.4.2
@@ -320,13 +305,13 @@ class SimpleTextSampleEntry(PlainTextSampleEntry):
         if file.tell() < self.get_max_offset():
             self.text_config_box = self.read_box(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"content_encoding: {self.content_encoding}",)
-        repl += (f"mime_format: {self.mime_format}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("content_encoding", self.content_encoding),)
+        tuples += (("mime_format", self.mime_format),)
         if self.text_config_box is not None:
-            repl += (f"text_config_box: {self.text_config_box}",)
-        return super().repr(repl)
+            tuples += (("text_config_box", self.text_config_box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.6.3.2
@@ -350,12 +335,12 @@ class XMLSubtitleSampleEntry(SubtitleSampleEntry):
         max_len = self.get_max_offset() - file.tell()
         self.auxiliary_mime_types = read_utf8string(file, max_len)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"namespace: {self.namespace}",)
-        repl += (f"schema_location: {self.schema_location}",)
-        repl += (f"auxiliary_mime_types: {self.auxiliary_mime_types}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("namespace", self.namespace),)
+        tuples += (("schema_location", self.schema_location),)
+        tuples += (("auxiliary_mime_types", self.auxiliary_mime_types),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.6.3.2
@@ -371,10 +356,10 @@ class TextSubtitleSampleEntry(SubtitleSampleEntry):
         if file.tell() < self.get_max_offset():
             self.text_config_box = self.read_box(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"content_encoding: {self.content_encoding}",)
-        repl += (f"mime_format: {self.mime_format}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("content_encoding", self.content_encoding),)
+        tuples += (("mime_format", self.mime_format),)
         if self.text_config_box is not None:
-            repl += (f"text_config_box: {self.text_config_box}",)
-        return super().repr(repl)
+            tuples += (("text_config_box", self.text_config_box.contents()),)
+        return tuples

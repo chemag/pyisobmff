@@ -20,8 +20,8 @@ class ItemProtectionBox(FullBox):
             if box.box_type == "sinf":
                 self.protection_informations.append(box)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.protection_informations:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.protection_informations):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples

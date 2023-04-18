@@ -30,17 +30,19 @@ class SegmentIndexBox(FullBox):
         max_offset = self.get_max_offset()
         file.seek(max_offset)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"reference_ID: {self.reference_ID}",)
-        repl += (f"timescale: {self.timescale}",)
-        repl += (f"earliest_presentation_time: {self.earliest_presentation_time}",)
-        repl += (f"first_offset: {self.first_offset}",)
-        repl += (f"reserved: {self.reserved}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("reference_ID", self.reference_ID),)
+        tuples += (("timescale", self.timescale),)
+        tuples += (("earliest_presentation_time", self.earliest_presentation_time),)
+        tuples += (("first_offset", self.first_offset),)
+        tuples += (("reserved", self.reserved),)
         for idx, val in enumerate(self.references):
-            repl += (f'reference[{idx}].reference_type: {val["reference_type"]}',)
-            repl += (f'reference[{idx}].reference_size: {val["reference_size"]}',)
-            repl += (f'reference[{idx}].starts_with_SAP: {val["starts_with_SAP"]}',)
-            repl += (f'reference[{idx}].SAP_type: {val["SAP_type"]}',)
-            repl += (f'reference[{idx}].SAP_delta_time: {val["SAP_delta_time"]}',)
-        return super().repr(repl)
+            tuples += ((f'reference[{idx}]["reference_type"]', val["reference_type"]),)
+            tuples += ((f'reference[{idx}]["reference_size"]', val["reference_size"]),)
+            tuples += (
+                (f'reference[{idx}]["starts_with_SAP"]', val["starts_with_SAP"]),
+            )
+            tuples += ((f'reference[{idx}]["SAP_type"]', val["SAP_type"]),)
+            tuples += ((f'reference[{idx}]["SAP_delta_time"]', val["SAP_delta_time"]),)
+        return tuples

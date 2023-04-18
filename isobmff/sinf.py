@@ -22,10 +22,10 @@ class OriginalFormatBox(Box):
     def read(self, file):
         self.data_format = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"data_format: {self.data_format}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("data_format", self.data_format),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.12.6
@@ -41,12 +41,12 @@ class SchemeTypeBox(FullBox):
             max_len = self.get_max_offset() - file.tell()
             self.scheme_uri = read_utf8string(file, max_len)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"scheme_type: {self.scheme_type}",)
-        repl += (f"scheme_version: {self.scheme_version}",)
-        repl += (f'scheme_uri: "{self.scheme_uri}"',)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("scheme_type", self.scheme_type),)
+        tuples += (("scheme_version", self.scheme_version),)
+        tuples += (("scheme_uri", self.scheme_uri),)
+        return tuples
 
 
 class SchemeInformationBox(Box):

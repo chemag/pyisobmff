@@ -28,14 +28,6 @@ class FileTypeBox(Box):
             tuples += (("compatible_brand", compatible_brand),)
         return tuples
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"major_brand: {self.major_brand}",)
-        repl += (f"minor_version: {self.minor_version}",)
-        for brand in self.compatible_brands:
-            repl += (f"compatible_brand: {brand}",)
-        return super().repr(repl)
-
 
 # ISO/IEC 23008-12:2022, Section 8.16.2
 class SegmentTypeBox(FileTypeBox):

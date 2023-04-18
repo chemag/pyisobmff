@@ -15,12 +15,12 @@ class MovieFragmentBox(Box):
         # must have 1+ TrackFragmentBoxes
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         if self.debug > 2:
-            for box in self.box_list:
-                repl += (repr(box),)
-        return super().repr(repl)
+            for idx, box in enumerate(self.box_list):
+                tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.8.5
@@ -30,7 +30,7 @@ class MovieFragmentHeaderBox(FullBox):
     def read(self, file):
         self.sequence_number = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"sequence_number: {self.sequence_number}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("sequence_number", self.sequence_number),)
+        return tuples

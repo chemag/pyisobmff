@@ -9,26 +9,16 @@ class MediaFile(object):
         self.debug = debug
 
     def __repr__(self):
-        rep = ""
+        out = ""
         for box in self.box_list:
-            rep += f"{repr(box)}\n"
-        return rep
+            out += str(box)
+        return out
 
     def contents(self):
         tuples = ()
         for box in self.box_list:
             tuples += (("box", box.contents()),)
         return tuples
-
-    @classmethod
-    def print(cls, tuples, indent):
-        tab_size = 2
-        for key, val in tuples:
-            if key == "box":
-                cls.print(val, indent + 1)
-            else:
-                tab = " " * tab_size * (indent if key != "path" else (indent - 1))
-                print(f"{tab}{key}: {val}")
 
     def read(self, file_name):
         with open(file_name, "rb") as file:

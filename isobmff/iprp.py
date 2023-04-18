@@ -29,12 +29,12 @@ class ItemPropertiesBox(Box):
         # must be ItemPropertyAssociationBox
         self.association = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (repr(self.property_container),)
-        for box in self.association:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("property_container", self.property_container.contents()),)
+        for idx, box in enumerate(self.association):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.14.2
@@ -49,11 +49,11 @@ class ItemPropertyContainer(Box):
         # or FreeSpaceBox
         self.properties = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.properties:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.properties):
+            tuples += ((f"property[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 23008-12:2022, Section 6.5.3.2
@@ -64,11 +64,11 @@ class ImageSpatialExtents(FullBox):
         self.width = read_uint(file, 4)
         self.height = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"width: {self.width}",)
-        repl += (f"height: {self.height}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("width", self.width),)
+        tuples += (("height", self.height),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.1.4.2
@@ -79,11 +79,11 @@ class PixelAspectRatio(Box):
         self.hSpacing = read_uint(file, 4)
         self.vSpacing = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"hSpacing: {self.hSpacing}",)
-        repl += (f"vSpacing: {self.vSpacing}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("hSpacing", self.hSpacing),)
+        tuples += (("vSpacing", self.vSpacing),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 12.1.5
@@ -110,24 +110,24 @@ class ColorInformation(Box):
         elif self.colour_type == "prof":
             self.ICC_profile = self.read_as_bytes(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"colour_type: {self.colour_type}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("colour_type", self.colour_type),)
         if self.colour_type == "nclx":
-            repl += (f"colour_primaries: {self.colour_primaries}",)
-            repl += (f"transfer_characteristics: {self.transfer_characteristics}",)
-            repl += (f"matrix_coefficients: {self.matrix_coefficients}",)
-            repl += (f"full_range_flag: {self.full_range_flag}",)
-            repl += (f"reserved: {self.reserved}",)
+            tuples += (("colour_primaries", self.colour_primaries),)
+            tuples += (("transfer_characteristics", self.transfer_characteristics),)
+            tuples += (("matrix_coefficients", self.matrix_coefficients),)
+            tuples += (("full_range_flag", self.full_range_flag),)
+            tuples += (("reserved", self.reserved),)
         elif self.colour_type == "nclc":
-            repl += (f"colour_primaries: {self.colour_primaries}",)
-            repl += (f"transfer_characteristics: {self.transfer_characteristics}",)
-            repl += (f"matrix_coefficients: {self.matrix_coefficients}",)
+            tuples += (("colour_primaries", self.colour_primaries),)
+            tuples += (("transfer_characteristics", self.transfer_characteristics),)
+            tuples += (("matrix_coefficients", self.matrix_coefficients),)
         elif self.colour_type == "rICC":
-            repl += (f'ICC_profile: "{self.ICC_profile}"',)
+            tuples += (("ICC_profile", f"{self.ICC_profile}"),)
         elif self.colour_type == "prof":
-            repl += (f'ICC_profile: "{self.ICC_profile}"',)
-        return super().repr(repl)
+            tuples += (("ICC_profile", f"{self.ICC_profile}"),)
+        return tuples
 
 
 # ISO/IEC 23008-12:2022, Section 6.5.6
@@ -142,13 +142,13 @@ class PixelInformationProperty(ItemFullProperty):
             channel["bits_per_channel"] = read_uint(file, 1)
             self.channels.append(channel)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         for idx, channel in enumerate(self.channels):
-            repl += (
-                f'channel[{idx}]["bits_per_channel"]: {channel["bits_per_channel"]}',
+            tuples += (
+                (f'channel[{idx}]["bits_per_channel"]', channel["bits_per_channel"]),
             )
-        return super().repr(repl)
+        return tuples
 
 
 # ISO/IEC 23008-12:2022, Section 6.5.7
@@ -159,11 +159,11 @@ class RelativeInformation(ItemFullProperty):
         self.horizontal_offset = read_uint(file, 4)
         self.vertical_offset = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"horizontal_offset: {self.horizontal_offset}",)
-        repl += (f"vertical_offset: {self.vertical_offset}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("horizontal_offset", self.horizontal_offset),)
+        tuples += (("vertical_offset", self.vertical_offset),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.14.2
@@ -201,18 +201,27 @@ class ItemPropertyAssociationBox(FullBox):
             entry["associations"] = associations
         self.entries.append(entry)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         for idx, entry in enumerate(self.entries):
-            repl += (f'entry[{idx}]["item_id"]: {entry["item_id"]}',)
+            tuples += ((f'entry[{idx}]["item_id"]', entry["item_id"]),)
             for jdx, association in enumerate(entry["associations"]):
-                repl += (
-                    f'entry[{idx}]["associations"][{jdx}]["item"]: {association["item"]}',
+                tuples += (
+                    (
+                        f'entry[{idx}]["associations"][{jdx}]["item"]',
+                        association["item"],
+                    ),
                 )
-                repl += (
-                    f'entry[{idx}]["associations"][{jdx}]["essential"]: {association["essential"]}',
+                tuples += (
+                    (
+                        f'entry[{idx}]["associations"][{jdx}]["essential"]',
+                        association["essential"],
+                    ),
                 )
-                repl += (
-                    f'entry[{idx}]["associations"][{jdx}]["property_index"]: {association["property_index"]}',
+                tuples += (
+                    (
+                        f'entry[{idx}]["associations"][{jdx}]["property_index"]',
+                        association["property_index"],
+                    ),
                 )
-        return super().repr(repl)
+        return tuples

@@ -17,11 +17,11 @@ class DataInformationBox(Box):
         while file.tell() < self.get_max_offset():
             self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
@@ -37,11 +37,11 @@ class DataReferenceBox(FullBox):
             # only DataEntryBaseBox boxes here
             self.data_entry = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.data_entry:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.data_entry):
+            tuples += ((f"data_entry[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
@@ -58,10 +58,10 @@ class DataEntryUrlBox(DataEntryBaseBox):
         max_len = self.get_max_offset() - file.tell()
         self.location = read_utf8string(file, max_len)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f'location: "{self.location}"',)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("location", f'"{self.location}"'),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
@@ -75,11 +75,11 @@ class DataEntryUrnBox(DataEntryBaseBox):
         max_len = self.get_max_offset() - file.tell()
         self.location = read_utf8string(file, max_len)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f'name: "{self.name}"',)
-        repl += (f'location: "{self.location}"',)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("name", self.name),)
+        tuples += (("location", self.location),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2
@@ -90,10 +90,10 @@ class DataEntryImdaBox(DataEntryBaseBox):
     def read(self, file):
         self.imda_ref_identifier = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f'imda_ref_identifier: "{self.imda_ref_identifier}"',)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("imda_ref_identifier", self.imda_ref_identifier),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.2.2

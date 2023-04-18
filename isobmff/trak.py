@@ -17,11 +17,11 @@ class TrackBox(Box):
     def read(self, file):
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.3.2
@@ -50,21 +50,21 @@ class TrackHeaderBox(FullBox):
         self.width = read_uint(file, 4)
         self.height = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"creation_time: {self.creation_time}",)
-        repl += (f"modification_time: {self.modification_time}",)
-        repl += (f"track_id: {self.track_id}",)
-        repl += (f"reserved1: {self.reserved1}",)
-        repl += (f"duration: {self.duration}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("creation_time", self.creation_time),)
+        tuples += (("modification_time", self.modification_time),)
+        tuples += (("track_id", self.track_id),)
+        tuples += (("reserved1", self.reserved1),)
+        tuples += (("duration", self.duration),)
         for idx, val in enumerate(self.reserved2):
-            repl += (f"reserved2[{idx}]: {val}",)
-        repl += (f"layer: {self.layer}",)
-        repl += (f"alternate_group: {self.alternate_group}",)
-        repl += (f"volume: 0x{self.volume:04x}",)
-        repl += (f"reserved3: {self.reserved3}",)
+            tuples += ((f"reserved2[{idx}]", val),)
+        tuples += (("layer", self.layer),)
+        tuples += (("alternate_group", self.alternate_group),)
+        tuples += (("volume", f"0x{self.volume:04x}"),)
+        tuples += (("reserved3", self.reserved3),)
         for idx, val in enumerate(self.matrix):
-            repl += (f"matrix[{idx}]: 0x{val:08x}",)
-        repl += (f"width: {int_to_fixed_point_16_16(self.width)}",)
-        repl += (f"height: {int_to_fixed_point_16_16(self.height)}",)
-        return super().repr(repl)
+            tuples += ((f"matrix[{idx}]", f"0x{val:08x}"),)
+        tuples += (("width", f"{int_to_fixed_point_16_16(self.width)}"),)
+        tuples += (("height", f"{int_to_fixed_point_16_16(self.height)}"),)
+        return tuples

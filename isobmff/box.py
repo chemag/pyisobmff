@@ -5,6 +5,21 @@ import struct
 from enum import Enum
 
 
+TAB_SIZE = 2
+
+
+def tuples_to_string(tuples, indent):
+    out = ""
+    for key, val in tuples:
+        # TODO(chema): check no boxes as val
+        if type(val) is tuple:
+            out += tuples_to_string(val, indent + 1)
+        else:
+            tab = " " * TAB_SIZE * (indent if key == "path" else (indent + 1))
+            out += f"{tab}{key}: {val}\n"
+    return out
+
+
 # ISO/IEC 14496-12:2022, Section 4.2.2
 class Box(object):
     box_type = None
@@ -27,20 +42,9 @@ class Box(object):
             tuples += (("largesize", self.largesize),)
         return tuples
 
-    def repr(self, repl=None):
-        new_repl = ()
-        new_repl += (f"offset: 0x{self.offset:08x}",)
-        new_repl += (f"box_type: {self.box_type}",)
-        new_repl += (f"path: {self.path}",)
-        new_repl += (f"size: {self.size}",)
-        if self.largesize is not None:
-            new_repl += (f"largesize: {self.largesize}",)
-        if repl is not None:
-            new_repl += repl
-        return f"[{self.box_type}]\n" + indent("\n".join(new_repl))
-
     def __repr__(self):
-        return self.repr()
+        tuples = self.contents()
+        return tuples_to_string(tuples, indent=0)
 
     def get_parent_name(self):
         name_list = self.path.split("/")
@@ -111,17 +115,6 @@ class FullBox(Box):
         tuples += (("flags", self.flags),)
         return tuples
 
-    def repr(self, repl=None):
-        new_repl = ()
-        new_repl += (f"version: {self.version}",)
-        new_repl += (f"flags: {self.flags}",)
-        if repl is not None:
-            new_repl += repl
-        return super().repr(new_repl)
-
-    def __repr__(self):
-        return self.repr()
-
 
 # generic container Box
 class ContainerBox(Box):
@@ -137,23 +130,20 @@ class ContainerBox(Box):
             tuples += (("box", box.contents()),)
         return tuples
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
-
 
 class UnimplementedBox(Box):
     def __init__(self, offset, path, box_type, size, largesize, debug):
         self.box_type = box_type
         super().__init__(offset, path, size, largesize, debug)
 
-    def __repr__(self):
-        return super().__repr__()
-
     def read(self, file):
-        self.read_as_bytes(file)
+        self.bytes = self.read_as_bytes(file)
+
+    def contents(self):
+        tuples = super().contents()
+        if self.debug > 2:
+            tuples += (("bytes", f"{self.bytes}"),)
+        return tuples
 
 
 class Quantity(Enum):

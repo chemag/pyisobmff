@@ -19,19 +19,19 @@ class AC3SampleEntry(Box):
         self.reserved4 = read_uint(file, 2)
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"reserved1: {self.reserved1}",)
-        repl += (f"data_reference_index: {self.data_reference_index}",)
-        repl += (f"reserved2: {self.reserved2}",)
-        repl += (f"channel_count: {self.channel_count}",)
-        repl += (f"sample_size: {self.sample_size}",)
-        repl += (f"reserved3: {self.reserved3}",)
-        repl += (f"sampling_rate: {self.sampling_rate}",)
-        repl += (f"reserved4: {self.reserved4}",)
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("reserved1", self.reserved1),)
+        tuples += (("data_reference_index", self.data_reference_index),)
+        tuples += (("reserved2", self.reserved2),)
+        tuples += (("channel_count", self.channel_count),)
+        tuples += (("sample_size", self.sample_size),)
+        tuples += (("reserved3", self.reserved3),)
+        tuples += (("sampling_rate", self.sampling_rate),)
+        tuples += (("reserved4", self.reserved4),)
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ETSI TS 102 366 v1.4.1, Section F.4
@@ -48,16 +48,16 @@ class AC3SpecificBox(Box):
         self.bit_rate_code = (total_bytes >> 5) & 0x1F
         self.reserved = total_bytes & 0x1F
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"fscod: {self.fscod}",)
-        repl += (f"bsid: {self.bsid}",)
-        repl += (f"bsmod: {self.bsmod}",)
-        repl += (f"acmod: {self.acmod}",)
-        repl += (f"lfeon: {self.lfeon}",)
-        repl += (f"bit_rate_code: {self.bit_rate_code}",)
-        repl += (f"reserved: {self.reserved}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("fscod", self.fscod),)
+        tuples += (("bsid", self.bsid),)
+        tuples += (("bsmod", self.bsmod),)
+        tuples += (("acmod", self.acmod),)
+        tuples += (("lfeon", self.lfeon),)
+        tuples += (("bit_rate_code", self.bit_rate_code),)
+        tuples += (("reserved", self.reserved),)
+        return tuples
 
 
 # ETSI TS 102 366 v1.4.1, Section F.5
@@ -76,19 +76,19 @@ class EC3SampleEntry(Box):
         self.reserved4 = read_uint(file, 2)
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"reserved1: {self.reserved1}",)
-        repl += (f"data_reference_index: {self.data_reference_index}",)
-        repl += (f"reserved2: {self.reserved2}",)
-        repl += (f"channel_count: {self.channel_count}",)
-        repl += (f"sample_size: {self.sample_size}",)
-        repl += (f"reserved3: {self.reserved3}",)
-        repl += (f"sampling_rate: {self.sampling_rate}",)
-        repl += (f"reserved4: {self.reserved4}",)
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("reserved1", self.reserved1),)
+        tuples += (("data_reference_index", self.data_reference_index),)
+        tuples += (("reserved2", self.reserved2),)
+        tuples += (("channel_count", self.channel_count),)
+        tuples += (("sample_size", self.sample_size),)
+        tuples += (("reserved3", self.reserved3),)
+        tuples += (("sampling_rate", self.sampling_rate),)
+        tuples += (("reserved4", self.reserved4),)
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ETSI TS 102 366 v1.4.1, Section F.6
@@ -125,22 +125,22 @@ class EC3SpecificBox(Box):
         max_len = self.get_max_offset() - file.tell()
         self.reserved4 = read_uint(file, max_len)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"data_rate: {self.data_rate}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("data_rate", self.data_rate),)
         for idx, val in enumerate(self.subs):
-            repl += (f'sub[{idx}]["fscod"]: {val["fscod"]}',)
-            repl += (f'sub[{idx}]["bsid"]: {val["bsid"]}',)
-            repl += (f'sub[{idx}]["reserved1"]: {val["reserved1"]}',)
-            repl += (f'sub[{idx}]["avsc"]: {val["avsc"]}',)
-            repl += (f'sub[{idx}]["bsmod"]: {val["bsmod"]}',)
-            repl += (f'sub[{idx}]["acmod"]: {val["acmod"]}',)
-            repl += (f'sub[{idx}]["lfeon"]: {val["lfeon"]}',)
-            repl += (f'sub[{idx}]["reserved2"]: {val["reserved2"]}',)
-            repl += (f'sub[{idx}]["num_dep_sub"]: {val["num_dep_sub"]}',)
+            tuples += ((f'sub[{idx}]["fscod"]', val["fscod"]),)
+            tuples += ((f'sub[{idx}]["bsid"]', val["bsid"]),)
+            tuples += ((f'sub[{idx}]["reserved1"]', val["reserved1"]),)
+            tuples += ((f'sub[{idx}]["avsc"]', val["avsc"]),)
+            tuples += ((f'sub[{idx}]["bsmod"]', val["bsmod"]),)
+            tuples += ((f'sub[{idx}]["acmod"]', val["acmod"]),)
+            tuples += ((f'sub[{idx}]["lfeon"]', val["lfeon"]),)
+            tuples += ((f'sub[{idx}]["reserved2"]', val["reserved2"]),)
+            tuples += ((f'sub[{idx}]["num_dep_sub"]', val["num_dep_sub"]),)
             if "reserved3" in val:
-                repl += (f'sub[{idx}]["reserved3"]: {val["reserved3"]}',)
+                tuples += ((f'sub[{idx}]["reserved3"]', val["reserved3"]),)
             else:
-                repl += (f'sub[{idx}]["chan_loc"]: {val["chan_loc"]}',)
-        repl += (f"reserved4: {self.reserved4}",)
-        return super().repr(repl)
+                tuples += ((f'sub[{idx}]["chan_loc"]', val["chan_loc"]),)
+        tuples += (("reserved4", self.reserved4),)
+        return tuples

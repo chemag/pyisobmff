@@ -13,10 +13,10 @@ class AVCSampleEntry(VisualSampleEntry):
         super().read(file)
         self.config = self.read_box(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"config: {self.config}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("config", self.config.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-15:2022, Section 5.4.2.1.2
@@ -32,10 +32,10 @@ class AVC2SampleEntry(VisualSampleEntry):
         super().read(file)
         self.avcconfig = self.read_box(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"avcconfig: {self.avcconfig}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("avcconfig", self.avcconfig.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-15:2022, Section 5.4.2.1.2
@@ -53,10 +53,10 @@ class AVCConfigurationBox(Box):
         )
         self.avc_config.read(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"avc_config: {self.avc_config}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("avc_config", self.avc_config.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-15:2022, Section 5.3.2.1.2
@@ -110,28 +110,28 @@ class AVCDecoderConfigurationRecord(object):
                 sequenceParameterSetExtLength = read_uint(file, 2)
                 self.sps_ext.append(read_bytes(file, sequenceParameterSetExtLength))
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = ()
         if self.reserved1 is None:
-            return "\n".join(repl)
-        repl += (f"configurationVersion: {self.configurationVersion}",)
-        repl += (f"AVCProfileIndication: {self.AVCProfileIndication}",)
-        repl += (f"profile_compatibility: {self.profile_compatibility}",)
-        repl += (f"AVCLevelIndication: {self.AVCLevelIndication}",)
-        repl += (f"reserved1: {bin(self.reserved1)}",)
-        repl += (f"lengthSizeMinusOne: {self.lengthSizeMinusOne}",)
-        repl += (f"reserved2: {bin(self.reserved2)}",)
+            return tuples
+        tuples += (("configurationVersion", self.configurationVersion),)
+        tuples += (("AVCProfileIndication", self.AVCProfileIndication),)
+        tuples += (("profile_compatibility", self.profile_compatibility),)
+        tuples += (("AVCLevelIndication", self.AVCLevelIndication),)
+        tuples += (("reserved1", bin(self.reserved1)),)
+        tuples += (("lengthSizeMinusOne", self.lengthSizeMinusOne),)
+        tuples += (("reserved2", bin(self.reserved2)),)
         for idx, val in enumerate(self.sps):
-            repl += (f'sps[{idx}]: "{val}"',)
+            tuples += ((f"sps[{idx}]", val),)
         for idx, val in enumerate(self.pps):
-            repl += (f'pps[{idx}]: "{val}"',)
+            tuples += ((f"pps[{idx}]", val),)
         if self.reserved3 is not None and self.AVCProfileIndication not in [66, 77, 88]:
-            repl += (f"reserved3: {bin(self.reserved3)}",)
-            repl += (f"chroma_format: {self.chroma_format}",)
-            repl += (f"reserved4: {bin(self.reserved4)}",)
-            repl += (f"bit_depth_luma_minus8: {self.bit_depth_luma_minus8}",)
-            repl += (f"reserved5: {bin(self.reserved5)}",)
-            repl += (f"bit_depth_chroma_minus8: {self.bit_depth_chroma_minus8}",)
+            tuples += (("reserved3", bin(self.reserved3)),)
+            tuples += (("chroma_format", self.chroma_format),)
+            tuples += (("reserved4", bin(self.reserved4)),)
+            tuples += (("bit_depth_luma_minus8", self.bit_depth_luma_minus8),)
+            tuples += (("reserved5", bin(self.reserved5)),)
+            tuples += (("bit_depth_chroma_minus8", self.bit_depth_chroma_minus8),)
             for idx, val in enumerate(self.sps_ext):
-                repl += (f'sps_ext[{idx}]: "{val}"',)
-        return "\n".join(repl)
+                tuples += ((f"sps_ext[{idx}]", val),)
+        return tuples

@@ -13,11 +13,11 @@ class ExtendedTypeBox(Box):
             # TODO(chema): only tyco allowed here
             self.compatible_combinations = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.compatible_combinations:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.compatible_combinations):
+            tuples += ((f"compatible_combination[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 23008-12:2022, Section 4.4
@@ -30,8 +30,8 @@ class TypeCombinationBox(Box):
             box_type = read_fourcc(file)
             self.compatible_brands.append(box_type)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         for idx, val in enumerate(self.compatible_brands):
-            repl += (f"compatible_brands[{idx}]: {val}",)
-        return super().repr(repl)
+            tuples += ((f"compatible_brands[{idx}]", val),)
+        return tuples

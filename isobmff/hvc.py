@@ -15,10 +15,10 @@ class HEVCSampleEntry(VisualSampleEntry):
         super().read(file)
         self.config = self.read_box(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"config: {self.config}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("config", self.config.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-15:2022, Section 8.4.1.1.2
@@ -40,10 +40,10 @@ class HEVCConfigurationBox(Box):
         self.hevc_config = HEVCDecoderConfigurationRecord()
         self.hevc_config.read(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"hevc_config: {self.hevc_config}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("hevc_config", self.hevc_config.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-15:2022, Section 8.3.2.1.2
@@ -110,27 +110,33 @@ class HEVCDecoderConfigurationRecord(object):
             item["nal_units"].append(nal_unit)
         return item
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"configuration_version: {self.configuration_version}",)
-        repl += (f"general_profile_space: {self.general_profile_space}",)
-        repl += (f"general_tier_flag: {bin(self.general_tier_flag)}",)
-        repl += (f"general_profile_idc: {self.general_profile_idc}",)
-        repl += (
-            f"general_profile_compat_flags: {bin(self.general_profile_compat_flags)}",
+    def contents(self):
+        tuples = ()
+        tuples += (("configuration_version", self.configuration_version),)
+        tuples += (("general_profile_space", self.general_profile_space),)
+        tuples += (("general_tier_flag", bin(self.general_tier_flag)),)
+        tuples += (("general_profile_idc", self.general_profile_idc),)
+        tuples += (
+            (
+                "general_profile_compat_flags",
+                bin(self.general_profile_compat_flags),
+            ),
         )
-        repl += (
-            f"general_const_indicator_flags: {bin(self.general_const_indicator_flags)}",
+        tuples += (
+            (
+                "general_const_indicator_flags",
+                bin(self.general_const_indicator_flags),
+            ),
         )
-        repl += (f"general_level_idc: {self.general_level_idc}",)
-        repl += (f"min_spatial_segmentation_idc: {self.min_spatial_segmentation_idc}",)
-        repl += (f"parallelism_type: {self.parallelism_type}",)
-        repl += (f"chroma_format: {self.chroma_format}",)
-        repl += (f"bit_depth_luma_minus_8: {self.bit_depth_luma_minus_8}",)
-        repl += (f"bit_depth_chroma_minus_8: {self.bit_depth_chroma_minus_8}",)
-        repl += (f"avg_frame_rate: {self.avg_frame_rate}",)
-        repl += (f"constant_frame_rate: {self.constant_frame_rate}",)
-        repl += (f"num_temporal_layers: {self.num_temporal_layers}",)
-        repl += (f"temporal_id_nested: {self.temporal_id_nested}",)
-        repl += (f"length_size_minus_1: {self.length_size_minus_1}",)
-        return "\n".join(repl)
+        tuples += (("general_level_idc", self.general_level_idc),)
+        tuples += (("min_spatial_segmentation_idc", self.min_spatial_segmentation_idc),)
+        tuples += (("parallelism_type", self.parallelism_type),)
+        tuples += (("chroma_format", self.chroma_format),)
+        tuples += (("bit_depth_luma_minus_8", self.bit_depth_luma_minus_8),)
+        tuples += (("bit_depth_chroma_minus_8", self.bit_depth_chroma_minus_8),)
+        tuples += (("avg_frame_rate", self.avg_frame_rate),)
+        tuples += (("constant_frame_rate", self.constant_frame_rate),)
+        tuples += (("num_temporal_layers", self.num_temporal_layers),)
+        tuples += (("temporal_id_nested", self.temporal_id_nested),)
+        tuples += (("length_size_minus_1", self.length_size_minus_1),)
+        return tuples

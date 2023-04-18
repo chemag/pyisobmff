@@ -22,19 +22,19 @@ class AC4SampleEntry(Box):
         self.reserved4 = read_uint(file, 2)
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"reserved1: {self.reserved1}",)
-        repl += (f"data_reference_index: {self.data_reference_index}",)
-        repl += (f"reserved2: {self.reserved2}",)
-        repl += (f"channel_count: {self.channel_count}",)
-        repl += (f"sample_size: {self.sample_size}",)
-        repl += (f"reserved3: {self.reserved3}",)
-        repl += (f"sampling_frequency: {self.sampling_frequency}",)
-        repl += (f"reserved4: {self.reserved4}",)
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("reserved1", self.reserved1),)
+        tuples += (("data_reference_index", self.data_reference_index),)
+        tuples += (("reserved2", self.reserved2),)
+        tuples += (("channel_count", self.channel_count),)
+        tuples += (("sample_size", self.sample_size),)
+        tuples += (("reserved3", self.reserved3),)
+        tuples += (("sampling_frequency", self.sampling_frequency),)
+        tuples += (("reserved4", self.reserved4),)
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ETSI TS 102 366 v1.4.1, Section E.6.1
@@ -58,15 +58,15 @@ class AC4DsiV1(object):
         offset = file.tell()
         self.remaining = read_bytes(file, self.max_offset - offset)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"ac4_dsi_version: {self.ac4_dsi_version}",)
-        repl += (f"bitstream_version: {self.bitstream_version}",)
-        repl += (f"fs_index: {self.fs_index}",)
-        repl += (f"frame_rate_index: {self.frame_rate_index}",)
-        repl += (f"n_presentations: {self.n_presentations}",)
-        repl += (f"remaining: {self.remaining}",)
-        return "\n".join(repl)
+    def contents(self):
+        tuples = ()
+        tuples += (("ac4_dsi_version", self.ac4_dsi_version),)
+        tuples += (("bitstream_version", self.bitstream_version),)
+        tuples += (("fs_index", self.fs_index),)
+        tuples += (("frame_rate_index", self.frame_rate_index),)
+        tuples += (("n_presentations", self.n_presentations),)
+        tuples += (("remaining", self.remaining),)
+        return tuples
 
 
 # ETSI TS 102 366 v1.4.1, Section E.5
@@ -77,10 +77,10 @@ class AC4SpecificBox(Box):
         self.ac4_dsi_v1 = AC4DsiV1(max_offset=self.get_max_offset())
         self.ac4_dsi_v1.read(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"ac4_dsi_v1: {self.ac4_dsi_v1}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("ac4_dsi_v1", self.ac4_dsi_v1.contents()),)
+        return tuples
 
 
 # ETSI TS 102 366 v1.4.1, Section E.5a
@@ -101,15 +101,18 @@ class AC4PresentationLabelBox(FullBox):
             presentation["presentation_label"] = read_utf8string(file, max_len)
             self.presentations.append(presentation)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"reserved: {self.reserved}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("reserved", self.reserved),)
         for idx, val in enumerate(self.presentations):
-            repl += (f'presentation[{idx}]["reserved"]: {val["reserved"]}',)
-            repl += (
-                f'presentation[{idx}]["presentation_id"]: {val["presentation_id"]}',
+            tuples += ((f'presentation[{idx}]["reserved"]', val["reserved"]),)
+            tuples += (
+                (f'presentation[{idx}]["presentation_id"]', val["presentation_id"]),
             )
-            repl += (
-                f'presentation[{idx}]["presentation_label"]: {val["presentation_label"]}',
+            tuples += (
+                (
+                    f'presentation[{idx}]["presentation_label"]',
+                    val["presentation_label"],
+                ),
             )
-        return super().repr(repl)
+        return tuples

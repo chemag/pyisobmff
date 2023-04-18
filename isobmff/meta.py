@@ -35,8 +35,8 @@ class MetaBox(FullBox):
                 break
             self.box_list.append(box)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples

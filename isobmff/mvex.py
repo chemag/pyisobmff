@@ -14,11 +14,11 @@ class MovieExtendsBox(Box):
         # other boxes
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.8.2
@@ -31,10 +31,10 @@ class MovieExtendsHeaderBox(FullBox):
         else:
             self.fragment_duration = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"fragment_duration: {self.fragment_duration}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("fragment_duration", self.fragment_duration),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.8.3
@@ -48,13 +48,13 @@ class TrackExtendsBox(FullBox):
         self.default_sample_size = read_uint(file, 4)
         self.default_sample_flags = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"track_ID: {self.track_ID}",)
-        repl += (
-            f"default_sample_description_index: {self.default_sample_description_index}",
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("track_ID", self.track_ID),)
+        tuples += (
+            ("default_sample_description_index", self.default_sample_description_index),
         )
-        repl += (f"default_sample_duration: {self.default_sample_duration}",)
-        repl += (f"default_sample_size: {self.default_sample_size}",)
-        repl += (f"default_sample_flags: {self.default_sample_flags}",)
-        return super().repr(repl)
+        tuples += (("default_sample_duration", self.default_sample_duration),)
+        tuples += (("default_sample_size", self.default_sample_size),)
+        tuples += (("default_sample_flags", self.default_sample_flags),)
+        return tuples

@@ -10,11 +10,11 @@ class FreeBox(Box):
     def read(self, file):
         self.bytes = self.read_as_bytes(file)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         if self.debug > 2:
-            repl += (f'bytes: "{self.bytes}"',)
-        return super().repr(repl)
+            tuples += (("bytes", f"{self.bytes}"),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.1.2

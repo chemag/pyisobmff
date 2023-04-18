@@ -18,13 +18,13 @@ class TimeToSampleBox(FullBox):
             entry["sample_delta"] = read_uint(file, 4)
             self.entries.append(entry)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         if self.debug > 2:
             for idx, val in enumerate(self.entries):
-                repl += (f'entry[{idx}]["sample_count"]: {val["sample_count"]}',)
-                repl += (f'entry[{idx}]["sample_delta"]: {val["sample_delta"]}',)
-        return super().repr(repl)
+                tuples += ((f'entry[{idx}]["sample_count"]', val["sample_count"]),)
+                tuples += ((f'entry[{idx}]["sample_delta"]', val["sample_delta"]),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.6.1.3
@@ -43,10 +43,10 @@ class CompositionOffsetBox(FullBox):
                 entry["sample_offset"] = read_sint(file, 4)
             self.entries.append(entry)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         if self.debug > 2:
             for idx, val in enumerate(self.entries):
-                repl += (f'entry[{idx}]["sample_count"]: {val["sample_count"]}',)
-                repl += (f'entry[{idx}]["sample_offset"]: {val["sample_offset"]}',)
-        return super().repr(repl)
+                tuples += ((f'entry[{idx}]["sample_count"]', val["sample_count"]),)
+                tuples += ((f'entry[{idx}]["sample_offset"]', val["sample_offset"]),)
+        return tuples

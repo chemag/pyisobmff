@@ -20,10 +20,10 @@ class MP4VisualSampleEntry(VisualSampleEntry):
         super().read(file)
         self.ES = self.read_box(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"ES: {self.ES}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("ES", self.ES.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-14:2020, Section 6.7.2
@@ -34,10 +34,10 @@ class MP4AudioSampleEntry(AudioSampleEntry):
         super().read(file)
         self.ES = self.read_box(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"ES: {self.ES}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("ES", self.ES.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-14:2020, Section 6.7.2
@@ -48,7 +48,7 @@ class MpegSampleEntry(SampleEntry):
         super().read(file)
         self.ES = self.read_box(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"ES: {self.ES}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("ES", self.ES.contents()),)
+        return tuples

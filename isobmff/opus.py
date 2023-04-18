@@ -27,23 +27,25 @@ class OpusSpecificBox(Box):
                 file, self.output_channel_count
             )
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"version: {self.version}",)
-        repl += (f"output_channel_count: {self.output_channel_count}",)
-        repl += (f"preskip: {ntohs(self.preskip)}",)
-        repl += (f"input_sample_rate: {ntohl(self.input_sample_rate)}",)
-        repl += (f"output_gain: {self.output_gain}",)
-        repl += (f"channel_mapping_family: {self.channel_mapping_family}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("version", self.version),)
+        tuples += (("output_channel_count", self.output_channel_count),)
+        tuples += (("preskip", ntohs(self.preskip)),)
+        tuples += (("input_sample_rate", f"{ntohl(self.input_sample_rate)}"),)
+        tuples += (("output_gain", self.output_gain),)
+        tuples += (("channel_mapping_family", self.channel_mapping_family),)
         for idx, val in enumerate(self.channel_mappings):
-            repl += (f'channel_mapping[{idx}]["stream_count"]: {val["stream_count"]}',)
-            repl += (
-                f'channel_mapping[{idx}]["coupled_count"]: {val["coupled_count"]}',
+            tuples += (
+                (f'channel_mapping[{idx}]["stream_count"]', val["stream_count"]),
             )
-            repl += (
-                f'channel_mapping[{idx}]["channel_mapping"]: {val["channel_mapping"]}',
+            tuples += (
+                (f'channel_mapping[{idx}]["coupled_count"]', val["coupled_count"]),
             )
-        return super().repr(repl)
+            tuples += (
+                (f'channel_mapping[{idx}]["channel_mapping"]', val["channel_mapping"]),
+            )
+        return tuples
 
 
 # https://opus-codec.org/docs/opus_in_isobmff.html, Section 4.3.2

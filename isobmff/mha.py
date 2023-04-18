@@ -17,16 +17,16 @@ class MHADecoderConfigurationRecord(object):
         self.mpegh3daConfigLength = read_uint(file, 2)
         self.mpegh3daConfig = read_uint(file, self.mpegh3daConfigLength)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"configurationVersion: {self.configurationVersion}",)
-        repl += (
-            f"mpegh3daProfileLevelIndication: {self.mpegh3daProfileLevelIndication}",
+    def contents(self):
+        tuples = ()
+        tuples += (("configurationVersion", self.configurationVersion),)
+        tuples += (
+            ("mpegh3daProfileLevelIndication", self.mpegh3daProfileLevelIndication),
         )
-        repl += (f"referenceChannelLayout: {self.referenceChannelLayout}",)
-        repl += (f"mpegh3daConfigLength: {self.mpegh3daConfigLength}",)
-        repl += (f"mpegh3daConfig: {self.mpegh3daConfig}",)
-        return "\n".join(repl)
+        tuples += (("referenceChannelLayout", self.referenceChannelLayout),)
+        tuples += (("mpegh3daConfigLength", self.mpegh3daConfigLength),)
+        tuples += (("mpegh3daConfig", self.mpegh3daConfig),)
+        return tuples
 
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
@@ -37,10 +37,10 @@ class MHAConfigurationBox(Box):
         self.MHAConfig = MHADecoderConfigurationRecord(max_offset=self.get_max_offset())
         self.MHAConfig.read(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"MHAConfig: {self.MHAConfig}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("MHAConfig", self.MHAConfig.contents()),)
+        return tuples
 
 
 ## ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
@@ -63,11 +63,11 @@ class MHASampleEntry(AudioSampleEntry):
         super().read(file)
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2

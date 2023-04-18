@@ -12,11 +12,11 @@ class EditBox(Box):
     def read(self, file):
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.6.6
@@ -38,15 +38,15 @@ class EditListBox(FullBox):
             entry["media_rate_fraction"] = read_uint(file, 2)
             self.entries.append(entry)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         for idx, val in enumerate(self.entries):
-            repl += (f'entries[{idx}]["edit_duration"]: {val["edit_duration"]}',)
-            repl += (f'entries[{idx}]["media_time"]: {val["media_time"]}',)
-            repl += (
-                f'entries[{idx}]["media_rate_integer"]: {val["media_rate_integer"]}',
+            tuples += ((f'entries[{idx}]["edit_duration"]', val["edit_duration"]),)
+            tuples += ((f'entries[{idx}]["media_time"]', val["media_time"]),)
+            tuples += (
+                (f'entries[{idx}]["media_rate_integer"]', val["media_rate_integer"]),
             )
-            repl += (
-                f'entries[{idx}]["media_rate_fraction"]: {val["media_rate_fraction"]}',
+            tuples += (
+                (f'entries[{idx}]["media_rate_fraction"]', val["media_rate_fraction"]),
             )
-        return super().repr(repl)
+        return tuples

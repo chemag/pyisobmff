@@ -14,11 +14,11 @@ class TrackFragmentBox(Box):
     def read(self, file):
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.8.7
@@ -58,30 +58,30 @@ class TrackFragmentHeaderBox(FullBox):
         ]:
             self.default_sample_flags = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"track_id: {self.track_id}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("track_id", self.track_id),)
         if (self.flags & self.FLAGS["base-data-offset-present"]) == self.FLAGS[
             "base-data-offset-present"
         ]:
-            repl += (f"base_data_offset: {self.base_data_offset}",)
+            tuples += (("base_data_offset", self.base_data_offset),)
         if (self.flags & self.FLAGS["sample-description-index-present"]) == self.FLAGS[
             "sample-description-index-present"
         ]:
-            repl += (f"sample_description_index: {self.sample_description_index}",)
+            tuples += (("sample_description_index", self.sample_description_index),)
         if (self.flags & self.FLAGS["default-sample-duration-present"]) == self.FLAGS[
             "default-sample-duration-present"
         ]:
-            repl += (f"default_sample_duration: {self.default_sample_duration}",)
+            tuples += (("default_sample_duration", self.default_sample_duration),)
         if (self.flags & self.FLAGS["default-sample-size-present"]) == self.FLAGS[
             "default-sample-size-present"
         ]:
-            repl += (f"default_sample_size: {self.default_sample_size}",)
+            tuples += (("default_sample_size", self.default_sample_size),)
         if (self.flags & self.FLAGS["default-sample-flags-present"]) == self.FLAGS[
             "default-sample-flags-present"
         ]:
-            repl += (f"default_sample_flags: {self.default_sample_flags}",)
-        return super().repr(repl)
+            tuples += (("default_sample_flags", self.default_sample_flags),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.8.8
@@ -133,39 +133,44 @@ class TrackRunBox(FullBox):
             max_offset = self.get_max_offset()
             file.seek(max_offset)
 
-    def __repr__(self):
-        repl = ()
+    def contents(self):
+        tuples = super().contents()
         if (self.flags & self.FLAGS["data-offset-present"]) == self.FLAGS[
             "data-offset-present"
         ]:
-            repl += (f"data_offset: {self.data_offset}",)
+            tuples += (("data_offset", self.data_offset),)
         if (self.flags & self.FLAGS["first-sample-flags-present"]) == self.FLAGS[
             "first-sample-flags-present"
         ]:
-            repl += (f"first_sample_flags: {self.first_sample_flags}",)
+            tuples += (("first_sample_flags", self.first_sample_flags),)
         if self.debug > 2:
             for idx, val in enumerate(self.samples):
                 if (self.flags & self.FLAGS["sample-duration-present"]) == self.FLAGS[
                     "sample-duration-present"
                 ]:
-                    repl += (
-                        f'samples[{idx}]["sample_duration"]: {val["sample_duration"]}',
+                    tuples += (
+                        (f'samples[{idx}]["sample_duration"]', val["sample_duration"]),
                     )
                 if (self.flags & self.FLAGS["sample-size-present"]) == self.FLAGS[
                     "sample-size-present"
                 ]:
-                    repl += (f'samples[{idx}]["sample_size"]: {val["sample_size"]}',)
+                    tuples += ((f'samples[{idx}]["sample_size"]', val["sample_size"]),)
                 if (self.flags & self.FLAGS["sample-flags-present"]) == self.FLAGS[
                     "sample-flags-present"
                 ]:
-                    repl += (f'samples[{idx}]["sample_flags"]: {val["sample_flags"]}',)
+                    tuples += (
+                        (f'samples[{idx}]["sample_flags"]', val["sample_flags"]),
+                    )
                 if (
                     self.flags & self.FLAGS["sample-composition-time-offsets-present"]
                 ) == self.FLAGS["sample-composition-time-offsets-present"]:
-                    repl += (
-                        f'samples[{idx}]["sample_composition_time_offset"]: {val["sample_composition_time_offset"]}',
+                    tuples += (
+                        (
+                            f'samples[{idx}]["sample_composition_time_offset"]',
+                            val["sample_composition_time_offset"],
+                        ),
                     )
-        return super().repr(repl)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.8.12
@@ -178,7 +183,7 @@ class TrackFragmentBaseMediaDecodeTimeBox(FullBox):
         else:
             self.baseMediaDecodeTime = read_uint(file, 4)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"baseMediaDecodeTime: {self.baseMediaDecodeTime}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("baseMediaDecodeTime", self.baseMediaDecodeTime),)
+        return tuples

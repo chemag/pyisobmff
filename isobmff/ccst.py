@@ -14,10 +14,10 @@ class ccst(FullBox):
         self.max_ref_per_pic = (word >> 26) & 0xF
         self.reserved = (word >> 0) & 0x03FFFFFF
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"all_ref_pics_intra: {self.all_ref_pics_intra}",)
-        repl += (f"intra_pred_used: {self.intra_pred_used}",)
-        repl += (f"max_ref_per_pic: {self.max_ref_per_pic}",)
-        repl += (f"reserved: {self.reserved}",)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("all_ref_pics_intra", self.all_ref_pics_intra),)
+        tuples += (("intra_pred_used", self.intra_pred_used),)
+        tuples += (("max_ref_per_pic", self.max_ref_per_pic),)
+        tuples += (("reserved", self.reserved),)
+        return tuples

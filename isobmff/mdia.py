@@ -15,11 +15,11 @@ class MediaBox(Box):
     def read(self, file):
         self.box_list = self.read_box_list(file)
 
-    def __repr__(self):
-        repl = ()
-        for box in self.box_list:
-            repl += (repr(box),)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.4.2.1
@@ -43,14 +43,14 @@ class MediaHeaderBox(FullBox):
         self.language.append(byte & 0b11111)
         self.pre_defined = read_uint(file, 2)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"creation_time: {self.creation_time}",)
-        repl += (f"modification_time: {self.modification_time}",)
-        repl += (f"timescale: {self.timescale}",)
-        repl += (f"duration: {self.duration}",)
-        repl += (f"pad: {self.pad}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("creation_time", self.creation_time),)
+        tuples += (("modification_time", self.modification_time),)
+        tuples += (("timescale", self.timescale),)
+        tuples += (("duration", self.duration),)
+        tuples += (("pad", self.pad),)
         for idx, val in enumerate(self.language):
-            repl += (f"language[{idx}]: {val}",)
-        repl += (f"pre_defined: {self.pre_defined}",)
-        return super().repr(repl)
+            tuples += ((f"language[{idx}]", val),)
+        tuples += (("pre_defined", self.pre_defined),)
+        return tuples

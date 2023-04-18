@@ -48,34 +48,46 @@ class ItemLocationBox(FullBox):
                 item["extents"].append(extent)
             self.items.append(item)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"offset_size: {self.offset_size}",)
-        repl += (f"length_size: {self.length_size}",)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("offset_size", self.offset_size),)
+        tuples += (("length_size", self.length_size),)
         if self.version in [1, 2]:
-            repl += (f"index_size: {self.index_size}",)
+            tuples += (("index_size", self.index_size),)
         else:
-            repl += (f"reserved: {self.reserved}",)
+            tuples += (("reserved", self.reserved),)
         for idx, item in enumerate(self.items):
-            repl += (f'item[{idx}]["item_id"]: {item["item_id"]}',)
+            tuples += ((f'item[{idx}]["item_id"]', item["item_id"]),)
             if self.version in [1, 2]:
-                repl += (f'item[{idx}]["reserved"]: {item["reserved"]}',)
-                repl += (
-                    f'item[{idx}]["construction_method"]: {item["construction_method"]}',
+                tuples += ((f'item[{idx}]["reserved"]', item["reserved"]),)
+                tuples += (
+                    (
+                        f'item[{idx}]["construction_method"]',
+                        item["construction_method"],
+                    ),
                 )
-            repl += (
-                f'item[{idx}]["data_reference_index"]: {item["data_reference_index"]}',
+            tuples += (
+                (f'item[{idx}]["data_reference_index"]', item["data_reference_index"]),
             )
-            repl += (f'item[{idx}]["base_offset"]: {item["base_offset"]}',)
+            tuples += ((f'item[{idx}]["base_offset"]', item["base_offset"]),)
             for jdx, extent in enumerate(item["extents"]):
                 if self.version in [1, 2] and self.index_size > 0:
-                    repl += (
-                        f'item[{idx}]["extent"][{jdx}]["item_reference_index"]: {extent["item_reference_index"]}',
+                    tuples += (
+                        (
+                            f'item[{idx}]["extent"][{jdx}]["item_reference_index"]',
+                            extent["item_reference_index"],
+                        ),
                     )
-                repl += (
-                    f'item[{idx}]["extent"][{jdx}]["extent_offset"]: 0x{extent["extent_offset"]:08x}',
+                tuples += (
+                    (
+                        f'item[{idx}]["extent"][{jdx}]["extent_offset"]',
+                        f'0x{extent["extent_offset"]:08x}',
+                    ),
                 )
-                repl += (
-                    f'item[{idx}]["extent"][{jdx}]["extent_length"]: {extent["extent_length"]}',
+                tuples += (
+                    (
+                        f'item[{idx}]["extent"][{jdx}]["extent_length"]',
+                        extent["extent_length"],
+                    ),
                 )
-        return super().repr(repl)
+        return tuples

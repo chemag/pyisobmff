@@ -23,9 +23,9 @@ class HandlerReferenceBox(FullBox):
         # ensure we read all the way to the end of the box
         self.bytes = self.read_as_bytes(file)
 
-    def __repr__(self):
-        repl = ()
-        repl += (f"handler_type: {self.handler_type}",)
-        repl += (f'name: "{self.name}"',)
-        # repl += (f'bytes: "{self.bytes}"',)
-        return super().repr(repl)
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("handler_type", self.handler_type),)
+        tuples += (("name", self.name),)
+        # tuples += (("bytes", f"{self.bytes}"),)
+        return tuples
