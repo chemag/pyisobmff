@@ -260,3 +260,21 @@ class MimeBox(FullBox):
         repl = ()
         repl += (f"content_type: {self.content_type}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 12.3.3.2
+class URIBox(FullBox):
+    box_type = b"uri "
+
+    def __init__(self, max_offset):
+        self.max_offset = max_offset
+
+    def read(self, file):
+        super().read(file)
+        max_len = self.get_max_offset() - file.tell()
+        self.the_uri = read_utf8string(file, max_len)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"the_uri: {self.the_uri}",)
+        return super().repr(repl)
