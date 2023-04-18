@@ -64,7 +64,7 @@ class Box(object):
     def read_as_bytes(self, file):
         offset = file.tell()
         max_offset = self.get_max_offset()
-        self.contents = file.read(max_offset - offset)
+        return file.read(max_offset - offset)
 
     # read the remaining bytes as boxes
     def read_box_list(self, file):

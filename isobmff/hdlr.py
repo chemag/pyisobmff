@@ -21,10 +21,11 @@ class HandlerReferenceBox(FullBox):
         max_len = self.get_max_offset() - file.tell()
         self.name = read_utf8string(file, max_len)
         # ensure we read all the way to the end of the box
-        self.read_as_bytes(file)
+        self.bytes = self.read_as_bytes(file)
 
     def __repr__(self):
         repl = ()
         repl += (f"handler_type: {self.handler_type}",)
         repl += (f'name: "{self.name}"',)
+        # repl += (f'bytes: "{self.bytes}"',)
         return super().repr(repl)

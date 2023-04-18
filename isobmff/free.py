@@ -8,12 +8,12 @@ class FreeBox(Box):
     is_mandatory = False
 
     def read(self, file):
-        self.read_as_bytes(file)
+        self.bytes = self.read_as_bytes(file)
 
     def __repr__(self):
         repl = ()
         if self.debug > 2:
-            repl += (f'contents: "{self.contents}"',)
+            repl += (f'bytes: "{self.bytes}"',)
         return super().repr(repl)
 
 
