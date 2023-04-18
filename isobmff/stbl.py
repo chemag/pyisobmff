@@ -80,7 +80,6 @@ class SampleDescriptionBox(FullBox):
 # ISO/IEC 14496-12:2022, Section 12.1.3.2
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class VisualSampleEntry(SampleEntry):
-    box_type = b"vide"
     box_list = []
     pre_defined2 = []
 
