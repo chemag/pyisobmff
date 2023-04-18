@@ -188,3 +188,18 @@ class XMLMetaDataSampleEntry(MetaDataSampleEntry):
         repl += (f"namespace: {self.namespace}",)
         repl += (f"schema_location: {self.schema_location}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 12.3.3.2
+class TextConfigBox(FullBox):
+    box_type = b"txtC"
+
+    def read(self, file):
+        super().read(file)
+        max_len = self.get_max_offset() - file.tell()
+        self.text_config = read_utf8string(file, max_len)
+
+    def __repl__(self):
+        repl = ()
+        repl += (f"text_config: {self.text_config}",)
+        return super().repr(repl)
