@@ -20,6 +20,14 @@ class FileTypeBox(Box):
             compat_brand = read_fourcc(file)
             self.compatible_brands.append(compat_brand)
 
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("major_brand", self.major_brand),)
+        tuples += (("minor_version", self.minor_version),)
+        for compatible_brand in self.compatible_brands:
+            tuples += (("compatible_brand", compatible_brand),)
+        return tuples
+
     def __repr__(self):
         repl = ()
         repl += (f"major_brand: {self.major_brand}",)

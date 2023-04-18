@@ -17,6 +17,16 @@ class Box(object):
         self.largesize = largesize
         self.debug = debug
 
+    def contents(self):
+        tuples = ()
+        tuples += (("path", self.path),)
+        tuples += (("offset", f"0x{self.offset:08x}"),)
+        tuples += (("box_type", self.box_type),)
+        tuples += (("size", self.size),)
+        if self.largesize is not None:
+            tuples += (("largesize", self.largesize),)
+        return tuples
+
     def repr(self, repl=None):
         new_repl = ()
         new_repl += (f"offset: 0x{self.offset:08x}",)
@@ -95,6 +105,12 @@ class FullBox(Box):
         self.version = version
         self.flags = flags
 
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("version", self.version),)
+        tuples += (("flags", self.flags),)
+        return tuples
+
     def repr(self, repl=None):
         new_repl = ()
         new_repl += (f"version: {self.version}",)
@@ -114,6 +130,12 @@ class ContainerBox(Box):
 
     def read(self, file):
         self.box_list = self.read_box_list(file)
+
+    def contents(self):
+        tuples = super().contents()
+        for box in self.box_list:
+            tuples += (("box", box.contents()),)
+        return tuples
 
     def __repr__(self):
         repl = ()
