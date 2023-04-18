@@ -45,7 +45,7 @@ class Box(object):
 
     @classmethod
     def get_path(cls, path, box_type, parent):
-        box_type_str = box_type.decode("ascii")
+        box_type_str = box_type.decode("iso8859-15")
         if parent is None:
             new_path = path + "/" + box_type_str
         elif box_type_str not in parent.subpath:
