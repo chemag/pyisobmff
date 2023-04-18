@@ -162,87 +162,29 @@ class AudioSampleEntry(SampleEntry):
         return self.repr()
 
 
-# ISO/IEC 14496-12:2022, Section 8.5.2.2
-class BitRateBox(Box):
-    box_type = b"btrt"
-
-    def read(self, file):
-        self.buffer_size_db = read_uint(file, 4)
-        self.max_bitrate = read_uint(file, 4)
-        self.avg_bitrate = read_uint(file, 4)
-
-    def __repr__(self):
-        repl = ()
-        repl += (f"buffer_size_db: {self.buffer_size_db}",)
-        repl += (f"max_bitrate: {self.max_bitrate}",)
-        repl += (f"avg_bitrate: {self.avg_bitrate}",)
-        return super().repr(repl)
-
-
-# ISO/IEC 14496-12:2022, Section 12.6
-class SubtitleSampleEntry(SampleEntry):
+# ISO/IEC 14496-12:2022, Section 12.3.3.2
+class MetaDataSampleEntry(SampleEntry):
     pass
-
-
-# ISO/IEC 14496-12:2022, Section 12.6
-class XMLSubtitleSampleEntry(SubtitleSampleEntry):
-    box_type = b"stpp"
-
-    def read(self, file):
-        super().read(file)
-        max_len = self.get_max_offset() - file.tell()
-        self.namespace = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
-        self.schema_location = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
-        self.auxiliary_mime_types = read_utf8string(file, max_len)
-
-    def repr(self, repl=None):
-        new_repl = ()
-        new_repl += (f"namespace: {self.namespace}",)
-        new_repl += (f"schema_location: {self.schema_location}",)
-        new_repl += (f"auxiliary_mime_types: {self.auxiliary_mime_types}",)
-        return super().repr(repl)
 
 
 # ISO/IEC 14496-12:2022, Section 12.3.3.2
-class TextConfigBox(SubtitleSampleEntry):
-    box_type = b"txtC"
-
-    def read(self, file):
-        super().read(file)
-        max_len = self.get_max_offset() - file.tell()
-        self.text_config = read_utf8string(file, max_len)
-
-    def repr(self, repl=None):
-        new_repl = ()
-        new_repl += (f"text_config: {self.text_config}",)
-        return super().repr(repl)
-
-
-# ISO/IEC 14496-12:2022, Section 12.5.3.2
-class PlainTextSampleEntry(SampleEntry):
-    pass
-
-
-# ISO/IEC 14496-12:2022, Section 12.5.3.2
-class SimpleTextSampleEntry(PlainTextSampleEntry):
-    box_type = b"stxt"
-    text_config_box = None
+class XMLMetaDataSampleEntry(MetaDataSampleEntry):
+    box_type = b"metx"
 
     def read(self, file):
         super().read(file)
         max_len = self.get_max_offset() - file.tell()
         self.content_encoding = read_utf8string(file, max_len)
+        # TODO(chema): utf8list here
         max_len = self.get_max_offset() - file.tell()
-        self.mime_format = read_utf8string(file, max_len)
-        if file.tell() < self.get_max_offset():
-            self.text_config_box = self.read_box(file)
+        self.namespace = read_utf8string(file, max_len)
+        # TODO(chema): utf8list here
+        max_len = self.get_max_offset() - file.tell()
+        self.schema_location = read_utf8string(file, max_len)
 
-    def repr(self, repl=None):
-        new_repl = ()
-        new_repl += (f"content_encoding: {self.content_encoding}",)
-        new_repl += (f"mime_format: {self.mime_format}",)
-        if self.text_config_box is not None:
-            repl += (f"text_config_box: {self.text_config_box}",)
+    def __repl__(selfNone):
+        repl = ()
+        repl += (f"content_encoding: {self.content_encoding}",)
+        repl += (f"namespace: {self.namespace}",)
+        repl += (f"schema_location: {self.schema_location}",)
         return super().repr(repl)
