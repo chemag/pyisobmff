@@ -278,3 +278,21 @@ class URIBox(FullBox):
         repl = ()
         repl += (f"the_uri: {self.the_uri}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 12.3.3.2
+class URIInitBox(FullBox):
+    box_type = b"uriI"
+
+    def __init__(self, max_offset):
+        self.max_offset = max_offset
+
+    def read(self, file):
+        super().read(file)
+        max_len = self.get_max_offset() - file.tell()
+        self.uri_initialization_data = self.read_as_bytes(file)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"uri_initialization_data: {self.uri_initialization_data}",)
+        return super().repr(repl)
