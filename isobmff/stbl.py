@@ -128,7 +128,6 @@ class VisualSampleEntry(SampleEntry):
 # ISO/IEC 14496-12:2022, Section 12.2.3.2
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class AudioSampleEntry(SampleEntry):
-    box_type = b"soun"
     box_list = []
     reserved1 = []
 
