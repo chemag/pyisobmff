@@ -377,3 +377,25 @@ class XMLSubtitleSampleEntry(SubtitleSampleEntry):
         repl += (f"schema_location: {self.schema_location}",)
         repl += (f"auxiliary_mime_types: {self.auxiliary_mime_types}",)
         return super().repr(repl)
+
+
+# ISO/IEC 14496-12:2022, Section 12.6.3.2
+class TextSubtitleSampleEntry(SubtitleSampleEntry):
+    box_type = b"sbtt"
+
+    def read(self, file):
+        super().read(file)
+        max_len = self.get_max_offset() - file.tell()
+        self.content_encoding = read_utf8string(file, max_len)
+        max_len = self.get_max_offset() - file.tell()
+        self.mime_format = read_utf8string(file, max_len)
+        if file.tell() < self.get_max_offset():
+            self.text_config_box = self.read_box(file)
+
+    def __repr__(self):
+        repl = ()
+        repl += (f"content_encoding: {self.content_encoding}",)
+        repl += (f"mime_format: {self.mime_format}",)
+        if self.text_config_box is not None:
+            repl += (f"text_config_box: {self.text_config_box}",)
+        return super().repr(repl)
