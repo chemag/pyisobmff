@@ -16,6 +16,8 @@ this_dir = os.path.abspath(dirname)
 rootdir = os.path.join(this_dir, "..")
 sys.path.append(rootdir)
 
+sys.path.append(os.path.join(os.environ["HOME"], "proj/pyisobmff"))
+
 import isobmff
 
 __version__ = "0.3"
