@@ -61,10 +61,6 @@ class AVCConfigurationBox(Box):
 
 # ISO/IEC 14496-15:2022, Section 5.3.2.1.2
 class AVCDecoderConfigurationRecord(object):
-    sps = []
-    pps = []
-    sps_ext = []
-
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -83,14 +79,17 @@ class AVCDecoderConfigurationRecord(object):
         byte5 = read_uint(file, 1)
         self.reserved2 = (byte5 >> 5) & 0x07
         numOfSequenceParameterSets = byte5 & 0x1F
+        self.sps = []
         for _ in range(numOfSequenceParameterSets):
             sequenceParameterSetLength = read_uint(file, 2)
             self.sps.append(read_bytes(file, sequenceParameterSetLength))
         numOfPictureParameterSets = read_uint(file, 1)
+        self.pps = []
         for _ in range(numOfPictureParameterSets):
             pictureParameterSetLength = read_uint(file, 2)
             self.pps.append(read_bytes(file, pictureParameterSetLength))
         # ensure there are enough bytes for the remaining fields
+        self.sps_ext = []
         if file.tell() >= self.max_offset:
             # out of data in the box: let's punt here
             self.reserved3 = None

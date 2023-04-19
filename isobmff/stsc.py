@@ -9,10 +9,10 @@ class SampleToChunkBox(FullBox):
     box_type = b"stsc"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
+        self.entries = []
         for _ in range(entry_count):
             entry = {}
             entry["first_chunk"] = read_uint(file, 4)

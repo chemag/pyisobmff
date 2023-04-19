@@ -48,8 +48,6 @@ class HEVCConfigurationBox(Box):
 
 # ISO/IEC 14496-15:2022, Section 8.3.2.1.2
 class HEVCDecoderConfigurationRecord(object):
-    array = []
-
     def read(self, file):
         self.configuration_version = read_uint(file, 1)
         #
@@ -93,6 +91,7 @@ class HEVCDecoderConfigurationRecord(object):
         self.length_size_minus_1 = byte & 0b11
         #
         num_of_arrays = read_uint(file, 1)  # 8
+        self.array = []
         for _ in range(num_of_arrays):
             self.array.append(self.__read_item(file))
 

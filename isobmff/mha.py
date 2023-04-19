@@ -57,7 +57,6 @@ class MPEG4ExtensionDescriptorsBox(Box):
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.5.2
 class MHASampleEntry(AudioSampleEntry):
     box_type = b"mha1"
-    box_list = []
 
     def read(self, file):
         super().read(file)

@@ -37,8 +37,6 @@ class AvsSequenceInfoBox(Box):
 
 # IEEE 1857.3-2013, Section 4.2.3.3.1
 class AVSDecoderConfigurationRecord(object):
-    sequence_header_nal_units = []
-
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -56,6 +54,7 @@ class AVSDecoderConfigurationRecord(object):
         byte4 = read_uint(file, 1)
         self.reserved2 = (byte4 >> 5) & 0x07
         numOfSequenceHeader = byte4 & 0x1F
+        self.sequence_header_nal_units = []
         for _ in range(numOfSequenceHeader):
             # ensure there are enough bytes for a next reading
             if file.tell() >= self.max_offset:

@@ -10,7 +10,6 @@ from .stbl import AudioSampleEntry
 # https://opus-codec.org/docs/opus_in_isobmff.html, Section 4.3.2
 class OpusSpecificBox(Box):
     box_type = b"dOps"
-    channel_mappings = []
 
     def read(self, file):
         self.version = read_uint(file, 1)
@@ -19,6 +18,7 @@ class OpusSpecificBox(Box):
         self.input_sample_rate = read_uint(file, 4)
         self.output_gain = read_sint(file, 2)
         self.channel_mapping_family = read_uint(file, 1)
+        self.channel_mappings = []
         if self.channel_mapping_family != 0:
             channel_mapping = {}
             channel_mapping["stream_count"] = read_uint(file, 1)
@@ -26,6 +26,7 @@ class OpusSpecificBox(Box):
             channel_mapping["channel_mapping"] = read_uint(
                 file, self.output_channel_count
             )
+            self.channel_mappings.append(channel_mapping)
 
     def contents(self):
         tuples = super().contents()

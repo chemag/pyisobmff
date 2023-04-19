@@ -10,7 +10,6 @@ class MediaBox(Box):
     box_type = b"mdia"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    box_list = []
 
     def read(self, file):
         self.box_list = self.read_box_list(file)
@@ -27,8 +26,6 @@ class MediaHeaderBox(FullBox):
     box_type = b"mdhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    # ISO-639-2/T language code
-    language = []
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4
@@ -38,6 +35,8 @@ class MediaHeaderBox(FullBox):
         self.duration = read_uint(file, read_size)
         byte = read_uint(file, 2)
         self.pad = (byte >> 15) & 0b1
+        # ISO-639-2/T language code
+        self.language = []
         self.language.append((byte >> 10) & 0b11111)
         self.language.append((byte >> 5) & 0b11111)
         self.language.append(byte & 0b11111)

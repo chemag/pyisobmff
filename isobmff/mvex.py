@@ -7,7 +7,6 @@ from .box import read_uint
 # ISO/IEC 14496-12:2022, Section 8.8.1
 class MovieExtendsBox(Box):
     box_type = b"mvex"
-    box_list = []
 
     def read(self, file):
         # optional MovieExtendsHeaderBox

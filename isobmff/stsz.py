@@ -7,11 +7,11 @@ from .box import read_uint
 class SampleSizeBox(FullBox):
     box_type = b"stsz"
     is_mandatory = False
-    entries = []
 
     def read(self, file):
         self.sample_size = read_uint(file, 4)
         sample_count = read_uint(file, 4)
+        self.entries = []
         if self.sample_size == 0:
             for _ in range(sample_count):
                 entry = {}

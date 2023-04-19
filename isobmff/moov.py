@@ -10,7 +10,6 @@ class MovieBox(Box):
     box_type = b"moov"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    box_list = []
 
     def read(self, file):
         self.box_list = self.read_box_list(file)
@@ -27,9 +26,6 @@ class MovieHeaderBox(FullBox):
     box_type = b"mvhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    reserved2 = []
-    matrix = []
-    pre_defined = []
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4
@@ -40,10 +36,13 @@ class MovieHeaderBox(FullBox):
         self.rate = read_uint(file, 4)
         self.volume = read_uint(file, 2)
         self.reserved1 = read_uint(file, 2)
+        self.reserved2 = []
         for _ in range(2):
             self.reserved2.append(read_uint(file, 4))
+        self.matrix = []
         for _ in range(9):
             self.matrix.append(read_uint(file, 4))
+        self.pre_defined = []
         for _ in range(6):
             self.pre_defined.append(read_uint(file, 4))
         self.next_track_id = read_uint(file, 4)

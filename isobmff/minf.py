@@ -10,7 +10,6 @@ class MediaInformationBox(Box):
     box_type = b"minf"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    box_list = []
 
     def read(self, file):
         self.box_list = self.read_box_list(file)
@@ -26,10 +25,10 @@ class MediaInformationBox(Box):
 class VideoMediaHeaderBox(FullBox):
     box_type = b"vmhd"
     is_mandatory = True
-    opcolor = []
 
     def read(self, file):
         self.graphicsmode = read_uint(file, 2)
+        self.opcolor = []
         for _ in range(3):
             self.opcolor.append(read_uint(file, 2))
 

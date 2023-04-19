@@ -6,9 +6,9 @@ from .box import read_fourcc
 # ISO/IEC 23008-12:2022, Section 4.4
 class ExtendedTypeBox(Box):
     box_type = b"etyp"
-    compatible_combinations = []
 
     def read(self, file):
+        self.compatible_combinations = []
         while file.tell() < self.get_max_offset():
             # TODO(chema): only tyco allowed here
             self.compatible_combinations = self.read_box_list(file)
@@ -23,9 +23,9 @@ class ExtendedTypeBox(Box):
 # ISO/IEC 23008-12:2022, Section 4.4
 class TypeCombinationBox(Box):
     box_type = b"tyco"
-    compatible_brands = []
 
     def read(self, file):
+        self.compatible_brands = []
         while file.tell() < self.get_max_offset():
             box_type = read_fourcc(file)
             self.compatible_brands.append(box_type)

@@ -9,8 +9,6 @@ from .stbl import AudioSampleEntry
 
 # https://github.com/xiph/flac/blob/master/doc/isoflac.txt, Section 3.3.2
 class FlacMetadataBlock(object):
-    block_data = []
-
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -19,6 +17,7 @@ class FlacMetadataBlock(object):
         self.last_metadata_block_flag = byte >> 7
         self.block_type = byte & 0x7F
         length = read_uint(file, 3)
+        self.block_data = []
         for _ in range(length):
             self.block_data.append(read_uint(file, 1))
 
@@ -33,9 +32,9 @@ class FlacMetadataBlock(object):
 
 class FlacSpecificBox(Box):
     box_type = b"dfLa"
-    metadata_blocks = []
 
     def read(self, file):
+        self.metadata_blocks = []
         while file.tell() < self.get_max_offset():
             metadata_block = FlacMetadataBlock(max_offset=self.get_max_offset())
             metadata_block.read(file)

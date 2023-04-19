@@ -6,7 +6,6 @@ from .box import read_uint
 # ISO/IEC 14496-12:2022, Section 8.16.3
 class SegmentIndexBox(FullBox):
     box_type = b"sidx"
-    references = []
 
     def read(self, file):
         self.reference_ID = read_uint(file, 4)
@@ -16,6 +15,7 @@ class SegmentIndexBox(FullBox):
         self.first_offset = read_uint(file, count_size)
         self.reserved = read_uint(file, 2)
         reference_count = read_uint(file, 2)
+        self.references = []
         for _ in range(reference_count):
             reference = {}
             word1 = read_uint(file, 4)

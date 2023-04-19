@@ -9,10 +9,10 @@ class ItemProtectionBox(FullBox):
     box_type = b"ipro"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
-    protection_informations = []
 
     def read(self, file):
         protection_count = read_uint(file, 2)
+        self.protection_informations = []
         for _ in range(protection_count):
             box = self.read_box(file)
             if box is None:

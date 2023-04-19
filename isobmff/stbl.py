@@ -17,9 +17,8 @@ class SampleTableBox(ContainerBox):
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
 class SampleEntry(Box):
-    reserved0 = []
-
     def read(self, file):
+        self.reserved0 = []
         for _ in range(6):
             reserved = read_uint(file, 1)
             self.reserved0.append(reserved)
@@ -55,10 +54,10 @@ class SampleDescriptionBox(FullBox):
     box_type = b"stsd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    samples = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
+        self.samples = []
         for _ in range(entry_count):
             box = self.read_box(file)
             if not box:
@@ -75,13 +74,11 @@ class SampleDescriptionBox(FullBox):
 # ISO/IEC 14496-12:2022, Section 12.1.3.2
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class VisualSampleEntry(SampleEntry):
-    box_list = []
-    pre_defined2 = []
-
     def read(self, file):
         super().read(file)
         self.pre_defined1 = read_uint(file, 2)
         self.reserved1 = read_uint(file, 2)
+        self.pre_defined2 = []
         for _ in range(3):
             self.pre_defined2.append(read_uint(file, 4))
         self.width = read_uint(file, 2)
@@ -118,11 +115,9 @@ class VisualSampleEntry(SampleEntry):
 # ISO/IEC 14496-12:2022, Section 12.2.3.2
 # ISO/IEC 14496-14:2020, Section 6.7.2
 class AudioSampleEntry(SampleEntry):
-    box_list = []
-    reserved1 = []
-
     def read(self, file):
         super().read(file)
+        self.reserved1 = []
         for _ in range(2):
             self.reserved1.append(read_uint(file, 4))
         self.channelcount = read_uint(file, 2)

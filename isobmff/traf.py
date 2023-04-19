@@ -9,7 +9,6 @@ from .box import read_sint
 # ISO/IEC 14496-12:2022, Section 8.8.6
 class TrackFragmentBox(Box):
     box_type = b"traf"
-    box_list = []
 
     def read(self, file):
         self.box_list = self.read_box_list(file)
@@ -95,7 +94,6 @@ class TrackRunBox(FullBox):
         "sample-flags-present": 0x000400,
         "sample-composition-time-offsets-present": 0x000800,
     }
-    samples = []
 
     def read(self, file):
         sample_count = read_uint(file, 4)
@@ -107,6 +105,7 @@ class TrackRunBox(FullBox):
             "first-sample-flags-present"
         ]:
             self.first_sample_flags = read_uint(file, 4)
+        self.samples = []
         for _ in range(sample_count):
             sample = {}
             if (self.flags & self.FLAGS["sample-duration-present"]) == self.FLAGS[

@@ -9,11 +9,11 @@ from .box import read_utf8string
 class ItemInformationBox(FullBox):
     box_type = b"iinf"
     is_mandatory = False
-    item_infos = []
 
     def read(self, file):
         count_size = 2 if self.version == 0 else 4
         entry_count = read_uint(file, count_size)
+        self.item_infos = []
         for _ in range(entry_count):
             box = self.read_box(file)
             if box is None:
@@ -93,8 +93,6 @@ class ItemInformationEntry(FullBox):
 # ISO/IEC 14496-12:2022, Section 8.11.6.2
 # Note that this class descends from ItemInfoExtension.
 class FDItemInfoExtension(object):
-    group_ids = []
-
     def read(self, file):
         max_len = self.get_max_offset() - file.tell()
         self.content_location = read_utf8string(file, max_len)
@@ -103,6 +101,7 @@ class FDItemInfoExtension(object):
         self.content_length = read_uint(file, 8)
         self.transfer_length = read_uint(file, 8)
         entry_count = read_uint(file, 1)
+        self.group_ids = []
         for _ in range(entry_count):
             group_id = read_uint(file, 4)
             self.group_ids.append(group_id)

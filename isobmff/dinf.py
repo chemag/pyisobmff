@@ -11,9 +11,9 @@ class DataInformationBox(Box):
     box_type = b"dinf"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    box_list = []
 
     def read(self, file):
+        self.box_list = []
         while file.tell() < self.get_max_offset():
             self.box_list = self.read_box_list(file)
 
@@ -29,10 +29,10 @@ class DataReferenceBox(FullBox):
     box_type = b"dref"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    data_entry = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
+        self.data_entry = []
         for _ in range(entry_count):
             # only DataEntryBaseBox boxes here
             self.data_entry = self.read_box_list(file)

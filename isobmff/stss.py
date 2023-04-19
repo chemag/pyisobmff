@@ -7,10 +7,10 @@ from .box import read_uint
 class SyncSampleBox(FullBox):
     box_type = b"stss"
     is_mandatory = False
-    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
+        self.entries = []
         for _ in range(entry_count):
             entry = {}
             entry["sample_number"] = read_uint(file, 4)

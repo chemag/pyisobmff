@@ -10,12 +10,12 @@ class FileTypeBox(Box):
     box_type = b"ftyp"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    compatible_brands = []
 
     def read(self, file):
         self.major_brand = read_fourcc(file)
         self.minor_version = read_uint(file, 4)
         num_compatible_brands = int((self.size - 16) / 4)
+        self.compatible_brands = []
         for _ in range(num_compatible_brands):
             compat_brand = read_fourcc(file)
             self.compatible_brands.append(compat_brand)

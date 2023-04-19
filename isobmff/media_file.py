@@ -3,8 +3,6 @@ from .box import read_box
 
 
 class MediaFile(object):
-    box_list = []
-
     def __init__(self, debug):
         self.debug = debug
 
@@ -21,6 +19,7 @@ class MediaFile(object):
         return tuples
 
     def read(self, file_name):
+        self.box_list = []
         with open(file_name, "rb") as file:
             while True:
                 box = read_box(file, "", self.debug)

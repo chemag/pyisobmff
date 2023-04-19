@@ -8,10 +8,10 @@ from .box import read_sint
 class TimeToSampleBox(FullBox):
     box_type = b"stts"
     is_mandatory = True
-    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
+        self.entries = []
         for _ in range(entry_count):
             entry = {}
             entry["sample_count"] = read_uint(file, 4)
@@ -30,10 +30,10 @@ class TimeToSampleBox(FullBox):
 # ISO/IEC 14496-12:2022, Section 8.6.1.3
 class CompositionOffsetBox(FullBox):
     box_type = b"ctts"
-    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
+        self.entries = []
         for _ in range(entry_count):
             entry = {}
             entry["sample_count"] = read_uint(file, 4)

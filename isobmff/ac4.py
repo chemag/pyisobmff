@@ -9,7 +9,6 @@ from .box import read_utf8string
 # ETSI TS 103 190-2 v1.2.1, Section E.4
 class AC4SampleEntry(Box):
     box_type = b"ac-4"
-    box_list = []
 
     def read(self, file):
         self.reserved1 = read_uint(file, 6)
@@ -39,8 +38,6 @@ class AC4SampleEntry(Box):
 
 # ETSI TS 102 366 v1.4.1, Section E.6.1
 class AC4DsiV1(object):
-    presentations = []
-
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -86,12 +83,12 @@ class AC4SpecificBox(Box):
 # ETSI TS 102 366 v1.4.1, Section E.5a
 class AC4PresentationLabelBox(FullBox):
     box_type = b"lac4"
-    presentations = []
 
     def read(self, file):
         half = read_uint(file, 2)
         self.reserved = half >> 9
         num_presentation_labels = half & 0x01FF
+        self.presentations = []
         for _ in range(num_presentation_labels):
             presentation = {}
             half = read_uint(file, 2)

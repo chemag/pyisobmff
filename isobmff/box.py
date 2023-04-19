@@ -119,7 +119,6 @@ class FullBox(Box):
 # generic container Box
 class ContainerBox(Box):
     # used to implement generic container boxes more easily
-    box_list = []
 
     def read(self, file):
         self.box_list = self.read_box_list(file)

@@ -6,7 +6,6 @@ from .box import read_uint
 # ETSI TS 102 366 v1.4.1, Section F.3
 class AC3SampleEntry(Box):
     box_type = b"ac-3"
-    box_list = []
 
     def read(self, file):
         self.reserved1 = read_uint(file, 6)
@@ -63,7 +62,6 @@ class AC3SpecificBox(Box):
 # ETSI TS 102 366 v1.4.1, Section F.5
 class EC3SampleEntry(Box):
     box_type = b"ec-3"
-    box_list = []
 
     def read(self, file):
         self.reserved1 = read_uint(file, 6)
@@ -94,12 +92,12 @@ class EC3SampleEntry(Box):
 # ETSI TS 102 366 v1.4.1, Section F.6
 class EC3SpecificBox(Box):
     box_type = b"dec3"
-    subs = []
 
     def read(self, file):
         half = read_uint(file, 2)
         self.data_rate = half >> 13
         num_ind_sub = half & 0x07
+        self.subs = []
         for _ in range(num_ind_sub):
             sub = {}
             byte1 = read_uint(file, 1)

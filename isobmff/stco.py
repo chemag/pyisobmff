@@ -9,10 +9,10 @@ class ChunkOffsetBox(FullBox):
     box_type = b"stco"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
+        self.entries = []
         for _ in range(entry_count):
             entry = {}
             entry["chunk_offset"] = read_uint(file, 4)
@@ -28,10 +28,10 @@ class ChunkOffsetBox(FullBox):
 # ISO/IEC 14496-12:2022, Section 8.7.5
 class ChunkLargeOffsetBox(FullBox):
     box_type = b"co64"
-    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
+        self.entries = []
         for _ in range(entry_count):
             entry = {}
             entry["chunk_offset"] = read_uint(file, 8)

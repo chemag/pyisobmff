@@ -21,7 +21,6 @@ class ItemPropertiesBox(Box):
     box_type = b"iprp"
     is_mandatory = False
     quantity = Quantity.ZERO_OR_ONE
-    association = []
 
     def read(self, file):
         # must be ItemPropertyContainerBox
@@ -42,7 +41,6 @@ class ItemPropertyContainer(Box):
     box_type = b"ipco"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    properties = []
 
     def read(self, file):
         # boxes derived from ItemProperty, ItemFullProperty,
@@ -133,10 +131,10 @@ class ColorInformation(Box):
 # ISO/IEC 23008-12:2022, Section 6.5.6
 class PixelInformationProperty(ItemFullProperty):
     box_type = b"pixi"
-    channels = []
 
     def read(self, file):
         num_channels = read_uint(file, 1)
+        self.channels = []
         for _ in range(num_channels):
             channel = {}
             channel["bits_per_channel"] = read_uint(file, 1)
@@ -171,18 +169,18 @@ class ItemPropertyAssociationBox(FullBox):
     box_type = b"ipma"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
-        entry = {}
+        self.entries = []
         for _ in range(entry_count):
+            entry = {}
             if self.version < 1:
                 entry["item_id"] = read_uint(file, 2)
             else:
                 entry["item_id"] = read_uint(file, 4)
             association_count = read_uint(file, 1)
-            associations = []
+            entry["associations"] = []
             for _ in range(association_count):
                 if self.flags & 1 == 1:
                     item = read_uint(file, 2)
@@ -197,9 +195,8 @@ class ItemPropertyAssociationBox(FullBox):
                     "essential": essential,
                     "property_index": property_index,
                 }
-                associations.append(association)
-            entry["associations"] = associations
-        self.entries.append(entry)
+                entry["associations"].append(association)
+            self.entries.append(entry)
 
     def contents(self):
         tuples = super().contents()

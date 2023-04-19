@@ -7,7 +7,6 @@ from .box import read_uint
 class ItemLocationBox(FullBox):
     box_type = b"iloc"
     is_mandatory = False
-    items = []
 
     def read(self, file):
         byte0 = read_uint(file, 1)

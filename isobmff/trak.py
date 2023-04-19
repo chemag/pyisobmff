@@ -12,7 +12,6 @@ class TrackBox(Box):
     box_type = b"trak"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    box_list = []
 
     def read(self, file):
         self.box_list = self.read_box_list(file)
@@ -29,8 +28,6 @@ class TrackHeaderBox(FullBox):
     box_type = b"tkhd"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
-    reserved2 = []
-    matrix = []
 
     def read(self, file):
         read_size = 8 if self.version == 1 else 4
@@ -39,12 +36,14 @@ class TrackHeaderBox(FullBox):
         self.track_id = read_uint(file, 4)
         self.reserved1 = read_uint(file, 4)
         self.duration = read_uint(file, read_size)
+        self.reserved2 = []
         for _ in range(2):
             self.reserved2.append(read_uint(file, 4))
         self.layer = read_sint(file, 2)
         self.alternate_group = read_uint(file, 2)
         self.volume = read_uint(file, 2)
         self.reserved3 = read_uint(file, 2)
+        self.matrix = []
         for _ in range(9):
             self.matrix.append(read_uint(file, 4))
         self.width = read_uint(file, 4)

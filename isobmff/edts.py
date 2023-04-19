@@ -7,7 +7,6 @@ from .box import read_uint, read_sint
 # ISO/IEC 14496-12:2022, Section 8.6.5
 class EditBox(Box):
     box_type = b"edts"
-    box_list = []
 
     def read(self, file):
         self.box_list = self.read_box_list(file)
@@ -22,10 +21,10 @@ class EditBox(Box):
 # ISO/IEC 14496-12:2022, Section 8.6.6
 class EditListBox(FullBox):
     box_type = b"elst"
-    entries = []
 
     def read(self, file):
         entry_count = read_uint(file, 4)
+        self.entries = []
         for _ in range(entry_count):
             entry = {}
             if self.version == 1:
