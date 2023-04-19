@@ -10,3 +10,8 @@ class PrimaryItemBox(FullBox):
 
     def read(self, file):
         self.item_id = read_uint(file, 2)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += ((f"item_id", self.item_id),)
+        return tuples
