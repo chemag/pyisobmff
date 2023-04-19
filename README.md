@@ -8,9 +8,81 @@ Originally from [here](https://github.com/m-hiki/isobmff).
 
 # 1. Introduction
 
-Goal: A tool to parse ISOBMFF files that is easy to extend.
+## 1.1. The ISOBMFF Media File Format
 
-Note that a new box type a reader, a contents dumper, and (maybe) an entry in the `isobmff/__init__.py` file.
+ISOBMFF is a popular file format for encapsulating media content, including video, images, and audio. The format originated in Apple's QuickTime, but has been standardized (as ISO/IEC 14496-12:2022), and extended for different media content.
+
+The ISOBMFF format is relatively simple: All data is organized in "boxes" (aka "atoms"), which are just TLV blobs: A blob with a type, a length (size), and a value. In the wire, a box starts with the size field (4 bytes), then the type field (which follows a well-known, registered fourcc structure -- 4 bytes), and then the value. The exact contents of the value field depends on the box type. Note that some of the boxes can have other boxes (they are sometimes defined as "containers"), which will follow the same TLB structure.
+
+There are a couple of quirks on the TLV structure:
+* Type and length are normally 4 bytes, but special values ("uuid" for types, and 1 for size) allows extended versions of them.
+* Some boxes (known as "FullBox") also have an extra 4-byte field after the type, including a version number and a set of flags.
+
+Let's show how an ISOBMFF stream looks like:
+
+As an example, these are the the first few bytes of the test media file we include in this package:
+```
+$ xxd media/C001.heic
+00000000: 0000 0024 6674 7970 6865 6963 0000 0000  ...$ftypheic....
+00000010: 6d73 6631 6d69 6631 6865 6963 6865 7663  msf1mif1heichevc
+00000020: 6973 6f38 0000 0131 6d65 7461 0000 0000  iso8...1meta....
+00000030: 0000 0021 6864 6c72 0000 0000 0000 0000  ...!hdlr........
+00000040: 7069 6374 0000 0000 0000 0000 0000 0000  pict............
+...
+```
+
+Note the file starts with 4 bytes that indicate the size of the first box (0x00000024, or 36 bytes). The next 4 bytes include the type, which in this case is "ftyp". The "ftyp" box (aka `FileTypeBox`) is defined in ISO/IEC 23008-12:2022, Section 4.3.2).
+```
+aligned(8) class GeneralTypeBox(code) extends Box(code) {
+    unsigned int(32) major_brand;
+    unsigned int(32) minor_version;
+    unsigned int(32) compatible_brands[]; // to end of the box
+}
+aligned(8) class FileTypeBox extends GeneralTypeBox ('ftyp')
+{}
+```
+
+The value is the next 28 bytes (the "size" field includes itself, so the value is 36 - 8 = 28 bytes). It includes 3 fields:
+* the "`major_brand`" field value is "heic". This field occupies 4 bytes.
+* the "`minor_version`" field value is 0x00000000. This field occupies 4 bytes.
+* the "`compatible_brands[]`" array contains the value ["msf1", "mif1", "heic", "hevc", "iso8"]. This field occupies the remaining of the box, which in this case is 20 bytes, or 5 fourcc types.
+
+At offset 0x24 we can see the second box. Its size is 0x00000131 (305 bytes), and its type is "meta". The "meta" box (aka `MetaBox`) is defined in ISO/IEC 14496-12:2022, Section 8.11.1.1.
+```
+aligned(8) class MetaBox (handler_type)
+        extends FullBox('meta', version = 0, 0) {
+    HandlerBox(handler_type) theHandler;
+    PrimaryItemBox primary_resource; // optional
+    DataInformationBox file_locations; // optional
+    ItemLocationBox item_locations; // optional
+    ItemProtectionBox protections; // optional
+    ItemInfoBox item_infos; // optional
+    IPMPControlBox IPMP_control; // optional
+    ItemReferenceBox item_refs; // optional
+    ItemDataBox item_data; // optional
+    Box other_boxes[]; // optional
+}
+```
+
+Note that the "meta" box is a "`FullBox`", which means that the 4 bytes just after the fourcc tag (0x00000000) are the version and the flags fields (both 0). The next bytes are a "hdlr" (`HandlerBox`) box, defined in ISO/IEC 14496-12:2022, Section 8.4.3.
+
+
+## 1.2. Why a New Parser?
+
+The main goal of this tool is to have an ISOBMFF box parser that is easy to extend.
+
+I considered several options before writing a new one:
+* ffmpeg. Of course, if you do any media processing, ffmpeg should be the first option. I wanted a simple parser, while ffmpeg is a full demuxer.
+* mp4dump from [bento4](https://github.com/axiomatic-systems/Bento4). The tool works relatively well (in fact the simple parser's output is inspired in that tool), but it is too chatty. For example, the implementation of the "stts" box includes 327 lines of C++ code. In comparison, the implementation in this package is only ~20 lines.
+* other similar C++ tools, including [gpac](https://github.com/gpac/gpac), [AtomicParsley](https://github.com/wez/atomicparsley), and [mp4v2](https://mp4v2.org/). gpac in particular is the most promising tool: While not active (the last patch as of 20230420 is from 20221018), it understands item IDs, which provides a nice extra extraction feature (e.g. to extract h265 key frames from heic files). Again, we find the cost of adding new parsers to be cumbersome.
+* [pymp4](https://github.com/beardypig/pymp4) is similar to this package. It is based on the [construct python library](https://en.wikipedia.org/wiki/Construct_(python_library)), which is very appealing as it allows declarative definitions of new boxes. IMO the structures of ISOBMFF are too generic to be easily captured by the `construct` package.
+
+The closest thing to what I was looking for was [isobmff](https://github.com/m-hiki/isobmff). This package allows relatively simple definitions ofnew boxes. Note that a new box type just needs to define a class (`Box` or `FullBox`) with:
+* (1) the actual fourcc, defined as the "`box_type`" class method,
+* (2) a `read()` method that reads the actual bytes,
+* (3) a `contents()` method that dump the contents in a series of tuples.
+
+If you decide that the new box is independent enough that it deserves a new file, the you need to add a new entry in the `isobmff/__init__.py` file.
 
 For example, the "pitm" box (defined in ISO/IEC 14496-12:2022, Section 8.11.4) just contains a single 2-byte unsigned integer. The whole code needed to parse it (see `isobmff/pitm.py`) is:
 
@@ -106,9 +178,50 @@ path: /mdat
 
 WIP: Not working yet!
 
+Check the full list of boxes:
+```
+$ ./scripts/isobmff-parse.py media/C001.heic  |grep -a path:
+path: /ftyp
+path: /meta
+  path: /meta/hdlr
+  path: /meta/pitm
+  path: /meta/iloc
+  path: /meta/iinf
+  path: /meta/iprp
+    path: /meta/iprp/ipco
+      path: /meta/iprp/ipco/hvcC
+      path: /meta/iprp/ipco/ispe
+    path: /meta/iprp/ipma
+path: /moov
+  path: /moov/mvhd
+  path: /moov/trak
+    path: /moov/trak/tkhd
+    path: /moov/trak/mdia
+      path: /moov/trak/mdia/mdhd
+      path: /moov/trak/mdia/hdlr
+      path: /moov/trak/mdia/minf
+        path: /moov/trak/mdia/minf/vmhd
+        path: /moov/trak/mdia/minf/dinf
+          path: /moov/trak/mdia/minf/dinf/dref
+            path: /moov/trak/mdia/minf/dinf/dref/url
+        path: /moov/trak/mdia/minf/stbl
+          path: /moov/trak/mdia/minf/stbl/stsd
+            path: /moov/trak/mdia/minf/stbl/stsd/hvc1
+              path: /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC
+              path: /moov/trak/mdia/minf/stbl/stsd/hvc1/ccst
+              path: /moov/trak/mdia/minf/stbl/stsd/hvc1/stts
+          path: /moov/trak/mdia/minf/stbl/stsc
+          path: /moov/trak/mdia/minf/stbl/stco
+          path: /moov/trak/mdia/minf/stbl/stsz
+          path: /moov/trak/mdia/minf/stbl/stss
+path: /mdat
+path: /mdat
+path: /mdat
+```
+
 Extract a box from an ISOBMFF file:
 ```
-$ ./scripts/isobmff-parse.py --extract /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC -o C001.heic.hvcC media/C001.heic
+$ ./scripts/isobmff-parse.py --extract-box --path /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC -o C001.heic.hvcC media/C001.heic
 $ stat -c "%s" C001.heic.hvcC
 108
 $ xxd C001.heic.hvcC
@@ -119,6 +232,21 @@ $ xxd C001.heic.hvcC
 00000040: 1f42 0101 0160 0000 0300 0003 0000 0300  .B...`..........
 00000050: 0003 0078 a002 8080 2d1f e5f9 246d 9ed9  ...x....-...$m..
 00000060: 2200 0100 0744 01c1 9095 8112            "....D......
+```
+
+Extract a box value (just the payload) from an ISOBMFF file:
+```
+$ ./scripts/isobmff-parse.py --extract-value --path /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC -o C001.heic.hvcC media/C001.heic
+$ stat -c "%s" C001.heic.hvcC
+100
+$ xxd C001.heic.hvcC
+00000000: 0101 6000 0000 0000 0000 0000 78f0 00fc  ..`.........x...
+00000010: fdf8 f832 000f 0320 0001 0018 4001 0c01  ...2... ....@...
+00000020: ffff 0160 0000 0300 0003 0000 0300 0003  ...`............
+00000030: 0078 f024 2100 0100 1f42 0101 0160 0000  .x.$!....B...`..
+00000040: 0300 0003 0000 0300 0003 0078 a002 8080  ...........x....
+00000050: 2d1f e5f9 246d 9ed9 2200 0100 0744 01c1  -...$m.."....D..
+00000060: 9095 8112                                ....
 ```
 
 
