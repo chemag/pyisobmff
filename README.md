@@ -135,7 +135,7 @@ Standards:
 * ETSI TS 103 190-2 v1.2.1, Digital Audio Compression AC4 Immersive and Personalized Audio
 * IEEE 1857.3-2013, IEEE Standard for Systems of Advanced Audio and Video Coding
 * [Opus in ISOBMFF Specification](https://opus-codec.org/docs/opus_in_isobmff.html)
-* [Flac2 in ISOBMFF Specification](https://github.com/xiph/flac/blob/master/doc/isoflac.txt)
+* [Encapsulation of FLAC in ISO Base Media File Format](https://github.com/xiph/flac/blob/master/doc/isoflac.txt)
 
 
 Video Sources:
