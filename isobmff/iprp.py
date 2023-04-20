@@ -37,7 +37,7 @@ class ItemPropertiesBox(Box):
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.14.2
-class ItemPropertyContainer(Box):
+class ItemPropertyContainerBox(Box):
     box_type = b"ipco"
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
