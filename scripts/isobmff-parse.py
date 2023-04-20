@@ -18,6 +18,7 @@ __version__ = "0.1"
 
 FUNC_CHOICES = {
     "parse": "parse isobmff input",
+    "extract-box": "extract full box by name",
 }
 
 default_values = {
@@ -25,7 +26,9 @@ default_values = {
     "dry_run": False,
     "func": "parse",
     "listfile": None,
+    "path": None,
     "infile": None,
+    "outfile": None,
 }
 
 
@@ -53,6 +56,21 @@ def test_file_of_files(listfile, debug):
         print("BROKEN FILES")
         for filename in error_list:
             print(f"  {filename}")
+
+
+def extract_box(media_file, path, outfile, include_headers, debug):
+    # search the path in media_file
+    box = media_file.find_subbox(path)
+    if box is None:
+        print(f"error: cannot find {path} in {media_file.filename}")
+        sys.exit(-1)
+    # extract the expected bytes
+    with open(media_file.filename, "rb") as fin:
+        fin.seek(box.offset)
+        data = fin.read(box.size)
+    # extract the expected bytes
+    with open(outfile, "wb") as fout:
+        fout.write(data)
 
 
 def get_options(argv):
@@ -118,6 +136,21 @@ def get_options(argv):
             help=val,
         )
     parser.add_argument(
+        "--path",
+        type=str,
+        default=default_values["path"],
+        metavar="box-path",
+        help="box path",
+    )
+    parser.add_argument(
+        "-o",
+        "--outfile",
+        type=str,
+        default=default_values["outfile"],
+        metavar="output-file",
+        help="output file",
+    )
+    parser.add_argument(
         "--listfile",
         type=str,
         default=default_values["listfile"],
@@ -160,6 +193,9 @@ def main(argv):
 
     if options.func == "parse":
         print(media_file)
+
+    elif options.func == "extract-box":
+        extract_box(media_file, options.path, options.outfile, True, options.debug)
 
 
 if __name__ == "__main__":

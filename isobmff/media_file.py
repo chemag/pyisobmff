@@ -2,6 +2,7 @@
 import os
 
 from .box import Box
+from .box import find_subbox
 
 
 class MediaFile(Box):
@@ -25,3 +26,6 @@ class MediaFile(Box):
     def read(self):
         with open(self.filename, "rb") as file:
             self.box_list = self.read_box_list(file)
+
+    def find_subbox(self, full_path):
+        return find_subbox(self, full_path)

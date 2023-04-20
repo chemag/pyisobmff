@@ -20,6 +20,25 @@ def tuples_to_string(tuples, indent):
     return out
 
 
+def find_subbox(box, full_path):
+    # check if this is the box
+    if box.path.strip() == full_path.strip():
+        return box
+    # look for boxes and lists of boxes
+    b = Box
+    for var, child in box.__dict__.items():
+        if issubclass(child.__class__, b):
+            return find_subbox(child, full_path)
+        elif issubclass(child.__class__, list):
+            for item in child:
+                if issubclass(item.__class__, b):
+                    if full_path.strip() == item.path.strip() or full_path.startswith(
+                        item.path + "/"
+                    ):
+                        return find_subbox(item, full_path)
+    return None
+
+
 # ISO/IEC 14496-12:2022, Section 4.2.2
 class Box(object):
     box_type = None
