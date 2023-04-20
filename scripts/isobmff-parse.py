@@ -19,6 +19,7 @@ __version__ = "0.1"
 FUNC_CHOICES = {
     "parse": "parse isobmff input",
     "extract-box": "extract full box by name",
+    "extract-value": "extract box payload by name",
 }
 
 default_values = {
@@ -66,8 +67,12 @@ def extract_box(media_file, path, outfile, include_headers, debug):
         sys.exit(-1)
     # extract the expected bytes
     with open(media_file.filename, "rb") as fin:
-        fin.seek(box.offset)
-        data = fin.read(box.size)
+        start_offset = box.offset if include_headers else box.payload_offset
+        fin.seek(start_offset)
+        size = box.size
+        if not include_headers:
+            size -= start_offset - box.offset
+        data = fin.read(size)
     # extract the expected bytes
     with open(outfile, "wb") as fout:
         fout.write(data)
@@ -194,8 +199,11 @@ def main(argv):
     if options.func == "parse":
         print(media_file)
 
-    elif options.func == "extract-box":
-        extract_box(media_file, options.path, options.outfile, True, options.debug)
+    elif options.func in ["extract-box", "extract-value"]:
+        include_header = options.func == "extract-box"
+        extract_box(
+            media_file, options.path, options.outfile, include_header, options.debug
+        )
 
 
 if __name__ == "__main__":
