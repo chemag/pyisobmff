@@ -30,8 +30,8 @@ default_values = {
 
 
 def parse_file(infile, debug):
-    media_file = isobmff.MediaFile(debug)
-    media_file.read(infile)
+    media_file = isobmff.MediaFile(infile, debug)
+    media_file.read()
     return media_file
 
 

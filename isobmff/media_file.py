@@ -1,28 +1,26 @@
 # -*- coding: utf-8 -*-
-from .box import read_box
+import os
+
+from .box import Box
 
 
-class MediaFile(object):
-    def __init__(self, debug):
+class MediaFile(Box):
+    def __init__(self, filename, debug):
+        self.filename = filename
+        offset = 0
+        path = ""
+        size = os.path.getsize(self.filename)
+        largesize = None
+        super().__init__(offset, path, size, largesize, debug)
         self.debug = debug
 
-    def __repr__(self):
-        out = ""
-        for box in self.box_list:
-            out += str(box)
-        return out
-
     def contents(self):
+        # no super() here as the box header data is false
         tuples = ()
         for box in self.box_list:
             tuples += (("box", box.contents()),)
         return tuples
 
-    def read(self, file_name):
-        self.box_list = []
-        with open(file_name, "rb") as file:
-            while True:
-                box = read_box(file, "", self.debug)
-                if box is None:
-                    break
-                self.box_list.append(box)
+    def read(self):
+        with open(self.filename, "rb") as file:
+            self.box_list = self.read_box_list(file)
