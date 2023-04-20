@@ -35,6 +35,26 @@ def parse_file(infile, debug):
     return media_file
 
 
+def test_file_of_files(listfile, debug):
+    # read the list of input files from the input file
+    error_list = []
+    with open(listfile, "r") as f:
+        for infile in f.readlines():
+            # parse the input file
+            infile = infile.strip()
+            print(f"### parsing {infile}")
+            try:
+                _ = parse_file(infile, debug)
+            except:
+                print(f"    error on {infile}")
+                error_list.append(infile)
+    # dump the list of broken input files
+    if error_list:
+        print("BROKEN FILES")
+        for filename in error_list:
+            print(f"  {filename}")
+
+
 def get_options(argv):
     """Generic option parser.
 
@@ -124,35 +144,22 @@ def get_options(argv):
 
 
 def main(argv):
-    # parse options
+    # 0. parse options
     options = get_options(argv)
     if options.version:
         print("version: %s" % __version__)
         sys.exit(0)
     if options.debug > 0:
         print(options)
-    # parse the input file
+
+    # 1. parse the input file
     if options.listfile is not None:
-        # read the list of input files from the input file
-        error_list = []
-        with open(options.listfile, "r") as f:
-            for infile in f.readlines():
-                # parse the input file
-                infile = infile.strip()
-                print(f"### parsing {infile}")
-                try:
-                    _ = parse_file(infile, options.debug)
-                except:
-                    print(f"    error on {infile}")
-                    error_list.append(infile)
-        # dump the list of broken input files
-        if error_list:
-            print("BROKEN FILES")
-            for filename in error_list:
-                print(f"  {filename}")
+        test_file_of_files(options.listfile, options.debug)
         sys.exit()
     media_file = parse_file(options.infile, options.debug)
-    print(media_file)
+
+    if options.func == "parse":
+        print(media_file)
 
 
 if __name__ == "__main__":
