@@ -8,10 +8,11 @@ class MediaFile(Box):
     def __init__(self, filename, debug):
         self.filename = filename
         offset = 0
+        payload_offset = 0
         path = ""
         size = os.path.getsize(self.filename)
         largesize = None
-        super().__init__(offset, path, size, largesize, debug)
+        super().__init__(offset, payload_offset, path, size, largesize, debug)
         self.debug = debug
 
     def contents(self):

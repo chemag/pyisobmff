@@ -24,8 +24,9 @@ def tuples_to_string(tuples, indent):
 class Box(object):
     box_type = None
 
-    def __init__(self, offset, path, size, largesize, debug):
+    def __init__(self, offset, payload_offset, path, size, largesize, debug):
         self.offset = offset
+        self.payload_offset = payload_offset
         self.path = path
         self.subpath = {}
         self.size = size
@@ -108,8 +109,10 @@ class Box(object):
 class FullBox(Box):
     box_type = None
 
-    def __init__(self, offset, path, size, largesize, version, flags, debug):
-        super().__init__(offset, path, size, largesize, debug)
+    def __init__(
+        self, offset, payload_offset, path, size, largesize, version, flags, debug
+    ):
+        super().__init__(offset, payload_offset, path, size, largesize, debug)
         self.version = version
         self.flags = flags
 
@@ -135,9 +138,9 @@ class ContainerBox(Box):
 
 
 class UnimplementedBox(Box):
-    def __init__(self, offset, path, box_type, size, largesize, debug):
+    def __init__(self, offset, payload_offset, path, box_type, size, largesize, debug):
         self.box_type = box_type
-        super().__init__(offset, path, size, largesize, debug)
+        super().__init__(offset, payload_offset, path, size, largesize, debug)
 
     def read(self, file):
         self.bytes = self.read_as_bytes(file)
@@ -255,6 +258,7 @@ def read_box(file, path, debug, parent=None):
     if box_type == b"uuid":
         extended_type = read_extended_type(file)
         full_box_type = extended_type
+    payload_offset = file.tell()
     # 2. calculate the full path
     new_path = Box.get_path(path, box_type, parent)
     # 3. find the right Box/FullBox
@@ -266,6 +270,7 @@ def read_box(file, path, debug, parent=None):
             if class_type == "Box":
                 box = box_class(
                     offset=offset,
+                    payload_offset=payload_offset,
                     path=new_path,
                     size=size,
                     largesize=largesize,
@@ -276,6 +281,7 @@ def read_box(file, path, debug, parent=None):
                 flags = read_uint(file, 3)
                 box = box_class(
                     offset=offset,
+                    payload_offset=payload_offset,
                     path=new_path,
                     size=size,
                     largesize=largesize,
@@ -295,6 +301,8 @@ def read_box(file, path, debug, parent=None):
             print(
                 f"warning: unimplemented box offset: 0x{offset:08x} type: {full_box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
             )
-        box = UnimplementedBox(offset, new_path, full_box_type, size, largesize, debug)
+        box = UnimplementedBox(
+            offset, payload_offset, new_path, full_box_type, size, largesize, debug
+        )
         box.read(file)
     return box
