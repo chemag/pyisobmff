@@ -65,9 +65,13 @@ class Box(object):
             parent.subpath[box_type_str] += 1
         return new_path
 
+    def get_size(self):
+        """get box size, including header"""
+        return self.size if self.largesize is None else self.largesize
+
     def get_max_offset(self):
-        """get box size excluding header"""
-        return self.offset + (self.size if self.largesize is None else self.largesize)
+        """get box ending offset"""
+        return self.offset + self.get_size()
 
     # default read() operation
     # read the remaining bytes as just bytes
