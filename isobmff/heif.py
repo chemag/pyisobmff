@@ -92,3 +92,16 @@ class ImageRotation(ItemProperty):
         tuples += (("reserved", self.reserved),)
         tuples += (("angle", self.angle),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.11
+class LayerSelectorProperty(ItemProperty):
+    box_type = b"lsel"
+
+    def read(self, file):
+        self.layer_id = read_uint(file, 2)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("layer_id", self.layer_id),)
+        return tuples
