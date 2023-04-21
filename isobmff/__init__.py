@@ -17,6 +17,7 @@ from . import flac
 from . import free
 from . import ftyp
 from . import hdlr
+from . import heif
 from . import hvc
 from . import iinf
 from . import iloc
