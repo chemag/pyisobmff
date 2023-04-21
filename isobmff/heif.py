@@ -4,10 +4,11 @@ from .box import FullBox
 from .box import Quantity
 from .box import read_uint
 from .box import read_fixed_size_string
+from .box import read_utf8string
 from .iprp import ItemFullProperty
 
 
-# ISO/IEC 23008-12:2022, Section 6.5.3.2
+# ISO/IEC 23008-12:2022, Section 6.5.3
 class ImageSpatialExtents(FullBox):
     box_type = b"ispe"
 
@@ -55,4 +56,23 @@ class RelativeInformation(ItemFullProperty):
         tuples = super().contents()
         tuples += (("horizontal_offset", self.horizontal_offset),)
         tuples += (("vertical_offset", self.vertical_offset),)
+        return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.8
+class AuxiliaryTypeProperty(ItemFullProperty):
+    box_type = b"auxC"
+
+    def read(self, file):
+        max_len = self.get_max_offset() - file.tell()
+        self.aux_type = read_utf8string(file, max_len)
+        self.aux_subtype = []
+        while file.tell() < self.get_max_offset():
+            self.aux_subtype.append(read_uint(file, 1))
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("aux_type", self.aux_type),)
+        for idx, val in enumerate(self.aux_subtype):
+            tuples += ((f"aux_subtype[{idx}]", val),)
         return tuples
