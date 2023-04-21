@@ -139,3 +139,20 @@ class ImageScaling(ItemFullProperty):
         tuples += (("target_height_numerator", self.target_height_numerator),)
         tuples += (("target_height_denominator", self.target_height_denominator),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.17
+class RequiredReferenceTypesProperty(ItemFullProperty):
+    box_type = b"rref"
+
+    def read(self, file):
+        reference_type_count = read_uint(file, 1)
+        self.reference_type = []
+        for _ in range(reference_type_count):
+            self.reference_type.append(read_uint(file, 4))
+
+    def contents(self):
+        tuples = super().contents()
+        for idx, val in enumerate(self.reference_type):
+            tuples += ((f"reference_type[{idx}]", val),)
+        return tuples
