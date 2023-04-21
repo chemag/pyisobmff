@@ -268,3 +268,18 @@ class FocusProperty(ItemFullProperty):
         tuples += (("focus_distance_numerator", self.focus_distance_numerator),)
         tuples += (("focus_distance_denominator", self.focus_distance_denominator),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.25
+class FlashExposureProperty(ItemFullProperty):
+    box_type = b"afbr"
+
+    def read(self, file):
+        self.flash_exposure_numerator = read_uint(file, 1)
+        self.flash_exposure_denominator = read_uint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("flash_exposure_numerator", self.flash_exposure_numerator),)
+        tuples += (("flash_exposure_denominator", self.flash_exposure_denominator),)
+        return tuples
