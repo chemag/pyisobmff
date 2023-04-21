@@ -205,3 +205,20 @@ class UserDescriptionProperty(ItemFullProperty):
         tuples += (("description", self.description),)
         tuples += (("tags", self.tags),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.21
+class AccessibilityTextProperty(ItemFullProperty):
+    box_type = b"altt"
+
+    def read(self, file):
+        max_len = self.get_max_offset() - file.tell()
+        self.alt_text = read_utf8string(file, max_len)
+        max_len = self.get_max_offset() - file.tell()
+        self.alt_lang = read_utf8string(file, max_len)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("alt_text", self.alt_text),)
+        tuples += (("alt_lang", self.alt_lang),)
+        return tuples
