@@ -182,3 +182,26 @@ class ModificationTimeProperty(ItemFullProperty):
         tuples = super().contents()
         tuples += (("modification_time", self.modification_time),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.20
+class UserDescriptionProperty(ItemFullProperty):
+    box_type = b"udes"
+
+    def read(self, file):
+        max_len = self.get_max_offset() - file.tell()
+        self.lang = read_utf8string(file, max_len)
+        max_len = self.get_max_offset() - file.tell()
+        self.name = read_utf8string(file, max_len)
+        max_len = self.get_max_offset() - file.tell()
+        self.description = read_utf8string(file, max_len)
+        max_len = self.get_max_offset() - file.tell()
+        self.tags = read_utf8string(file, max_len)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("lang", self.lang),)
+        tuples += (("name", self.name),)
+        tuples += (("description", self.description),)
+        tuples += (("tags", self.tags),)
+        return tuples
