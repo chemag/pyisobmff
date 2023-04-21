@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import string
 import struct
 from enum import Enum
 
@@ -39,6 +40,37 @@ def find_subbox(box, full_path):
     return None
 
 
+# decode a bytes string into a string containing only characters
+# from the POSIX portable filename character set. For all other
+# characters, use "\\x%02x".
+#
+# The Open Group Base Specifications Issue 7, 2018 edition
+# IEEE Std 1003.1-2017 (Revision of IEEE Std 1003.1-2008)
+#
+# 3.282 Portable Filename Character Set
+#
+# The set of characters from which portable filenames are constructed.
+#
+# A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+# a b c d e f g h i j k l m n o p q r s t u v w x y z
+# 0 1 2 3 4 5 6 7 8 9 . _ -
+#
+# The last three characters are the <period>, <underscore>, and
+# <hyphen-minus> characters, respectively. See also Pathname.
+PORTABLE_FILENAME_CHARACTER_SET = list(
+    ord(c)
+    for c in (string.ascii_uppercase + string.ascii_lowercase + string.digits + "._-")
+)
+
+
+def decode_posix_portable_filename(box_type):
+    box_type_str = "".join(
+        chr(c) if c in PORTABLE_FILENAME_CHARACTER_SET else f"\\x{c:02x}"
+        for c in box_type
+    )
+    return box_type_str
+
+
 # ISO/IEC 14496-12:2022, Section 4.2.2
 class Box(object):
     box_type = None
@@ -74,7 +106,7 @@ class Box(object):
 
     @classmethod
     def get_path(cls, path, box_type, parent):
-        box_type_str = box_type.decode("iso8859-15")
+        box_type_str = decode_posix_portable_filename(box_type)
         if parent is None:
             new_path = path + "/" + box_type_str
         elif box_type_str not in parent.subpath:
