@@ -5,7 +5,7 @@ from .box import read_uint
 from .box import read_fourcc
 
 
-# ISO/IEC 23008-12:2022, Section 4.3.2
+# ISO/IEC 14496-12:2022, Section 4.3.2
 class FileTypeBox(Box):
     box_type = b"ftyp"
     is_mandatory = True
@@ -29,6 +29,6 @@ class FileTypeBox(Box):
         return tuples
 
 
-# ISO/IEC 23008-12:2022, Section 8.16.2
+# ISO/IEC 14496-12:2022, Section 8.16.2
 class SegmentTypeBox(FileTypeBox):
     box_type = b"styp"

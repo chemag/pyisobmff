@@ -3,7 +3,7 @@ from .box import Box
 from .box import read_fourcc
 
 
-# ISO/IEC 23008-12:2022, Section 4.4
+# ISO/IEC 14496-12:2022, Section 4.4
 class ExtendedTypeBox(Box):
     box_type = b"etyp"
 
@@ -20,7 +20,7 @@ class ExtendedTypeBox(Box):
         return tuples
 
 
-# ISO/IEC 23008-12:2022, Section 4.4
+# ISO/IEC 14496-12:2022, Section 4.4
 class TypeCombinationBox(Box):
     box_type = b"tyco"
 
