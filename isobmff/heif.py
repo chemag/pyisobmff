@@ -156,3 +156,16 @@ class RequiredReferenceTypesProperty(ItemFullProperty):
         for idx, val in enumerate(self.reference_type):
             tuples += ((f"reference_type[{idx}]", val),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.18
+class CreationTimeProperty(ItemFullProperty):
+    box_type = b"crtt"
+
+    def read(self, file):
+        self.creation_time = read_uint(file, 8)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("creation_time", self.creation_time),)
+        return tuples
