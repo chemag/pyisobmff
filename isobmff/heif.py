@@ -105,3 +105,18 @@ class LayerSelectorProperty(ItemProperty):
         tuples = super().contents()
         tuples += (("layer_id", self.layer_id),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.12
+class ImageMirror(ItemProperty):
+    box_type = b"imir"
+
+    def read(self, file):
+        self.reserved = read_uint(file, 7)
+        self.axis = read_uint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("reserved", self.reserved),)
+        tuples += (("axis", self.axis),)
+        return tuples
