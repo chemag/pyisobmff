@@ -3,6 +3,7 @@ from .box import Box
 from .box import FullBox
 from .box import Quantity
 from .box import read_uint
+from .box import read_sint
 from .box import read_fixed_size_string
 from .box import read_utf8string
 from .iprp import ItemFullProperty
@@ -236,4 +237,19 @@ class AutoExposureProperty(ItemFullProperty):
         tuples = super().contents()
         tuples += (("exposure_step", self.exposure_step),)
         tuples += (("exposure_numerator", self.exposure_numerator),)
+        return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.23
+class WhiteBalanceProperty(ItemFullProperty):
+    box_type = b"wbbr"
+
+    def read(self, file):
+        self.blue_amber = read_uint(file, 2)
+        self.green_magenta = read_sint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("blue_amber", self.blue_amber),)
+        tuples += (("green_magenta", self.green_magenta),)
         return tuples
