@@ -169,3 +169,16 @@ class CreationTimeProperty(ItemFullProperty):
         tuples = super().contents()
         tuples += (("creation_time", self.creation_time),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.19
+class ModificationTimeProperty(ItemFullProperty):
+    box_type = b"mdft"
+
+    def read(self, file):
+        self.modification_time = read_uint(file, 8)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("modification_time", self.modification_time),)
+        return tuples
