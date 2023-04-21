@@ -283,3 +283,18 @@ class FlashExposureProperty(ItemFullProperty):
         tuples += (("flash_exposure_numerator", self.flash_exposure_numerator),)
         tuples += (("flash_exposure_denominator", self.flash_exposure_denominator),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.26
+class DepthOfFieldProperty(ItemFullProperty):
+    box_type = b"dobr"
+
+    def read(self, file):
+        self.f_stop_numerator = read_uint(file, 1)
+        self.f_stop_denominator = read_uint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("f_stop_numerator", self.f_stop_numerator),)
+        tuples += (("f_stop_denominator", self.f_stop_denominator),)
+        return tuples
