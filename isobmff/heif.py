@@ -120,3 +120,22 @@ class ImageMirror(ItemProperty):
         tuples += (("reserved", self.reserved),)
         tuples += (("axis", self.axis),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.13
+class ImageScaling(ItemFullProperty):
+    box_type = b"iscl"
+
+    def read(self, file):
+        self.target_width_numerator = read_uint(file, 2)
+        self.target_width_denominator = read_uint(file, 2)
+        self.target_height_numerator = read_uint(file, 2)
+        self.target_height_denominator = read_uint(file, 2)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("target_width_numerator", self.target_width_numerator),)
+        tuples += (("target_width_denominator", self.target_width_denominator),)
+        tuples += (("target_height_numerator", self.target_height_numerator),)
+        tuples += (("target_height_denominator", self.target_height_denominator),)
+        return tuples
