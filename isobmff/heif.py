@@ -222,3 +222,18 @@ class AccessibilityTextProperty(ItemFullProperty):
         tuples += (("alt_text", self.alt_text),)
         tuples += (("alt_lang", self.alt_lang),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.22
+class AutoExposureProperty(ItemFullProperty):
+    box_type = b"aebr"
+
+    def read(self, file):
+        self.exposure_step = read_uint(file, 1)
+        self.exposure_numerator = read_uint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("exposure_step", self.exposure_step),)
+        tuples += (("exposure_numerator", self.exposure_numerator),)
+        return tuples
