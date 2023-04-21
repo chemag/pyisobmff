@@ -253,3 +253,18 @@ class WhiteBalanceProperty(ItemFullProperty):
         tuples += (("blue_amber", self.blue_amber),)
         tuples += (("green_magenta", self.green_magenta),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.24
+class FocusProperty(ItemFullProperty):
+    box_type = b"fobr"
+
+    def read(self, file):
+        self.focus_distance_numerator = read_uint(file, 2)
+        self.focus_distance_denominator = read_uint(file, 2)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("focus_distance_numerator", self.focus_distance_numerator),)
+        tuples += (("focus_distance_denominator", self.focus_distance_denominator),)
+        return tuples
