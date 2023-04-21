@@ -298,3 +298,22 @@ class DepthOfFieldProperty(ItemFullProperty):
         tuples += (("f_stop_numerator", self.f_stop_numerator),)
         tuples += (("f_stop_denominator", self.f_stop_denominator),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.27
+class PanoramaProperty(ItemFullProperty):
+    box_type = b"pano"
+
+    def read(self, file):
+        self.panorama_direction = read_uint(file, 1)
+        if self.panorama_direction >= 4 and self.panorama_direction <= 5:
+            self.rows_minus_one = read_uint(file, 1)
+            self.columns_minus_one = read_uint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("panorama_direction", self.panorama_direction),)
+        if self.panorama_direction >= 4 and self.panorama_direction <= 5:
+            tuples += (("rows_minus_one", self.rows_minus_one),)
+            tuples += (("columns_minus_one", self.columns_minus_one),)
+        return tuples
