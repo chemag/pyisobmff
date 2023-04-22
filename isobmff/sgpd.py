@@ -90,6 +90,9 @@ class SampleGroupDescriptionBox(FullBox):
             if not sample_group_description_entry:
                 break
             self.sample_group_description_entries.append(sample_group_description_entry)
+        # skip the remaining data
+        # TODO: this should be centralized
+        file.seek(self.get_max_offset())
 
     def contents(self):
         tuples = super().contents()

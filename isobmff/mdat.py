@@ -7,5 +7,6 @@ class MediaDataBox(Box):
     is_mandatory = False
 
     def read(self, file):
-        max_offset = self.get_max_offset()
-        file.seek(max_offset)
+        # skip the remaining data
+        # TODO: this should be centralized
+        file.seek(self.get_max_offset())

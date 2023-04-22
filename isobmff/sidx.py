@@ -27,8 +27,8 @@ class SegmentIndexBox(FullBox):
             reference["SAP_delta_time"] = word2 & 0x0FFFFFFF
             self.references.append(reference)
         # skip the remaining data
-        max_offset = self.get_max_offset()
-        file.seek(max_offset)
+        # TODO: this should be centralized
+        file.seek(self.get_max_offset())
 
     def contents(self):
         tuples = super().contents()
