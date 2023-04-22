@@ -569,3 +569,17 @@ class AuxiliaryTypeInfoBox(FullBox):
             for idx, val in enumerate(self.group_description_indices):
                 tuples += ((f"group_description_index[{idx}]", val),)
         return tuples
+
+
+## ISO/IEC 23008-12:2022, Section B.2.3.3
+# class OperatingPointsInformationProperty(ItemFullProperty):
+#    box_type = b"oinf"
+#
+#    def read(self, file):
+#        self.op_info = OperatingPointsRecord(max_offset=self.get_max_offset())
+#        self.op_info.read(file)
+#
+#    def contents(self):
+#        tuples = super().contents()
+#        tuples += (("op_info", self.op_info.contents()),)
+#        return tuples
