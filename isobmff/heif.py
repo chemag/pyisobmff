@@ -522,3 +522,17 @@ class DirectReferenceSamplesList(VisualSampleGroupEntry):
         for idx, val in enumerate(self.direct_reference_sample_ids):
             tuples += ((f"direct_reference_sample_id[{idx}]", val),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 7.5.3
+class AuxiliaryTypeInfoBox(FullBox):
+    box_type = b"auxi"
+
+    def read(self, file):
+        max_len = self.get_max_offset() - file.tell()
+        self.aux_track_type = read_utf8string(file, max_len)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("aux_track_type", self.aux_track_type),)
+        return tuples
