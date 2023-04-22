@@ -385,3 +385,16 @@ class SplitTransitionEffectProperty(ItemFullProperty):
         tuples = super().contents()
         tuples += (("transition_direction", self.transition_direction),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.34
+class SuggestedTransitionPeriodProperty(ItemFullProperty):
+    box_type = b"stpe"
+
+    def read(self, file):
+        self.transition_period = read_uint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("transition_period", self.transition_period),)
+        return tuples
