@@ -372,3 +372,16 @@ class FadeTransitionEffectProperty(ItemFullProperty):
         tuples = super().contents()
         tuples += (("transition_direction", self.transition_direction),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.33
+class SplitTransitionEffectProperty(ItemFullProperty):
+    box_type = b"splt"
+
+    def read(self, file):
+        self.transition_direction = read_uint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("transition_direction", self.transition_direction),)
+        return tuples
