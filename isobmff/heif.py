@@ -583,3 +583,19 @@ class AuxiliaryTypeInfoBox(FullBox):
 #        tuples = super().contents()
 #        tuples += (("op_info", self.op_info.contents()),)
 #        return tuples
+
+
+# ISO/IEC 23008-12:2022, Section H.2
+class JPEGConfigurationBox(Box):
+    box_type = b"jpgC"
+
+    def read(self, file):
+        self.jpeg_prefixes = []
+        while file.tell() < self.get_max_offset():
+            self.jpeg_prefixes.append(read_uint(file, 1))
+
+    def contents(self):
+        tuples = super().contents()
+        for idx, val in enumerate(self.jpeg_prefixes):
+            tuples += ((f"jpeg_prefix[{idx}]", val),)
+        return tuples
