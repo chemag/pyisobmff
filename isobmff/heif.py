@@ -317,3 +317,16 @@ class PanoramaProperty(ItemFullProperty):
             tuples += (("rows_minus_one", self.rows_minus_one),)
             tuples += (("columns_minus_one", self.columns_minus_one),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.29
+class TargetOlsProperty(ItemFullProperty):
+    box_type = b"tols"
+
+    def read(self, file):
+        self.target_ols_idx = read_uint(file, 2)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("target_ols_idx", self.target_ols_idx),)
+        return tuples
