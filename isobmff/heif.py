@@ -502,3 +502,23 @@ class ccst(FullBox):
         tuples += (("max_ref_per_pic", self.max_ref_per_pic),)
         tuples += (("reserved", self.reserved),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 7.4.1
+class DirectReferenceSamplesList(VisualSampleGroupEntry):
+    box_type = b"refs"
+
+    def read(self, file):
+        super().read(file)
+        self.sample_id = read_sint(file, 4)
+        num_direct_reference_samples = read_uint(file, 1)
+        self.direct_reference_sample_ids = []
+        for _ in range(num_direct_reference_samples):
+            self.direct_reference_sample_ids.append(read_uint(file, 4))
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("sample_id", self.sample_id),)
+        for idx, val in enumerate(self.direct_reference_sample_ids):
+            tuples += ((f"direct_reference_sample_id[{idx}]", val),)
+        return tuples
