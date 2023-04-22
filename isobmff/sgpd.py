@@ -3,6 +3,31 @@ from .box import FullBox
 from .box import read_uint
 
 
+# ISO/IEC 14496-12:2022, Section 8.9.2
+class SampleToGroupBox(FullBox):
+    box_type = b"sbgp"
+
+    def read(self, file):
+        self.grouping_type = read_uint(file, 4)
+        if self.version >= 1:
+            self.grouping_type_parameter = read_uint(file, 4)
+        entry_count = read_uint(file, 4)
+        self.sample_counts = []
+        self.group_description_indices = []
+        for _ in range(entry_count):
+            self.sample_counts.append(read_uint(file, 4))
+            self.group_description_indices.append(read_uint(file, 4))
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("grouping_type", self.grouping_type),)
+        for idx, val in enumerate(self.sample_counts):
+            tuples += ((f"sample_count[{idx}]", val),)
+        for idx, val in enumerate(self.group_description_indices):
+            tuples += ((f"group_description_index[{idx}]", val),)
+        return tuples
+
+
 # ISO/IEC 14496-12:2022, Section 8.9.3.2
 class SampleGroupDescriptionEntry:
     pass
