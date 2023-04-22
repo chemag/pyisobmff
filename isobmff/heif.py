@@ -330,3 +330,16 @@ class TargetOlsProperty(ItemFullProperty):
         tuples = super().contents()
         tuples += (("target_ols_idx", self.target_ols_idx),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.30
+class WipeTransitionEffectProperty(ItemFullProperty):
+    box_type = b"wipe"
+
+    def read(self, file):
+        self.transition_direction = read_uint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("transition_direction", self.transition_direction),)
+        return tuples
