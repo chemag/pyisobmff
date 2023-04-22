@@ -398,3 +398,16 @@ class SuggestedTransitionPeriodProperty(ItemFullProperty):
         tuples = super().contents()
         tuples += (("transition_period", self.transition_period),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.35
+class SuggestedTimeDisplayDurationProperty(ItemFullProperty):
+    box_type = b"ssld"
+
+    def read(self, file):
+        self.duration = read_uint(file, 2)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("duration", self.duration),)
+        return tuples
