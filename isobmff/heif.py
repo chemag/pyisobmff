@@ -343,3 +343,19 @@ class WipeTransitionEffectProperty(ItemFullProperty):
         tuples = super().contents()
         tuples += (("transition_direction", self.transition_direction),)
         return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.5.31
+class ZoomTransitionEffectProperty(ItemFullProperty):
+    box_type = b"zoom"
+
+    def read(self, file):
+        byte0 = read_uint(file, 1)
+        self.transition_direction = byte0 >> 7
+        self.transition_shape = byte0 & 0x7F
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("transition_direction", self.transition_direction),)
+        tuples += (("transition_shape", self.transition_shape),)
+        return tuples
