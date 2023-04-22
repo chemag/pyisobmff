@@ -428,3 +428,43 @@ class VisualEquivalenceEntry(VisualSampleGroupEntry):
         tuples += (("time_offset", self.time_offset),)
         tuples += (("timescale_multiplier", self.timescale_multiplier),)
         return tuples
+
+
+## ISO/IEC 23008-12:2022, Section 6.8.6.2
+# class AutoExposureBracketingEntry(VisualSampleGroupEntry):
+#    box_type = b"aebr"
+#
+#    def read(self, file):
+#        super().read(file)
+#        self.exposure_step = read_uint(file, 1)
+#        self.exposure_numerator = read_uint(file, 1)
+#
+#    def contents(self):
+#        tuples = super().contents()
+#        tuples += (("exposure_step", self.exposure_step),)
+#        tuples += (("exposure_numerator", self.exposure_numerator),)
+#        return tuples
+
+## ISO/IEC 23008-12:2022, Section 6.8.6.3
+# class WhiteBalanceBracketingEntry(VisualSampleGroupEntry):
+#    box_type = b"wbbr"
+
+
+## ISO/IEC 23008-12:2022, Section 6.8.6.4
+# class FocusBracketingEntry(VisualSampleGroupEntry):
+#    box_type = b"fobr"
+
+
+## ISO/IEC 23008-12:2022, Section 6.8.6.5
+# class FlashExposureBracketingEntry(VisualSampleGroupEntry):
+#    box_type = b"afbr"
+
+
+## ISO/IEC 23008-12:2022, Section 6.8.6.6
+# class DepthOfFieldBracketingEntry(VisualSampleGroupEntry):
+#    box_type = b"dobr"
+
+
+## ISO/IEC 23008-12:2022, Section 6.8.8.2
+# class PanoramaEntry(VisualSampleGroupEntry):
+#    box_type = b"pano"
