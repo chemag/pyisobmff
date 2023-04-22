@@ -51,11 +51,6 @@ class QuickTimeChapterList(Box):
 
 
 # https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
-class QuickTimeSampleGroupDescription(Box):
-    box_type = b"sgpd"
-
-
-# https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
 class QuickTimeTags(Box):
     box_type = b"TAGS"
 

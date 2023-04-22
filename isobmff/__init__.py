@@ -37,6 +37,7 @@ from . import opus
 from . import pitm
 from . import qtff
 from . import sidx
+from . import sgpd
 from . import stbl
 from . import stco
 from . import stsc
