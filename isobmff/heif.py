@@ -468,3 +468,16 @@ class VisualEquivalenceEntry(VisualSampleGroupEntry):
 ## ISO/IEC 23008-12:2022, Section 6.8.8.2
 # class PanoramaEntry(VisualSampleGroupEntry):
 #    box_type = b"pano"
+
+
+# ISO/IEC 23008-12:2022, Section 6.10.2.2
+class MaskConfigurationProperty(ItemFullProperty):
+    box_type = b"mskC"
+
+    def read(self, file):
+        self.bits_per_pixel = read_uint(file, 8)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("bits_per_pixel", self.bits_per_pixel),)
+        return tuples
