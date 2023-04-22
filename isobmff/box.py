@@ -149,7 +149,7 @@ class Box(object):
 
     # read a single box
     def read_box(self, file):
-        return read_box(file, self.path, self.debug, self)
+        return read_box(file, self.path, self.debug, self, self.get_max_offset())
 
     def write(self, file):
         """write box to file"""
@@ -288,13 +288,26 @@ def get_class_type(cls):
 
 
 # TODO(chema): move function to Box/BoxHeader/FullBox/FullBoxHeader
-def read_box(file, path, debug, parent=None):
+def read_box(file, path, debug, parent=None, max_offset=None):
     # 1. read the BoxHeader fields
     offset = file.tell()
+    if max_offset is not None and (max_offset - file.tell()) < 4:
+        print(
+            f"read_box() no space for size field in Box Header max_offset: 0x{max_offset:08x} file.tell(): 0x{file.tell():08x}"
+        )
+        return None
     size = read_uint(file, 4)
     if size == "":
+        print(
+            f"read_box() empty size field in Box Header file.tell(): 0x{file.tell():08x}"
+        )
         return None
     try:
+        if max_offset is not None and (max_offset - file.tell()) < 4:
+            print(
+                f"read_box() no space for box_type field in Box Header max_offset: 0x{max_offset:08x} file.tell(): 0x{file.tell():08x}"
+            )
+            return None
         box_type = read_fourcc(file)
     except:
         raise Exception(f"error: cannot read box type at location 0x{offset+4:08x}")
@@ -304,9 +317,19 @@ def read_box(file, path, debug, parent=None):
     if size == 0:
         raise Exception(f"ERROR: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)")
     elif size == 1:
+        if max_offset is not None and (max_offset - file.tell()) < 8:
+            print(
+                f"read_box() no space for largesize field in Box Header max_offset: 0x{max_offset:08x} file.tell(): 0x{file.tell():08x}"
+            )
+            return None
         largesize = read_uint(file, 8)
     full_box_type = box_type
     if box_type == b"uuid":
+        if max_offset is not None and (max_offset - file.tell()) < 16:
+            print(
+                f"read_box() no space for extended_type field in Box Header max_offset: 0x{max_offset:08x} file.tell(): 0x{file.tell():08x}"
+            )
+            return None
         extended_type = read_extended_type(file)
         full_box_type = extended_type
     payload_offset = file.tell()
@@ -328,6 +351,11 @@ def read_box(file, path, debug, parent=None):
                     debug=debug,
                 )
             elif class_type == "FullBox":
+                if max_offset is not None and (max_offset - file.tell()) < 4:
+                    print(
+                        f"read_box() no space for version/flags field in Box Header max_offset: 0x{max_offset:08x} file.tell(): 0x{file.tell():08x}"
+                    )
+                    return None
                 version = read_uint(file, 1)
                 flags = read_uint(file, 3)
                 box = box_class(

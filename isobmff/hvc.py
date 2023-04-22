@@ -17,7 +17,8 @@ class HEVCSampleEntry(VisualSampleEntry):
 
     def contents(self):
         tuples = super().contents()
-        tuples += (("config", self.config.contents()),)
+        if self.config is not None:
+            tuples += (("config", self.config.contents()),)
         return tuples
 
 

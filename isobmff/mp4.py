@@ -22,7 +22,8 @@ class MP4VisualSampleEntry(VisualSampleEntry):
 
     def contents(self):
         tuples = super().contents()
-        tuples += (("ES", self.ES.contents()),)
+        if self.ES is not None:
+            tuples += (("ES", self.ES.contents()),)
         return tuples
 
 
@@ -36,7 +37,8 @@ class MP4AudioSampleEntry(AudioSampleEntry):
 
     def contents(self):
         tuples = super().contents()
-        tuples += (("ES", self.ES.contents()),)
+        if self.ES is not None:
+            tuples += (("ES", self.ES.contents()),)
         return tuples
 
 
@@ -50,5 +52,6 @@ class MpegSampleEntry(SampleEntry):
 
     def contents(self):
         tuples = super().contents()
-        tuples += (("ES", self.ES.contents()),)
+        if self.ES is not None:
+            tuples += (("ES", self.ES.contents()),)
         return tuples
