@@ -5,6 +5,7 @@ from .box import Quantity
 from .box import read_uint
 from .box import read_sint
 from .box import read_fixed_size_string
+from .box import read_fourcc
 from .box import read_utf8string
 from .iprp import ItemFullProperty
 from .iprp import ItemProperty
@@ -535,4 +536,36 @@ class AuxiliaryTypeInfoBox(FullBox):
     def contents(self):
         tuples = super().contents()
         tuples += (("aux_track_type", self.aux_track_type),)
+        return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 8.4.2
+class AuxiliaryTypeInfoBox(FullBox):
+    box_type = b"md5i"
+
+    def read(self, file):
+        self.input_MD5s = []
+        for _ in range(16):
+            self.input_MD5s.append(read_uint(file, 1))
+        self.input_4cc = read_fourcc(file)
+        if self.input_4cc == "sgpd":
+            self.grouping_type = read_uint(file, 4)
+            if self.flags & 0x1:
+                self.grouping_type_parameter = read_uint(file, 4)
+            num_entries = read_uint(file, 4)
+            self.group_description_indices = []
+            for _ in range(num_entries):
+                self.group_description_indices.append(read_uint(file, 4))
+
+    def contents(self):
+        tuples = super().contents()
+        for idx, val in enumerate(self.input_MD5s):
+            tuples += ((f"input_MD5[{idx}]", val),)
+        tuples += (("input_4cc", self.input_4cc),)
+        if self.input_4cc == "sgpd":
+            tuples += (("grouping_type", self.grouping_type),)
+            if self.flags & 0x1:
+                tuples += (("grouping_type_parameter", self.grouping_type_parameter),)
+            for idx, val in enumerate(self.group_description_indices):
+                tuples += ((f"group_description_index[{idx}]", val),)
         return tuples
