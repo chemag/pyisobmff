@@ -8,6 +8,7 @@ from .box import read_fixed_size_string
 from .box import read_utf8string
 from .iprp import ItemFullProperty
 from .iprp import ItemProperty
+from .sgpd import VisualSampleGroupEntry
 
 
 # ISO/IEC 23008-12:2022, Section 6.5.3
@@ -410,4 +411,20 @@ class SuggestedTimeDisplayDurationProperty(ItemFullProperty):
     def contents(self):
         tuples = super().contents()
         tuples += (("duration", self.duration),)
+        return tuples
+
+
+# ISO/IEC 23008-12:2022, Section 6.8.1.2
+class VisualEquivalenceEntry(VisualSampleGroupEntry):
+    box_type = b"eqiv"
+
+    def read(self, file):
+        super().read(file)
+        self.time_offset = read_sint(file, 2)
+        self.timescale_multiplier = read_uint(file, 2)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("time_offset", self.time_offset),)
+        tuples += (("timescale_multiplier", self.timescale_multiplier),)
         return tuples
