@@ -599,3 +599,17 @@ class JPEGConfigurationBox(Box):
         for idx, val in enumerate(self.jpeg_prefixes):
             tuples += ((f"jpeg_prefix[{idx}]", val),)
         return tuples
+
+
+## ISO/IEC 23008-12:2022, Section I.2.3.2
+# class VvcOperatingPointsInformationProperty(ItemFullProperty):
+#    box_type = b"vopi"
+#
+#    def read(self, file):
+#        self.op_info = VvcOperatingPointsRecord(max_offset=self.get_max_offset())
+#        self.op_info.read(file)
+#
+#    def contents(self):
+#        tuples = super().contents()
+#        tuples += (("op_info", self.op_info.contents()),)
+#        return tuples
