@@ -4,6 +4,7 @@ __init__
 """
 from __future__ import absolute_import
 from .media_file import MediaFile
+from .box import get_atom_list
 from . import ac3
 from . import ac4
 from . import avc

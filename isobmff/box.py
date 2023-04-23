@@ -291,6 +291,11 @@ def get_class_list(cls, res=[]):
     return res
 
 
+def get_atom_list():
+    box_classes = get_class_list(Box)
+    return [box_class.box_type for box_class in box_classes]
+
+
 def get_class_type(cls):
     while cls:
         if cls.__name__ == "Box":
