@@ -86,10 +86,14 @@ class SampleGroupDescriptionBox(FullBox):
                 if self.default_length == 0:
                     self.description_lengths.append(read_uint(file, 4))
             # TODO: must be of SampleGroupDescriptionEntry type
-            sample_group_description_entry = self.read_box(file)
-            if not sample_group_description_entry:
-                break
-            self.sample_group_description_entries.append(sample_group_description_entry)
+            sample_group_description_entry_length = (
+                self.default_length
+                if self.default_length != 0
+                else self.description_lengths[-1]
+            )
+            self.sample_group_description_entries.append(
+                read_uint(file, sample_group_description_entry_length)
+            )
         # skip the remaining data
         # TODO: this should be centralized
         file.seek(self.max_offset)
@@ -108,6 +112,6 @@ class SampleGroupDescriptionBox(FullBox):
             )
         for idx, val in enumerate(self.description_lengths):
             tuples += ((f"description_length[{idx}]", val),)
-        for idx, box in enumerate(self.sample_group_description_entries):
-            tuples += ((f"sample_group_description_entry[{idx}]", box.contents()),)
+        for idx, val in enumerate(self.sample_group_description_entries):
+            tuples += ((f"sample_group_description_entry[{idx}]", val),)
         return tuples
