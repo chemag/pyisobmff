@@ -153,13 +153,13 @@ class XMLMetaDataSampleEntry(MetaDataSampleEntry):
 
     def read(self, file):
         super().read(file)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.content_encoding = read_utf8string(file, max_len)
         # TODO(chema): utf8list here
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.namespace = read_utf8string(file, max_len)
         # TODO(chema): utf8list here
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.schema_location = read_utf8string(file, max_len)
 
     def contents(self):
@@ -176,7 +176,7 @@ class TextConfigBox(FullBox):
 
     def read(self, file):
         super().read(file)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.text_config = read_utf8string(file, max_len)
 
     def contents(self):
@@ -191,9 +191,9 @@ class TextMetaDataSampleEntry(MetaDataSampleEntry):
 
     def read(self, file):
         super().read(file)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.content_encoding = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.mime_format = read_utf8string(file, max_len)
         self.box_list = self.read_box_list(file)
 
@@ -212,7 +212,7 @@ class MimeBox(FullBox):
 
     def read(self, file):
         super().read(file)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.content_type = read_utf8string(file, max_len)
 
     def contents(self):
@@ -230,7 +230,7 @@ class URIBox(FullBox):
 
     def read(self, file):
         super().read(file)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.the_uri = read_utf8string(file, max_len)
 
     def contents(self):
@@ -248,7 +248,7 @@ class URIInitBox(FullBox):
 
     def read(self, file):
         super().read(file)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.uri_initialization_data = self.read_as_bytes(file)
 
     def contents(self):
@@ -263,9 +263,9 @@ class URIMetaSampleEntry(MetaDataSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.the_label = URIBox(max_offset=self.get_max_offset())
+        self.the_label = URIBox(max_offset=self.max_offset)
         self.uri_box.read(file)
-        self.init = URIInitBox(max_offset=self.get_max_offset())
+        self.init = URIInitBox(max_offset=self.max_offset)
         self.init.read(file)
 
     def contents(self):
@@ -293,11 +293,11 @@ class SimpleTextSampleEntry(PlainTextSampleEntry):
 
     def read(self, file):
         super().read(file)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.content_encoding = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.mime_format = read_utf8string(file, max_len)
-        if file.tell() < self.get_max_offset():
+        if file.tell() < self.max_offset:
             self.text_config_box = self.read_box(file)
 
     def contents(self):
@@ -321,13 +321,13 @@ class XMLSubtitleSampleEntry(SubtitleSampleEntry):
     def read(self, file):
         super().read(file)
         # TODO(chema): utf8list here
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.namespace = read_utf8string(file, max_len)
         # TODO(chema): utf8list here
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.schema_location = read_utf8string(file, max_len)
         # TODO(chema): utf8list here
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.auxiliary_mime_types = read_utf8string(file, max_len)
 
     def contents(self):
@@ -344,11 +344,11 @@ class TextSubtitleSampleEntry(SubtitleSampleEntry):
 
     def read(self, file):
         super().read(file)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.content_encoding = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.mime_format = read_utf8string(file, max_len)
-        if file.tell() < self.get_max_offset():
+        if file.tell() < self.max_offset:
             self.text_config_box = self.read_box(file)
 
     def contents(self):

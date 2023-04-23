@@ -21,5 +21,5 @@ class SampleToChunkBox(FullBox):
             entry["sample_description_index"] = read_uint(file, 4)
             self.entries.append(entry)
         # read the rest of the box
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.remaining = read_bytes(file, max_len)

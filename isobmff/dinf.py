@@ -14,7 +14,7 @@ class DataInformationBox(Box):
 
     def read(self, file):
         self.box_list = []
-        while file.tell() < self.get_max_offset():
+        while file.tell() < self.max_offset:
             self.box_list = self.read_box_list(file)
 
     def contents(self):
@@ -55,7 +55,7 @@ class DataEntryUrlBox(DataEntryBaseBox):
     is_mandatory = True
 
     def read(self, file):
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.location = read_utf8string(file, max_len)
 
     def contents(self):
@@ -70,9 +70,9 @@ class DataEntryUrnBox(DataEntryBaseBox):
     is_mandatory = True
 
     def read(self, file):
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.name = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.location = read_utf8string(file, max_len)
 
     def contents(self):

@@ -48,9 +48,7 @@ class AVCConfigurationBox(Box):
     box_type = b"avcC"
 
     def read(self, file):
-        self.avc_config = AVCDecoderConfigurationRecord(
-            max_offset=self.get_max_offset()
-        )
+        self.avc_config = AVCDecoderConfigurationRecord(max_offset=self.max_offset)
         self.avc_config.read(file)
 
     def contents(self):

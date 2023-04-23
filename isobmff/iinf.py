@@ -37,11 +37,11 @@ class ItemInformationEntry(FullBox):
         if self.version == 0 or self.version == 1:
             self.item_id = read_uint(file, 2)
             self.item_protection_index = read_uint(file, 2)
-            max_len = self.get_max_offset() - file.tell()
+            max_len = self.max_offset - file.tell()
             self.item_name = read_utf8string(file, max_len)
-            max_len = self.get_max_offset() - file.tell()
+            max_len = self.max_offset - file.tell()
             self.content_type = read_utf8string(file, max_len)
-            max_len = self.get_max_offset() - file.tell()
+            max_len = self.max_offset - file.tell()
             self.content_encoding = read_utf8string(file, max_len)
         if self.version == 1:
             extension_type = read_fixed_size_string(file, 4)
@@ -55,15 +55,15 @@ class ItemInformationEntry(FullBox):
                 self.item_id = read_uint(file, 4)
             self.item_protection_index = read_uint(file, 2)
             self.item_type = read_fixed_size_string(file, 4)
-            max_len = self.get_max_offset() - file.tell()
+            max_len = self.max_offset - file.tell()
             self.item_name = read_utf8string(file, max_len)
             if self.item_type == "mime":
-                max_len = self.get_max_offset() - file.tell()
+                max_len = self.max_offset - file.tell()
                 self.content_type = read_utf8string(file, max_len)
-                max_len = self.get_max_offset() - file.tell()
+                max_len = self.max_offset - file.tell()
                 self.content_encoding = read_utf8string(file, max_len)
             elif self.item_type == "uri ":
-                max_len = self.get_max_offset() - file.tell()
+                max_len = self.max_offset - file.tell()
                 self.uri_type = read_utf8string(file, max_len)
 
     def contents(self):
@@ -94,9 +94,9 @@ class ItemInformationEntry(FullBox):
 # Note that this class descends from ItemInfoExtension.
 class FDItemInfoExtension(object):
     def read(self, file):
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.content_location = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.content_md5 = read_utf8string(file, max_len)
         self.content_length = read_uint(file, 8)
         self.transfer_length = read_uint(file, 8)

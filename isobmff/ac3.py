@@ -120,7 +120,7 @@ class EC3SpecificBox(Box):
             else:
                 sub["reserved3"] = rem
             self.subs.append(sub)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.reserved4 = read_uint(file, max_len)
 
     def contents(self):

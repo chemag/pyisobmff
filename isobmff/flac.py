@@ -35,8 +35,8 @@ class FlacSpecificBox(Box):
 
     def read(self, file):
         self.metadata_blocks = []
-        while file.tell() < self.get_max_offset():
-            metadata_block = FlacMetadataBlock(max_offset=self.get_max_offset())
+        while file.tell() < self.max_offset:
+            metadata_block = FlacMetadataBlock(max_offset=self.max_offset)
             metadata_block.read(file)
             self.metadata_blocks.append(metadata_block)
 

@@ -130,7 +130,7 @@ class TrackRunBox(FullBox):
             self.samples.append(sample)
         # skip the remaining data
         # TODO: this should be centralized
-        file.seek(self.get_max_offset())
+        file.seek(self.max_offset)
 
     def contents(self):
         tuples = super().contents()

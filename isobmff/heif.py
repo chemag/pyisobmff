@@ -68,10 +68,10 @@ class AuxiliaryTypeProperty(ItemFullProperty):
     box_type = b"auxC"
 
     def read(self, file):
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.aux_type = read_utf8string(file, max_len)
         self.aux_subtype = []
-        while file.tell() < self.get_max_offset():
+        while file.tell() < self.max_offset:
             self.aux_subtype.append(read_uint(file, 1))
 
     def contents(self):
@@ -192,13 +192,13 @@ class UserDescriptionProperty(ItemFullProperty):
     box_type = b"udes"
 
     def read(self, file):
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.lang = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.name = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.description = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.tags = read_utf8string(file, max_len)
 
     def contents(self):
@@ -215,9 +215,9 @@ class AccessibilityTextProperty(ItemFullProperty):
     box_type = b"altt"
 
     def read(self, file):
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.alt_text = read_utf8string(file, max_len)
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.alt_lang = read_utf8string(file, max_len)
 
     def contents(self):
@@ -530,7 +530,7 @@ class AuxiliaryTypeInfoBox(FullBox):
     box_type = b"auxi"
 
     def read(self, file):
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.aux_track_type = read_utf8string(file, max_len)
 
     def contents(self):
@@ -576,7 +576,7 @@ class AuxiliaryTypeInfoBox(FullBox):
 #    box_type = b"oinf"
 #
 #    def read(self, file):
-#        self.op_info = OperatingPointsRecord(max_offset=self.get_max_offset())
+#        self.op_info = OperatingPointsRecord(max_offset=self.max_offset)
 #        self.op_info.read(file)
 #
 #    def contents(self):
@@ -591,7 +591,7 @@ class JPEGConfigurationBox(Box):
 
     def read(self, file):
         self.jpeg_prefixes = []
-        while file.tell() < self.get_max_offset():
+        while file.tell() < self.max_offset:
             self.jpeg_prefixes.append(read_uint(file, 1))
 
     def contents(self):
@@ -606,7 +606,7 @@ class JPEGConfigurationBox(Box):
 #    box_type = b"vopi"
 #
 #    def read(self, file):
-#        self.op_info = VvcOperatingPointsRecord(max_offset=self.get_max_offset())
+#        self.op_info = VvcOperatingPointsRecord(max_offset=self.max_offset)
 #        self.op_info.read(file)
 #
 #    def contents(self):

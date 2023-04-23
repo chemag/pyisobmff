@@ -9,4 +9,4 @@ class MediaDataBox(Box):
     def read(self, file):
         # skip the remaining data
         # TODO: this should be centralized
-        file.seek(self.get_max_offset())
+        file.seek(self.max_offset)

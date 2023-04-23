@@ -36,6 +36,9 @@ class EditListBox(FullBox):
             entry["media_rate_integer"] = read_uint(file, 2)
             entry["media_rate_fraction"] = read_uint(file, 2)
             self.entries.append(entry)
+        # skip the remaining data
+        # TODO: this should be centralized
+        file.seek(self.max_offset)
 
     def contents(self):
         tuples = super().contents()

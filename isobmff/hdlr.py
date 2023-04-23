@@ -18,7 +18,7 @@ class HandlerReferenceBox(FullBox):
         self.reserved = []
         for _ in range(3):  # 3*4=12bytes
             self.reserved.append(read_uint(file, 4))
-        max_len = self.get_max_offset() - file.tell()
+        max_len = self.max_offset - file.tell()
         self.name = read_utf8string(file, max_len)
         # ensure we read all the way to the end of the box
         self.bytes = self.read_as_bytes(file)

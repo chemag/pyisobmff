@@ -28,7 +28,7 @@ class SegmentIndexBox(FullBox):
             self.references.append(reference)
         # skip the remaining data
         # TODO: this should be centralized
-        file.seek(self.get_max_offset())
+        file.seek(self.max_offset)
 
     def contents(self):
         tuples = super().contents()

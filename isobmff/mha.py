@@ -34,7 +34,7 @@ class MHAConfigurationBox(Box):
     box_type = b"mhaC"
 
     def read(self, file):
-        self.MHAConfig = MHADecoderConfigurationRecord(max_offset=self.get_max_offset())
+        self.MHAConfig = MHADecoderConfigurationRecord(max_offset=self.max_offset)
         self.MHAConfig.read(file)
 
     def contents(self):

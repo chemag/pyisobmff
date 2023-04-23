@@ -9,7 +9,7 @@ class ExtendedTypeBox(Box):
 
     def read(self, file):
         self.compatible_combinations = []
-        while file.tell() < self.get_max_offset():
+        while file.tell() < self.max_offset:
             # TODO(chema): only tyco allowed here
             self.compatible_combinations = self.read_box_list(file)
 
@@ -26,7 +26,7 @@ class TypeCombinationBox(Box):
 
     def read(self, file):
         self.compatible_brands = []
-        while file.tell() < self.get_max_offset():
+        while file.tell() < self.max_offset:
             box_type = read_fourcc(file)
             self.compatible_brands.append(box_type)
 

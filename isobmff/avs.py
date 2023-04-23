@@ -24,9 +24,7 @@ class AvsSequenceInfoBox(Box):
     box_type = b"avss"
 
     def read(self, file):
-        self.avs_config = AVSDecoderConfigurationRecord(
-            max_offset=self.get_max_offset()
-        )
+        self.avs_config = AVSDecoderConfigurationRecord(max_offset=self.max_offset)
         self.avs_config.read(file)
 
     def contents(self):

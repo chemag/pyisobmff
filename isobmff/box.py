@@ -75,13 +75,18 @@ def decode_posix_portable_filename(box_type):
 class Box(object):
     box_type = None
 
-    def __init__(self, offset, payload_offset, path, size, largesize, debug):
+    def __init__(
+        self, offset, payload_offset, path, size, largesize, max_offset, debug
+    ):
         self.offset = offset
         self.payload_offset = payload_offset
         self.path = path
         self.subpath = {}
         self.size = size
         self.largesize = largesize
+        self.max_offset = self.offset + self.get_size()
+        if max_offset is not None:
+            self.max_offset = min(self.max_offset, max_offset)
         self.debug = debug
 
     def contents(self):
@@ -121,10 +126,6 @@ class Box(object):
         """get box size, including header"""
         return self.size if self.largesize is None else self.largesize
 
-    def get_max_offset(self):
-        """get box ending offset"""
-        return self.offset + self.get_size()
-
     # default read() operation
     # read the remaining bytes as just bytes
     def read(self, file):
@@ -133,14 +134,12 @@ class Box(object):
     # read the remaining bytes as simple bytes
     def read_as_bytes(self, file):
         offset = file.tell()
-        max_offset = self.get_max_offset()
-        return file.read(max_offset - offset)
+        return file.read(self.max_offset - offset)
 
     # read the remaining bytes as boxes
     def read_box_list(self, file):
         box_list = []
-        max_offset = self.get_max_offset()
-        while file.tell() < max_offset:
+        while file.tell() < self.max_offset:
             box = self.read_box(file)
             if box is None:
                 break
@@ -149,7 +148,7 @@ class Box(object):
 
     # read a single box
     def read_box(self, file):
-        return read_box(file, self.path, self.debug, self, self.get_max_offset())
+        return read_box(file, self.path, self.debug, self, self.max_offset)
 
     def write(self, file):
         """write box to file"""
@@ -161,9 +160,20 @@ class FullBox(Box):
     box_type = None
 
     def __init__(
-        self, offset, payload_offset, path, size, largesize, version, flags, debug
+        self,
+        offset,
+        payload_offset,
+        path,
+        size,
+        largesize,
+        max_offset,
+        version,
+        flags,
+        debug,
     ):
-        super().__init__(offset, payload_offset, path, size, largesize, debug)
+        super().__init__(
+            offset, payload_offset, path, size, largesize, max_offset, debug
+        )
         self.version = version
         self.flags = flags
 
@@ -189,9 +199,13 @@ class ContainerBox(Box):
 
 
 class UnimplementedBox(Box):
-    def __init__(self, offset, payload_offset, path, box_type, size, largesize, debug):
+    def __init__(
+        self, offset, payload_offset, path, box_type, size, largesize, max_offset, debug
+    ):
         self.box_type = box_type
-        super().__init__(offset, payload_offset, path, size, largesize, debug)
+        super().__init__(
+            offset, payload_offset, path, size, largesize, max_offset, debug
+        )
 
     def read(self, file):
         self.bytes = self.read_as_bytes(file)
@@ -348,6 +362,7 @@ def read_box(file, path, debug, parent=None, max_offset=None):
                     path=new_path,
                     size=size,
                     largesize=largesize,
+                    max_offset=max_offset,
                     debug=debug,
                 )
             elif class_type == "FullBox":
@@ -366,6 +381,7 @@ def read_box(file, path, debug, parent=None, max_offset=None):
                     largesize=largesize,
                     version=version,
                     flags=flags,
+                    max_offset=max_offset,
                     debug=debug,
                 )
             else:
@@ -381,7 +397,14 @@ def read_box(file, path, debug, parent=None, max_offset=None):
                 f"warning: unimplemented box offset: 0x{offset:08x} type: {full_box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
             )
         box = UnimplementedBox(
-            offset, payload_offset, new_path, full_box_type, size, largesize, debug
+            offset,
+            payload_offset,
+            new_path,
+            full_box_type,
+            size,
+            largesize,
+            max_offset,
+            debug,
         )
         box.read(file)
     return box

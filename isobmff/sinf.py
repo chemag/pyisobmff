@@ -38,7 +38,7 @@ class SchemeTypeBox(FullBox):
         self.scheme_type = read_uint(file, 4)
         self.scheme_version = read_uint(file, 4)
         if self.flags & 0b1:
-            max_len = self.get_max_offset() - file.tell()
+            max_len = self.max_offset - file.tell()
             self.scheme_uri = read_utf8string(file, max_len)
 
     def contents(self):

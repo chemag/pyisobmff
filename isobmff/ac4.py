@@ -71,7 +71,7 @@ class AC4SpecificBox(Box):
     box_type = b"dac4"
 
     def read(self, file):
-        self.ac4_dsi_v1 = AC4DsiV1(max_offset=self.get_max_offset())
+        self.ac4_dsi_v1 = AC4DsiV1(max_offset=self.max_offset)
         self.ac4_dsi_v1.read(file)
 
     def contents(self):
@@ -94,7 +94,7 @@ class AC4PresentationLabelBox(FullBox):
             half = read_uint(file, 2)
             presentation["reserved"] = half >> 9
             presentation["presentation_id"] = half & 0x01FF
-            max_len = self.get_max_offset() - file.tell()
+            max_len = self.max_offset - file.tell()
             presentation["presentation_label"] = read_utf8string(file, max_len)
             self.presentations.append(presentation)
 

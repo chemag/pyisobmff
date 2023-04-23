@@ -13,7 +13,7 @@ class MetaBox(FullBox):
 
     def read(self, file):
         self.box_list = []
-        while file.tell() < self.get_max_offset():
+        while file.tell() < self.max_offset:
             if not self.box_list:
                 if file.peek()[:4] == b"hdlr":
                     # This is a relatively common issue on isobmff streams
