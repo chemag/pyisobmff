@@ -4,7 +4,9 @@
 ISO/IEC 14496-12) parser."""
 
 import argparse
+import glob
 import os
+import pathlib
 import sys
 
 dirname = os.path.dirname(sys.modules[__name__].__file__)
@@ -26,6 +28,7 @@ default_values = {
     "debug": 0,
     "dry_run": False,
     "func": "parse",
+    "testdir": None,
     "listfile": None,
     "path": None,
     "infile": None,
@@ -57,6 +60,45 @@ def test_file_of_files(listfile, debug):
         print("BROKEN FILES")
         for filename in error_list:
             print(f"  {filename}")
+
+
+ISOBMFF_EXTENSIONS = (".mp4", ".heic", ".heif", ".mov", ".m4a", ".3gp", ".uvu")
+
+
+def get_list_of_isobmff_files(testdir, debug):
+    known_atom_list = isobmff.get_atom_list()
+    filelist = []
+    for fname in glob.glob(os.path.join(testdir, "*")):
+        if os.path.isdir(fname):
+            filelist += get_list_of_isobmff_files(fname, debug)
+        elif pathlib.Path(fname).suffix in ISOBMFF_EXTENSIONS:
+            with open(fname, "rb") as fin:
+                size0 = fin.read(4)
+                brand0 = fin.read(4)
+                if brand0 in known_atom_list:
+                    filelist.append(fname)
+    return filelist
+
+
+def test_directory(testdir, debug):
+    # 1. get the list of isobmff files
+    filelist = get_list_of_isobmff_files(testdir, debug)
+    # 2. parse them all
+    error_list = []
+    for fname in filelist:
+        # parse the input file
+        if debug > 0:
+            print(f"### parsing {fname}")
+        try:
+            _ = parse_file(fname, debug)
+        except:
+            print(f"    error on {fname}")
+            error_list.append(fname)
+    # 3. dump the list of broken input files
+    if error_list:
+        print("BROKEN FILES")
+        for fname in error_list:
+            print(f"  {fname}")
 
 
 def extract_box(media_file, path, outfile, include_headers, debug):
@@ -156,6 +198,13 @@ def get_options(argv):
         help="output file",
     )
     parser.add_argument(
+        "--testdir",
+        type=str,
+        default=default_values["testdir"],
+        metavar="test-dir",
+        help="test dir",
+    )
+    parser.add_argument(
         "--listfile",
         type=str,
         default=default_values["listfile"],
@@ -190,10 +239,15 @@ def main(argv):
     if options.debug > 0:
         print(options)
 
-    # 1. parse the input file
+    # 1. run test cases
     if options.listfile is not None:
         test_file_of_files(options.listfile, options.debug)
         sys.exit()
+    elif options.testdir is not None:
+        test_directory(options.testdir, options.debug)
+        sys.exit()
+
+    # 2. parse the input file
     media_file = parse_file(options.infile, options.debug)
 
     if options.func == "parse":
