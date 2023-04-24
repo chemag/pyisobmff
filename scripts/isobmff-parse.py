@@ -84,21 +84,23 @@ def test_directory(testdir, debug):
     # 1. get the list of isobmff files
     filelist = get_list_of_isobmff_files(testdir, debug)
     # 2. parse them all
-    error_list = []
+    error_list = {}
     for fname in filelist:
         # parse the input file
-        if debug > 0:
+        if debug > 1:
             print(f"### parsing {fname}")
         try:
             _ = parse_file(fname, debug)
-        except:
-            print(f"    error on {fname}")
-            error_list.append(fname)
+        except Exception as exc:
+            if debug > 0:
+                print(f"    error on {fname}")
+            error_list[fname] = exc.args[0]
     # 3. dump the list of broken input files
     if error_list:
-        print("BROKEN FILES")
-        for fname in error_list:
-            print(f"  {fname}")
+        print("# BROKEN FILES")
+        for fname, error in error_list.items():
+            print(f"-> {fname}")
+            print(f"{error}")
 
 
 def extract_box(media_file, path, outfile, include_headers, debug):
