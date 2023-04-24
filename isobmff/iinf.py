@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from .box import Box
 from .box import FullBox
 from .box import read_uint
 from .box import read_fixed_size_string
@@ -120,3 +121,56 @@ class FDItemInfoExtension(object):
 # ISO/IEC 14496-12:2022, Section 8.11.11
 class ItemDataBox(FullBox):
     box_type = b"idat"
+
+
+# ISO/IEC 14496-12:2022, Section 8.11.11
+class SingleItemTypeReferenceBox(Box):
+    def read(self, file):
+        self.from_item_ID = read_uint(file, 2)
+        reference_count = read_uint(file, 2)
+        self.to_item_IDs = []
+        for _ in range(reference_count):
+            self.to_item_IDs.append(read_uint(file, 2))
+
+    def contents(self):
+        tuples = ()
+        tuples += (("from_item_ID", self.from_item_ID),)
+        for idx, val in enumerate(self.group_ids):
+            tuples += ((f"to_item_ID[{idx}]", val),)
+        return tuples
+
+
+# ISO/IEC 14496-12:2022, Section 8.11.11
+class SingleItemTypeReferenceBoxLarge(Box):
+    def read(self, file):
+        self.from_item_ID = read_uint(file, 4)
+        reference_count = read_uint(file, 2)
+        self.to_item_IDs = []
+        for _ in range(reference_count):
+            self.to_item_IDs.append(read_uint(file, 4))
+
+    def contents(self):
+        tuples = ()
+        tuples += (("from_item_ID", self.from_item_ID),)
+        for idx, val in enumerate(self.group_ids):
+            tuples += ((f"to_item_ID[{idx}]", val),)
+        return tuples
+
+
+# ISO/IEC 14496-12:2022, Section 8.11.11
+class ItemReferenceBox(FullBox):
+    box_type = b"iref"
+
+    def read(self, file):
+        if self.version == 0:
+            # TODO: must be SingleItemTypeReferenceBox[]
+            self.box_list = self.read_box_list(file)
+        elif self.version == 1:
+            # TODO: must be SingleItemTypeReferenceBoxLarge[]
+            self.box_list = self.read_box_list(file)
+
+    def contents(self):
+        tuples = ()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
