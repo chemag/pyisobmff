@@ -16,7 +16,7 @@ The ISOBMFF format is relatively simple: All data is organized in "boxes" (aka "
 
 There are a couple of quirks on the TLV structure:
 * Type and length are normally 4 bytes, but special values ("uuid" for types, and 1 for size) allows extended versions of them.
-* Some boxes (known as "FullBox") also have an extra 4-byte field after the type, including a version number and a set of flags.
+* Some boxes (known as "FullBox") also have an extra 4-byte field after the type, including a version number and a set of flags. This allows box definitions to evolve.
 
 Let's show how an ISOBMFF stream looks like:
 
@@ -71,13 +71,13 @@ Note that the "meta" box is a "`FullBox`", which means that the 4 bytes just aft
 
 The main goal of this tool is to have an ISOBMFF box parser that is easy to extend.
 
-I considered several options before writing a new one:
-* ffmpeg. Of course, if you do any media processing, ffmpeg should be the first option. I wanted a simple parser, while ffmpeg is a full demuxer.
+We considered several options before writing a new one:
+* ffmpeg. Of course, if you do any media processing, ffmpeg should be the first option. We wanted a simple parser, while ffmpeg is a full demuxer.
 * mp4dump from [bento4](https://github.com/axiomatic-systems/Bento4). The tool works relatively well (in fact the simple parser's output is inspired in that tool), but it is too chatty. For example, the implementation of the "stts" box includes 327 lines of C++ code. In comparison, the implementation in this package is only ~20 lines.
 * other similar C++ tools, including [gpac](https://github.com/gpac/gpac), [AtomicParsley](https://github.com/wez/atomicparsley), and [mp4v2](https://mp4v2.org/). gpac in particular is the most promising tool: While not active (the last patch as of 20230420 is from 20221018), it understands item IDs, which provides a nice extra extraction feature (e.g. to extract h265 key frames from heic files). Again, we find the cost of adding new parsers to be cumbersome.
-* [pymp4](https://github.com/beardypig/pymp4) is similar to this package. It is based on the [construct python library](https://en.wikipedia.org/wiki/Construct_(python_library)), which is very appealing as it allows declarative definitions of new boxes. IMO the structures of ISOBMFF are too generic to be easily captured by the `construct` package.
+* [pymp4](https://github.com/beardypig/pymp4) is similar to this package. It is based on the [construct python library](https://en.wikipedia.org/wiki/Construct_(python_library)), which is very appealing as it allows declarative definitions of new boxes. In our opinion, the structures of ISOBMFF are too generic to be easily captured by the `construct` package.
 
-The closest thing to what I was looking for was [isobmff](https://github.com/m-hiki/isobmff). This package allows relatively simple definitions ofnew boxes. Note that a new box type just needs to define a class (`Box` or `FullBox`) with:
+The closest thing to what we were looking for was [isobmff](https://github.com/m-hiki/isobmff). This package allows relatively simple definitions of new boxes. Note that a new box type just needs to define a class (`Box` or `FullBox`) with:
 * (1) the actual fourcc, defined as the "`box_type`" class method,
 * (2) a `read()` method that reads the actual bytes,
 * (3) a `contents()` method that dump the contents in a series of tuples.
@@ -112,7 +112,7 @@ class PrimaryItemBox(FullBox):
 
 There are several use case:
 * (1) what is inside an ISOBMFF file.
-* (2) extract a given box from an ISOBMFF file [WIP].
+* (2) extract a given box from an ISOBMFF file.
 
 
 # 3. Operation: What is in an ISOBMFF File
@@ -173,10 +173,16 @@ path: /mdat
   size: 16
 ```
 
+We have thoroughly tested the parser by using the testdir mode in a directory containing all the video sources mentioned in the References Section. There is only 1 file where our parser chokes. None of the other tools can either (gpac's mp4dump or ffmpeg).
+
+```
+$ ./scripts/isobmff-parse.py  --testdir ~/video/test
+# BROKEN FILES
+-> video/test/videolan/samples/A-codecs/DVAudio/00_Testfilm_fha1.mov
+error: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)
+```
 
 # 4. Operation: Extract a Given Box From an ISOBMFF File
-
-WIP: Not working yet!
 
 Check the full list of boxes:
 ```
@@ -270,6 +276,7 @@ Video Sources:
 * [videolan samples](https://streams.videolan.org/samples/)
 * [videolan streams](https://streams.videolan.org/streams/)
 * [Nokia Conformance Test](https://github.com/nokiatech/heif_conformance)
+* [DECE CFF Test Files](https://www.uvcentral.com/cff/cff-test-files.html)
 
 
 # Appendix 1. Requirements.
