@@ -13,12 +13,13 @@ class HEVCSampleEntry(VisualSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.config = self.read_box(file)
+        # already included in the VisualSampleEntry box_list
+        # self.config = self.read_box(file)
 
     def contents(self):
         tuples = super().contents()
-        if self.config is not None:
-            tuples += (("config", self.config.contents()),)
+        # if self.config is not None:
+        #    tuples += (("config", self.config.contents()),)
         return tuples
 
 

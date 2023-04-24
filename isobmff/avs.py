@@ -11,11 +11,12 @@ class AvsSampleEntry(VisualSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.config = self.read_box(file)
+        # already included in the VisualSampleEntry box_list
+        # self.config = self.read_box(file)
 
     def contents(self):
         tuples = super().contents()
-        tuples += (("config", self.config.contents()),)
+        # tuples += (("config", self.config.contents()),)
         return tuples
 
 

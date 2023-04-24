@@ -60,12 +60,13 @@ class MHASampleEntry(AudioSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.box_list = self.read_box_list(file)
+        # already included in the AudioSampleEntry box_list
+        # self.box_list = self.read_box_list(file)
 
     def contents(self):
         tuples = super().contents()
-        for idx, box in enumerate(self.box_list):
-            tuples += ((f"box[{idx}]", box.contents()),)
+        # for idx, box in enumerate(self.box_list):
+        #    tuples += ((f"box[{idx}]", box.contents()),)
         return tuples
 
 

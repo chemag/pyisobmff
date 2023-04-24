@@ -11,11 +11,12 @@ class AVCSampleEntry(VisualSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.config = self.read_box(file)
+        # already included in the VisualSampleEntry box_list
+        # self.config = self.read_box(file)
 
     def contents(self):
         tuples = super().contents()
-        tuples += (("config", self.config.contents()),)
+        # tuples += (("config", self.config.contents()),)
         return tuples
 
 
@@ -30,11 +31,12 @@ class AVC2SampleEntry(VisualSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.avcconfig = self.read_box(file)
+        # already included in the VisualSampleEntry box_list
+        # self.avcconfig = self.read_box(file)
 
     def contents(self):
         tuples = super().contents()
-        tuples += (("avcconfig", self.avcconfig.contents()),)
+        # tuples += (("avcconfig", self.avcconfig.contents()),)
         return tuples
 
 
