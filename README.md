@@ -268,6 +268,13 @@ item_id,item_type,primary,offset,length
 Note the output is a CSV file containing items IDs, types, whether they are the primary item, the offset, and the length.
 
 
+Second, let's see how to extract specific items.
+```
+$ ./scripts/isobmff-parse.py --extract-item -o /tmp/C001.heic.20001.hvc1 --item-id 20001 media/C001.heic
+$ xxd /tmp/C001.heic.20001.hvc1
+
+```
+
 
 # 6. References
 

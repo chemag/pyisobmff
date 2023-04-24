@@ -23,6 +23,7 @@ FUNC_CHOICES = {
     "extract-box": "extract full box by name",
     "extract-value": "extract box payload by name",
     "list-items": "list item IDs and their types",
+    "extract-item": "extract contents of item with item ID",
 }
 
 default_values = {
@@ -32,6 +33,7 @@ default_values = {
     "testdir": None,
     "listfile": None,
     "path": None,
+    "item_id": None,
     "infile": None,
     "outfile": None,
 }
@@ -128,7 +130,7 @@ def extract_box(media_file, path, outfile, include_headers, debug):
     extract_bytes(media_file.filename, start_offset, size, outfile, debug)
 
 
-def process_items(media_file, outfile, just_list, debug):
+def process_items(media_file, outfile, input_item_id, debug):
     # 1. look for the item-related boxes
     iloc_box = media_file.find_subbox("/meta/iloc")
     assert iloc_box is not None, "error: cannot find /meta/iloc"
@@ -146,7 +148,8 @@ def process_items(media_file, outfile, just_list, debug):
     # 2.3. item locations from iloc box
     item_locations = {
         item["item_id"]: (
-            item["extents"][0]["extent_offset"],
+            (0 if not item["base_offset"] else item["base_offset"])
+            + item["extents"][0]["extent_offset"],
             item["extents"][0]["extent_length"],
         )
         for item in iloc_box.items
@@ -160,13 +163,19 @@ def process_items(media_file, outfile, just_list, debug):
         offset, length = item_locations[item_id]
         items[item_id] = (item_type, primary, offset, length)
     # 4. print the data
-    if just_list:
+    if input_item_id is None:
+        # list items
         if outfile is None or outfile == "-":
             outfile = "/dev/fd/1"
         with open(outfile, "w") as fout:
             fout.write("item_id,item_type,primary,offset,length\n")
             for item_id, (item_type, primary, offset, length) in items.items():
                 fout.write(f"{item_id},{item_type},{primary},{offset},{length}\n")
+    else:
+        # extract item
+        assert input_item_id in item_ids, f"error: invalid item id: {input_item_id}"
+        _, _, start_offset, size = items[input_item_id]
+        extract_bytes(media_file.filename, start_offset, size, outfile, debug)
 
 
 def get_options(argv):
@@ -239,6 +248,14 @@ def get_options(argv):
         help="box path",
     )
     parser.add_argument(
+        "--item-id",
+        type=int,
+        dest="item_id",
+        default=default_values["item_id"],
+        metavar="item_id",
+        help="item id",
+    )
+    parser.add_argument(
         "-o",
         "--outfile",
         type=str,
@@ -308,9 +325,8 @@ def main(argv):
             media_file, options.path, options.outfile, include_header, options.debug
         )
 
-    elif options.func == "list-items":
-        just_list = True
-        process_items(media_file, options.outfile, just_list, options.debug)
+    elif options.func in ["list-items", "extract-item"]:
+        process_items(media_file, options.outfile, options.item_id, options.debug)
 
 
 if __name__ == "__main__":
