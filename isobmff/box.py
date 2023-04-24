@@ -72,7 +72,7 @@ def decode_posix_portable_filename(box_type):
 
 
 # ISO/IEC 14496-12:2022, Section 4.2.2
-class Box(object):
+class Box:
     box_type = None
 
     def __init__(
@@ -90,6 +90,7 @@ class Box(object):
         self.debug = debug
 
     def contents(self):
+        # a non-Box class has no parent
         tuples = ()
         tuples += (("path", self.path),)
         tuples += (("offset", f"0x{self.offset:08x}"),)

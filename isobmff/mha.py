@@ -6,7 +6,7 @@ from .stbl import BitRateBox
 
 
 # ISO/IEC 23008-3:2015-Amd-2:2016, Section 20.4
-class MHADecoderConfigurationRecord(object):
+class MHADecoderConfigurationRecord:
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -18,6 +18,7 @@ class MHADecoderConfigurationRecord(object):
         self.mpegh3daConfig = read_uint(file, self.mpegh3daConfigLength)
 
     def contents(self):
+        # a non-Box class has no parent
         tuples = ()
         tuples += (("configurationVersion", self.configurationVersion),)
         tuples += (

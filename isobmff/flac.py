@@ -8,7 +8,7 @@ from .stbl import AudioSampleEntry
 
 
 # https://github.com/xiph/flac/blob/master/doc/isoflac.txt, Section 3.3.2
-class FlacMetadataBlock(object):
+class FlacMetadataBlock:
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -22,6 +22,7 @@ class FlacMetadataBlock(object):
             self.block_data.append(read_uint(file, 1))
 
     def contents(self):
+        # a non-Box class has no parent
         tuples = ()
         tuples += (("last_metadata_block_flag", self.last_metadata_block_flag),)
         tuples += (("block_type", self.block_type),)

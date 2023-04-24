@@ -60,7 +60,7 @@ class AVCConfigurationBox(Box):
 
 
 # ISO/IEC 14496-15:2022, Section 5.3.2.1.2
-class AVCDecoderConfigurationRecord(object):
+class AVCDecoderConfigurationRecord:
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -110,6 +110,7 @@ class AVCDecoderConfigurationRecord(object):
                 self.sps_ext.append(read_bytes(file, sequenceParameterSetExtLength))
 
     def contents(self):
+        # a non-Box class has no parent
         tuples = ()
         if self.reserved1 is None:
             return tuples

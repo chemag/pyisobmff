@@ -37,7 +37,7 @@ class AC4SampleEntry(Box):
 
 
 # ETSI TS 102 366 v1.4.1, Section E.6.1
-class AC4DsiV1(object):
+class AC4DsiV1:
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -56,6 +56,7 @@ class AC4DsiV1(object):
         self.remaining = read_bytes(file, self.max_offset - offset)
 
     def contents(self):
+        # a non-Box class has no parent
         tuples = ()
         tuples += (("ac4_dsi_version", self.ac4_dsi_version),)
         tuples += (("bitstream_version", self.bitstream_version),)

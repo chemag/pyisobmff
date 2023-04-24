@@ -6,7 +6,7 @@ from .box import read_utf8string
 
 
 # ISO/IEC 14496-12:2022, Section 7.2.6.5
-class ES_Descriptor(object):
+class ES_Descriptor:
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -41,6 +41,7 @@ class ES_Descriptor(object):
         self.rem = read_bytes(file, self.max_offset - file.tell())
 
     def contents(self):
+        # a non-Box class has no parent
         tuples = ()
         tuples += (("ES_ID", self.ES_ID),)
         tuples += (("streamDependenceFlag", self.streamDependenceFlag),)

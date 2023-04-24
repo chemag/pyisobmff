@@ -49,7 +49,7 @@ class HEVCConfigurationBox(Box):
 
 
 # ISO/IEC 14496-15:2022, Section 8.3.2.1.2
-class HEVCDecoderConfigurationRecord(object):
+class HEVCDecoderConfigurationRecord:
     def read(self, file):
         self.configuration_version = read_uint(file, 1)
         #
@@ -112,6 +112,7 @@ class HEVCDecoderConfigurationRecord(object):
         return item
 
     def contents(self):
+        # a non-Box class has no parent
         tuples = ()
         tuples += (("configuration_version", self.configuration_version),)
         tuples += (("general_profile_space", self.general_profile_space),)

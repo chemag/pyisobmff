@@ -93,7 +93,7 @@ class ItemInformationEntry(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.11.6.2
 # Note that this class descends from ItemInfoExtension.
-class FDItemInfoExtension(object):
+class FDItemInfoExtension:
     def read(self, file):
         max_len = self.max_offset - file.tell()
         self.content_location = read_utf8string(file, max_len)
@@ -108,6 +108,7 @@ class FDItemInfoExtension(object):
             self.group_ids.append(group_id)
 
     def contents(self):
+        # a non-Box class has no parent
         tuples = ()
         tuples += (("content_location", self.content_location),)
         tuples += (("content_md5", self.content_md5),)

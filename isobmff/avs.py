@@ -35,7 +35,7 @@ class AvsSequenceInfoBox(Box):
 
 
 # IEEE 1857.3-2013, Section 4.2.3.3.1
-class AVSDecoderConfigurationRecord(object):
+class AVSDecoderConfigurationRecord:
     def __init__(self, max_offset):
         self.max_offset = max_offset
 
@@ -65,6 +65,7 @@ class AVSDecoderConfigurationRecord(object):
             )
 
     def contents(self):
+        # a non-Box class has no parent
         tuples = ()
         if self.reserved1 is None:
             return tuples
