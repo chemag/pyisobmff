@@ -19,7 +19,7 @@ class ItemInformationBox(FullBox):
             box = self.read_box(file)
             if box is None:
                 break
-            if box.box_type == "infe":
+            if box.box_type == b"infe":
                 self.item_infos.append(box)
 
     def contents(self):

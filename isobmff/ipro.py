@@ -17,7 +17,7 @@ class ItemProtectionBox(FullBox):
             box = self.read_box(file)
             if box is None:
                 break
-            if box.box_type == "sinf":
+            if box.box_type == b"sinf":
                 self.protection_informations.append(box)
 
     def contents(self):
