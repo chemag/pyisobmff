@@ -134,7 +134,7 @@ class SingleItemTypeReferenceBox(Box):
             self.to_item_IDs.append(read_uint(file, 2))
 
     def contents(self):
-        tuples = ()
+        tuples = super().contents()
         tuples += (("from_item_ID", self.from_item_ID),)
         for idx, val in enumerate(self.group_ids):
             tuples += ((f"to_item_ID[{idx}]", val),)
@@ -151,7 +151,7 @@ class SingleItemTypeReferenceBoxLarge(Box):
             self.to_item_IDs.append(read_uint(file, 4))
 
     def contents(self):
-        tuples = ()
+        tuples = super().contents()
         tuples += (("from_item_ID", self.from_item_ID),)
         for idx, val in enumerate(self.group_ids):
             tuples += ((f"to_item_ID[{idx}]", val),)
@@ -171,7 +171,7 @@ class ItemReferenceBox(FullBox):
             self.box_list = self.read_box_list(file)
 
     def contents(self):
-        tuples = ()
+        tuples = super().contents()
         for idx, box in enumerate(self.box_list):
             tuples += ((f"box[{idx}]", box.contents()),)
         return tuples
