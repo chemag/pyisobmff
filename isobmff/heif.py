@@ -84,7 +84,7 @@ class AuxiliaryTypeProperty(ItemFullProperty):
 
 # ISO/IEC 23008-12:2022, Section 6.5.10
 class ImageRotation(ItemProperty):
-    box_type = b"rloc"
+    box_type = b"irot"
 
     def read(self, file):
         self.reserved = read_uint(file, 6)
