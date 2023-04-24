@@ -115,3 +115,8 @@ class FDItemInfoExtension(object):
         for idx, val in enumerate(self.group_ids):
             tuples += ((f"group_ids[{idx}]", val),)
         return tuples
+
+
+# ISO/IEC 14496-12:2022, Section 8.11.11
+class ItemDataBox(FullBox):
+    box_type = b"idat"
