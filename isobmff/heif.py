@@ -87,8 +87,9 @@ class ImageRotation(ItemProperty):
     box_type = b"irot"
 
     def read(self, file):
-        self.reserved = read_uint(file, 6)
-        self.angle = read_uint(file, 2)
+        byte0 = read_uint(file, 1)
+        self.reserved = (byte0 >> 2) & 0x3F
+        self.angle = byte0 & 0x03
 
     def contents(self):
         tuples = super().contents()
