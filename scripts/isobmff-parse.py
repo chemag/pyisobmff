@@ -22,6 +22,7 @@ FUNC_CHOICES = {
     "parse": "parse isobmff input",
     "extract-box": "extract full box by name",
     "extract-value": "extract box payload by name",
+    "list-items": "list item IDs and their types",
 }
 
 default_values = {
@@ -120,6 +121,47 @@ def extract_box(media_file, path, outfile, include_headers, debug):
     # extract the expected bytes
     with open(outfile, "wb") as fout:
         fout.write(data)
+
+
+def process_items(media_file, outfile, just_list, debug):
+    # 1. look for the item-related boxes
+    iloc_box = media_file.find_subbox("/meta/iloc")
+    assert iloc_box is not None, "error: cannot find /meta/iloc"
+    iinf_box = media_file.find_subbox("/meta/iinf")
+    assert iinf_box is not None, "error: cannot find /meta/iinf"
+    pitm_box = media_file.find_subbox("/meta/pitm")
+    assert pitm_box is not None, "error: cannot find /meta/pitm"
+    # 2. process the data
+    # 2.1. primary item ID from pitm box
+    pitm_item_id = pitm_box.item_id
+    # 2.2. item types from iinf box
+    item_types = {
+        item_info.item_id: item_info.item_type for item_info in iinf_box.item_infos
+    }
+    # 2.3. item locations from iloc box
+    item_locations = {
+        item["item_id"]: (
+            item["extents"][0]["extent_offset"],
+            item["extents"][0]["extent_length"],
+        )
+        for item in iloc_box.items
+    }
+    # 3. merge the data
+    items = {}
+    item_ids = set(item_types.keys()) & set(item_locations.keys())
+    for item_id in item_ids:
+        item_type = item_types[item_id]
+        primary = 1 if item_id == pitm_item_id else 0
+        offset, length = item_locations[item_id]
+        items[item_id] = (item_type, primary, offset, length)
+    # 4. print the data
+    if just_list:
+        if outfile is None or outfile == "-":
+            outfile = "/dev/fd/1"
+        with open(outfile, "w") as fout:
+            fout.write("item_id,item_type,primary,offset,length\n")
+            for item_id, (item_type, primary, offset, length) in items.items():
+                fout.write(f"{item_id},{item_type},{primary},{offset},{length}\n")
 
 
 def get_options(argv):
@@ -260,6 +302,10 @@ def main(argv):
         extract_box(
             media_file, options.path, options.outfile, include_header, options.debug
         )
+
+    elif options.func == "list-items":
+        just_list = True
+        process_items(media_file, options.outfile, just_list, options.debug)
 
 
 if __name__ == "__main__":

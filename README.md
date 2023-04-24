@@ -113,6 +113,7 @@ class PrimaryItemBox(FullBox):
 There are several use case:
 * (1) what is inside an ISOBMFF file.
 * (2) extract a given box from an ISOBMFF file.
+* (3) understand items inside an ISOBMFF file.
 
 
 # 3. Operation: What is in an ISOBMFF File
@@ -255,8 +256,20 @@ $ xxd C001.heic.hvcC
 00000060: 9095 8112                                ....
 ```
 
+# 5. Operation: Understand Items Inside an ISOBMFF File
 
-# 5. References
+First, let's see which items are available in an ISOBMFF file.
+```
+$ ./scripts/isobmff-parse.py --list-items media/C001.heic
+item_id,item_type,primary,offset,length
+20001,hvc1,1,0,111612
+```
+
+Note the output is a CSV file containing items IDs, types, whether they are the primary item, the offset, and the length.
+
+
+
+# 6. References
 
 Standards:
 * ISO/IEC 14496-12:2022, ISO base media file format
