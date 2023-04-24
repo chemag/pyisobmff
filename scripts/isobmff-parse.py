@@ -104,6 +104,16 @@ def test_directory(testdir, debug):
             print(f"{error}")
 
 
+def extract_bytes(infile, offset, size, outfile, debug):
+    # read the bytes
+    with open(infile, "rb") as fin:
+        fin.seek(offset)
+        data = fin.read(size)
+    # write the bytes
+    with open(outfile, "wb") as fout:
+        fout.write(data)
+
+
 def extract_box(media_file, path, outfile, include_headers, debug):
     # search the path in media_file
     box = media_file.find_subbox(path)
@@ -111,16 +121,11 @@ def extract_box(media_file, path, outfile, include_headers, debug):
         print(f"error: cannot find {path} in {media_file.filename}")
         sys.exit(-1)
     # extract the expected bytes
-    with open(media_file.filename, "rb") as fin:
-        start_offset = box.offset if include_headers else box.payload_offset
-        fin.seek(start_offset)
-        size = box.size
-        if not include_headers:
-            size -= start_offset - box.offset
-        data = fin.read(size)
-    # extract the expected bytes
-    with open(outfile, "wb") as fout:
-        fout.write(data)
+    start_offset = box.offset if include_headers else box.payload_offset
+    size = box.size
+    if not include_headers:
+        size -= start_offset - box.offset
+    extract_bytes(media_file.filename, start_offset, size, outfile, debug)
 
 
 def process_items(media_file, outfile, just_list, debug):
