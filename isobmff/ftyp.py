@@ -33,6 +33,11 @@ class FileTypeBox(Box):
     box_type = b"ftyp"
 
 
+# ISO/IEC 14496-12:2022, Section 8.3.5
+class TrackTypeBox(Box):
+    box_type = b"ttyp"
+
+
 # ISO/IEC 14496-12:2022, Section 8.16.2
 class SegmentTypeBox(FileTypeBox):
     box_type = b"styp"
