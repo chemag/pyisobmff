@@ -140,7 +140,6 @@ class ItemPropertyAssociationBox(FullBox):
                     essential = item >> 7
                     property_index = item & 0x7F
                 association = {
-                    "item": item,
                     "essential": essential,
                     "property_index": property_index,
                 }
@@ -152,12 +151,6 @@ class ItemPropertyAssociationBox(FullBox):
         for idx, entry in enumerate(self.entries):
             tuples += ((f'entry[{idx}]["item_id"]', entry["item_id"]),)
             for jdx, association in enumerate(entry["associations"]):
-                tuples += (
-                    (
-                        f'entry[{idx}]["associations"][{jdx}]["item"]',
-                        association["item"],
-                    ),
-                )
                 tuples += (
                     (
                         f'entry[{idx}]["associations"][{jdx}]["essential"]',
