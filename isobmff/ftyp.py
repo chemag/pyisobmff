@@ -6,8 +6,7 @@ from .box import read_fourcc
 
 
 # ISO/IEC 14496-12:2022, Section 4.3.2
-class FileTypeBox(Box):
-    box_type = b"ftyp"
+class GeneralTypeBox(Box):
     is_mandatory = True
     quantity = Quantity.EXACTLY_ONE
 
@@ -27,6 +26,11 @@ class FileTypeBox(Box):
         for compatible_brand in self.compatible_brands:
             tuples += (("compatible_brand", compatible_brand),)
         return tuples
+
+
+# ISO/IEC 14496-12:2022, Section 4.3.2
+class FileTypeBox(Box):
+    box_type = b"ftyp"
 
 
 # ISO/IEC 14496-12:2022, Section 8.16.2
