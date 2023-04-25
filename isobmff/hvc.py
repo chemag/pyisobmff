@@ -111,6 +111,15 @@ class HEVCDecoderConfigurationRecord:
             item["nal_units"].append(nal_unit)
         return item
 
+    def __contents_item(self, item):
+        # a non-Box class has no parent
+        tuples = ()
+        tuples += (("array_completeness", item["array_completeness"]),)
+        tuples += (("nal_unit_type", item["nal_unit_type"]),)
+        for idx, val in enumerate(item["nal_units"]):
+            tuples += ((f"nal_unit[{idx}]", val),)
+        return tuples
+
     def contents(self):
         # a non-Box class has no parent
         tuples = ()
@@ -141,4 +150,6 @@ class HEVCDecoderConfigurationRecord:
         tuples += (("num_temporal_layers", self.num_temporal_layers),)
         tuples += (("temporal_id_nested", self.temporal_id_nested),)
         tuples += (("length_size_minus_1", self.length_size_minus_1),)
+        for idx, val in enumerate(self.array):
+            tuples += ((f"array[{idx}]", self.__contents_item(val)),)
         return tuples
