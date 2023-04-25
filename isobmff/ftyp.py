@@ -38,6 +38,11 @@ class TrackTypeBox(Box):
     box_type = b"ttyp"
 
 
+# ISO/IEC 14496-12:2022, Section 8.11.15
+class BrandProperty(Box):
+    box_type = b"brnd"
+
+
 # ISO/IEC 14496-12:2022, Section 8.16.2
 class SegmentTypeBox(FileTypeBox):
     box_type = b"styp"
