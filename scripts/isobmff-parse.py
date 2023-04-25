@@ -141,9 +141,10 @@ def process_items(media_file, outfile, input_item_id, debug):
     # 2. process the data
     # 2.1. primary item ID from pitm box
     pitm_item_id = pitm_box.item_id
-    # 2.2. item types from iinf box
+    # 2.2. item types and paths from iinf box
     item_types = {
-        item_info.item_id: item_info.item_type for item_info in iinf_box.item_infos
+        item_info.item_id: (item_info.item_type, item_info.path)
+        for item_info in iinf_box.item_infos
     }
     # 2.3. item locations from iloc box
     item_locations = {
@@ -158,19 +159,21 @@ def process_items(media_file, outfile, input_item_id, debug):
     items = {}
     item_ids = set(item_types.keys()) & set(item_locations.keys())
     for item_id in item_ids:
-        item_type = item_types[item_id]
+        item_type, path = item_types[item_id]
         primary = 1 if item_id == pitm_item_id else 0
         offset, length = item_locations[item_id]
-        items[item_id] = (item_type, primary, offset, length)
+        items[item_id] = (item_type, path, primary, offset, length)
     # 4. print the data
     if input_item_id is None:
         # list items
         if outfile is None or outfile == "-":
             outfile = "/dev/fd/1"
         with open(outfile, "w") as fout:
-            fout.write("item_id,item_type,primary,offset,length\n")
-            for item_id, (item_type, primary, offset, length) in items.items():
-                fout.write(f"{item_id},{item_type},{primary},{offset},{length}\n")
+            fout.write("item_id,path,item_type,primary,offset,length\n")
+            for item_id, (item_type, path, primary, offset, length) in items.items():
+                fout.write(
+                    f"{item_id},{path},{item_type},{primary},{offset},{length}\n"
+                )
     else:
         # extract item
         assert input_item_id in item_ids, f"error: invalid item id: {input_item_id}"
