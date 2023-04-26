@@ -9,7 +9,7 @@ class PrimaryItemBox(FullBox):
     is_mandatory = False
 
     def read(self, file):
-        self.item_id = read_uint(file, 2)
+        self.item_id = read_uint(file, 2 if self.version == 0 else 4)
 
     def contents(self):
         tuples = super().contents()
