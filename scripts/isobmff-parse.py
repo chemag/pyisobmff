@@ -177,7 +177,7 @@ def process_items(media_file, outfile, input_item_id, debug):
     else:
         # extract item
         assert input_item_id in item_ids, f"error: invalid item id: {input_item_id}"
-        _, _, start_offset, size = items[input_item_id]
+        _, _, _, start_offset, size = items[input_item_id]
         extract_bytes(media_file.filename, start_offset, size, outfile, debug)
 
 
