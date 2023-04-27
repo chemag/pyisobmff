@@ -6,9 +6,7 @@ Originally from [here](https://github.com/m-hiki/isobmff).
 
 
 
-# 1. Introduction
-
-## 1.1. The ISOBMFF Media File Format
+# 1. Introduction: The ISOBMFF Media File Format
 
 ISOBMFF is a popular file format for encapsulating media content, including video, images, and audio. The format originated in Apple's QuickTime, but has been standardized (as ISO/IEC 14496-12:2022), and extended for different media content.
 
@@ -67,7 +65,7 @@ aligned(8) class MetaBox (handler_type)
 Note that the "meta" box is a "`FullBox`", which means that the 4 bytes just after the fourcc tag (0x00000000) are the version and the flags fields (both 0). The next bytes are a "hdlr" (`HandlerBox`) box, defined in ISO/IEC 14496-12:2022, Section 8.4.3.
 
 
-## 1.2. Why a New Parser?
+# 2. Why a New Parser?
 
 The main goal of this tool is to have an ISOBMFF box parser that is easy to extend.
 
@@ -82,10 +80,22 @@ The closest thing to what we were looking for was [isobmff](https://github.com/m
 * (2) a `read()` method that reads the actual bytes,
 * (3) a `contents()` method that dump the contents in a series of tuples.
 
-If you decide that the new box is independent enough that it deserves a new file, the you need to add a new entry in the `isobmff/__init__.py` file.
+If you decide that the new box is independent enough that it deserves a new file, then you need to add a new entry in the `isobmff/__init__.py` file.
 
-For example, the "pitm" box (defined in ISO/IEC 14496-12:2022, Section 8.11.4) just contains a single 2-byte unsigned integer. The whole code needed to parse it (see `isobmff/pitm.py`) is:
+For example, the "pitm" box (defined in ISO/IEC 14496-12:2022, Section 8.11.4) just contains a single 2-byte unsigned integer (4 bytes in newer versions). Its definition in the standard is:
 
+```
+aligned(8) class PrimaryItemBox
+  extends FullBox('pitm', version, 0) {
+    if (version == 0) {
+        unsigned int(16) item_ID;
+    } else {
+        unsigned int(32) item_ID;
+    }
+}
+```
+
+The whole code needed to parse it (see `isobmff/pitm.py`) is:
 ```
 $ cat isobmff/pitm.py
 # -*- coding: utf-8 -*-
@@ -99,7 +109,7 @@ class PrimaryItemBox(FullBox):
     is_mandatory = False
 
     def read(self, file):
-        self.item_id = read_uint(file, 2)
+        self.item_id = read_uint(file, 2 if self.version == 0 else 4)
 
     def contents(self):
         tuples = super().contents()
@@ -108,7 +118,7 @@ class PrimaryItemBox(FullBox):
 ```
 
 
-# 2. Use Cases
+# 3. Use Cases
 
 There are several use case:
 * (1) what is inside an ISOBMFF file.
@@ -116,7 +126,7 @@ There are several use case:
 * (3) understand items inside an ISOBMFF file.
 
 
-# 3. Operation: What is in an ISOBMFF File
+## 3.1. Operation: What is in an ISOBMFF File
 
 Parse an ISOBMFF file:
 ```
@@ -183,7 +193,7 @@ $ ./scripts/isobmff-parse.py  --testdir ~/video/test
 error: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)
 ```
 
-# 4. Operation: Extract a Given Box From an ISOBMFF File
+## 3.2. Operation: Extract a Given Box From an ISOBMFF File
 
 Check the full list of boxes:
 ```
@@ -256,7 +266,7 @@ $ xxd C001.heic.hvcC
 00000060: 9095 8112                                ....
 ```
 
-# 5. Operation: Understand Items Inside an ISOBMFF File
+## 3.3. Operation: Understand Items Inside an ISOBMFF File
 
 First, let's see which items are available in an ISOBMFF file.
 ```
@@ -272,11 +282,18 @@ Second, let's see how to extract specific items.
 ```
 $ ./scripts/isobmff-parse.py --extract-item -o /tmp/C001.heic.20001.hvc1 --item-id 20001 media/C001.heic
 $ xxd /tmp/C001.heic.20001.hvc1
-
+00000000: 0001 b3be 2601 af13 8077 57cf 9d5d 2930  ....&....wW..])0
+00000010: e619 759f 1cd2 d841 0778 8d99 91b8 2065  ..u....A.x.... e
+00000020: 85f6 2e5f cba3 1785 6275 cce4 ba2b dad9  ..._....bu...+..
+00000030: 6394 59a5 8aa7 4724 7f69 edde 326d 4841  c.Y...G$.i..2mHA
+00000040: dc01 c896 d3c2 8626 2140 24b2 6985 7b0c  .......&!@$.i.{.
+00000050: f368 6bb1 4916 0a13 518a ff4d 1fbd 4d99  .hk.I...Q..M..M.
+00000060: 1b35 b434 4d53 ab32 673c e08c 29e7 1234  .5.4MS.2g<..)..4
+...
 ```
 
 
-# 6. References
+# 4. References
 
 Standards:
 * ISO/IEC 14496-12:2022, ISO base media file format
