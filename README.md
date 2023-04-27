@@ -72,7 +72,7 @@ The main goal of this tool is to have an ISOBMFF box parser that is easy to exte
 We considered several options before writing a new one:
 * ffmpeg. Of course, if you do any media processing, ffmpeg should be the first option. We wanted a simple parser, while ffmpeg is a full demuxer.
 * mp4dump from [bento4](https://github.com/axiomatic-systems/Bento4). The tool works relatively well (in fact the simple parser's output is inspired in that tool), but it is too chatty. For example, the implementation of the "stts" box includes 327 lines of C++ code. In comparison, the implementation in this package is only ~20 lines.
-* other similar C++ tools, including [gpac](https://github.com/gpac/gpac), [AtomicParsley](https://github.com/wez/atomicparsley), and [mp4v2](https://mp4v2.org/). gpac in particular is the most promising tool: While not active (the last patch as of 20230420 is from 20221018), it understands item IDs, which provides a nice extra extraction feature (e.g. to extract h265 key frames from heic files). Again, we find the cost of adding new parsers to be cumbersome.
+* other similar C++ tools, including [gpac](https://github.com/gpac/gpac), [AtomicParsley](https://github.com/wez/atomicparsley), and [mp4v2](https://mp4v2.org/). gpac in particular is the most promising tool: It seems active (as of 20230420), and it understands item IDs, which provides a nice extra extraction feature (e.g. to extract h265 key frames from heic files). Again, we find the cost of adding new parsers to be cumbersome.
 * [pymp4](https://github.com/beardypig/pymp4) is similar to this package. It is based on the [construct python library](https://en.wikipedia.org/wiki/Construct_(python_library)), which is very appealing as it allows declarative definitions of new boxes. In our opinion, the structures of ISOBMFF are too generic to be easily captured by the `construct` package.
 
 The closest thing to what we were looking for was [isobmff](https://github.com/m-hiki/isobmff). This package allows relatively simple definitions of new boxes. Note that a new box type just needs to define a class (`Box` or `FullBox`) with:
@@ -292,8 +292,13 @@ $ xxd /tmp/C001.heic.20001.hvc1
 ...
 ```
 
+# 4. TODO
 
-# 4. References
+There are a couple of interesting use cases that we do not support yet:
+* (1) extract processed items. Right now the tool can extract an item based on its exact location (`iloc` box). But sometimes we want to extend the box, for example adding a config frame to an HEVC key frame ("hvc1" item type). This is what gpac's MP4Box does.
+
+
+# 5. References
 
 Standards:
 * ISO/IEC 14496-12:2022, ISO base media file format
