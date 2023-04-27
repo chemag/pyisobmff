@@ -198,43 +198,46 @@ error: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)
 Check the full list of boxes:
 ```
 $ ./scripts/isobmff-parse.py media/C001.heic  |grep -a path:
-path: /ftyp
-path: /meta
-  path: /meta/hdlr
-  path: /meta/pitm
-  path: /meta/iloc
-  path: /meta/iinf
-  path: /meta/iprp
-    path: /meta/iprp/ipco
-      path: /meta/iprp/ipco/hvcC
-      path: /meta/iprp/ipco/ispe
-    path: /meta/iprp/ipma
-path: /moov
-  path: /moov/mvhd
-  path: /moov/trak
-    path: /moov/trak/tkhd
-    path: /moov/trak/mdia
-      path: /moov/trak/mdia/mdhd
-      path: /moov/trak/mdia/hdlr
-      path: /moov/trak/mdia/minf
-        path: /moov/trak/mdia/minf/vmhd
-        path: /moov/trak/mdia/minf/dinf
-          path: /moov/trak/mdia/minf/dinf/dref
-            path: /moov/trak/mdia/minf/dinf/dref/url
-        path: /moov/trak/mdia/minf/stbl
-          path: /moov/trak/mdia/minf/stbl/stsd
-            path: /moov/trak/mdia/minf/stbl/stsd/hvc1
-              path: /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC
-              path: /moov/trak/mdia/minf/stbl/stsd/hvc1/ccst
-              path: /moov/trak/mdia/minf/stbl/stsd/hvc1/stts
-          path: /moov/trak/mdia/minf/stbl/stsc
-          path: /moov/trak/mdia/minf/stbl/stco
-          path: /moov/trak/mdia/minf/stbl/stsz
-          path: /moov/trak/mdia/minf/stbl/stss
-path: /mdat
-path: /mdat
-path: /mdat
+  path: /ftyp
+  path: /meta
+    path: /meta/hdlr
+    path: /meta/pitm
+    path: /meta/iloc
+    path: /meta/iinf
+      path: /meta/iinf/infe
+    path: /meta/iprp
+      path: /meta/iprp/ipco
+        path: /meta/iprp/ipco/hvcC
+        path: /meta/iprp/ipco/ispe
+      path: /meta/iprp/ipma
+  path: /moov
+    path: /moov/mvhd
+    path: /moov/trak
+      path: /moov/trak/tkhd
+      path: /moov/trak/mdia
+        path: /moov/trak/mdia/mdhd
+        path: /moov/trak/mdia/hdlr
+        path: /moov/trak/mdia/minf
+          path: /moov/trak/mdia/minf/vmhd
+          path: /moov/trak/mdia/minf/dinf
+            path: /moov/trak/mdia/minf/dinf/dref
+              path: /moov/trak/mdia/minf/dinf/dref/url\x20
+          path: /moov/trak/mdia/minf/stbl
+            path: /moov/trak/mdia/minf/stbl/stsd
+              path: /moov/trak/mdia/minf/stbl/stsd/hvc1
+                path: /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC
+                path: /moov/trak/mdia/minf/stbl/stsd/hvc1/ccst
+            path: /moov/trak/mdia/minf/stbl/stts
+            path: /moov/trak/mdia/minf/stbl/stsc
+            path: /moov/trak/mdia/minf/stbl/stco
+            path: /moov/trak/mdia/minf/stbl/stsz
+            path: /moov/trak/mdia/minf/stbl/stss
+  path: /mdat
+  path: /mdat2
+  path: /mdat3
 ```
+
+Note that, when it detects 2+ boxes of the same type under the same container, it will append a consecutive number to them.
 
 Extract a box from an ISOBMFF file:
 ```
@@ -250,6 +253,8 @@ $ xxd C001.heic.hvcC
 00000050: 0003 0078 a002 8080 2d1f e5f9 246d 9ed9  ...x....-...$m..
 00000060: 2200 0100 0744 01c1 9095 8112            "....D......
 ```
+
+Note that we have extracted the full box, including the size, type (fourcc), and (for FullBox boxes) the version/flags bytes. If you only want the payload, you can use the "`--extract-value`" option instead.
 
 Extract a box value (just the payload) from an ISOBMFF file:
 ```
@@ -275,10 +280,9 @@ item_id,item_type,primary,offset,length
 20001,hvc1,1,0,111612
 ```
 
-Note the output is a CSV file containing items IDs, types, whether they are the primary item, the offset, and the length.
+Note the output is a CSV file containing items IDs, types, whether they are the primary item, the offset, and the length. In this case we only have 1 item, namely an "hvc1" one.
 
-
-Second, let's see how to extract specific items.
+Second, let's extract  specific items.
 ```
 $ ./scripts/isobmff-parse.py --extract-item -o /tmp/C001.heic.20001.hvc1 --item-id 20001 media/C001.heic
 $ xxd /tmp/C001.heic.20001.hvc1
