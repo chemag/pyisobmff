@@ -61,6 +61,6 @@ class MovieHeaderBox(FullBox):
         for idx, val in enumerate(self.matrix):
             tuples += ((f"matrix[{idx}]", f"0x{val:08x}"),)
         for idx, val in enumerate(self.pre_defined):
-            tuples += (("pre_defined[{idx}]", val),)
+            tuples += ((f"pre_defined[{idx}]", val),)
         tuples += (("next_track_id", self.next_track_id),)
         return tuples
