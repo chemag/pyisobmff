@@ -9,6 +9,13 @@ from enum import Enum
 TAB_SIZE = 2
 
 
+def escape_value(s):
+    if isinstance(s, str):
+        # escape string
+        return "".join(c if c in string.printable else "\\x%02x" % ord(c) for c in s)
+    return s
+
+
 def tuples_to_string(tuples, indent):
     out = ""
     for key, val in tuples:
@@ -17,7 +24,7 @@ def tuples_to_string(tuples, indent):
             out += tuples_to_string(val, indent + 1)
         else:
             tab = " " * TAB_SIZE * (indent if key == "path" else (indent + 1))
-            out += f"{tab}{key}: {val}\n"
+            out += f"{tab}{key}: {escape_value(val)}\n"
     return out
 
 
