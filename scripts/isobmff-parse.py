@@ -259,14 +259,6 @@ def get_options(argv):
         help="item id",
     )
     parser.add_argument(
-        "-o",
-        "--outfile",
-        type=str,
-        default=default_values["outfile"],
-        metavar="output-file",
-        help="output file",
-    )
-    parser.add_argument(
         "--testdir",
         type=str,
         default=default_values["testdir"],
@@ -281,12 +273,20 @@ def get_options(argv):
         help="list file",
     )
     parser.add_argument(
-        "infile",
+        "-i",
+        "--infile",
         type=str,
-        nargs="?",
         default=default_values["infile"],
         metavar="input-file",
         help="input file",
+    )
+    parser.add_argument(
+        "-o",
+        "--outfile",
+        type=str,
+        default=default_values["outfile"],
+        metavar="output-file",
+        help="output file",
     )
     # do the parsing
     options = parser.parse_args(argv[1:])
