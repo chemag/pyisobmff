@@ -14,7 +14,10 @@ class ItemLocationBox(FullBox):
         self.length_size = byte0 & 0b1111
         byte1 = read_uint(file, 1)
         self.base_offset_size = (byte1 >> 4) & 0b1111
+        # offset_size, length_size, base_offset_size must
+        # be in {0, 4, 8}
         if self.version in [1, 2]:
+            # index_size must be in {0, 4, 8}
             self.index_size = byte1 & 0b1111
         else:
             self.reserved = byte1 & 0b1111
@@ -42,8 +45,14 @@ class ItemLocationBox(FullBox):
                 if self.version in [1, 2] and self.index_size > 0:
                     item["item_reference_index"] = read_uint(file, self.index_size)
 
-                extent["extent_offset"] = read_uint(file, self.offset_size)
-                extent["extent_length"] = read_uint(file, self.length_size)
+                if self.offset_size == 0:
+                    extent["extent_offset"] = 0
+                else:
+                    extent["extent_offset"] = read_uint(file, self.offset_size)
+                if self.length_size == 0:
+                    extent["extent_length"] = 0
+                else:
+                    extent["extent_length"] = read_uint(file, self.length_size)
                 item["extents"].append(extent)
             self.items.append(item)
 
