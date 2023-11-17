@@ -166,19 +166,14 @@ def process_items(media_file, outfile, input_item_id, debug):
     # 4. print the data
     if input_item_id is None:
         # list items
-        if outfile is None or outfile == "-":
-            outfile = "/dev/fd/1"
-        with open(outfile, "w") as fout:
-            fout.write("item_id,path,item_type,primary,offset,length\n")
-            for item_id, (item_type, path, primary, offset, length) in items.items():
-                fout.write(
-                    f"{item_id},{path},{item_type},{primary},{offset},{length}\n"
-                )
+        headers = "item_id,path,item_type,primary,offset,length"
+        return headers, items
     else:
         # extract item
         assert input_item_id in item_ids, f"error: invalid item id: {input_item_id}"
         _, _, _, start_offset, size = items[input_item_id]
         extract_bytes(media_file.filename, start_offset, size, outfile, debug)
+        return None, None
 
 
 def get_options(argv):
@@ -329,7 +324,26 @@ def main(argv):
         )
 
     elif options.func in ["list-items", "extract-item"]:
-        process_items(media_file, options.outfile, options.item_id, options.debug)
+        headers, items = process_items(
+            media_file, options.outfile, options.item_id, options.debug
+        )
+        if options.func == "list-items":
+            # list items
+            outfile = options.outfile
+            if outfile is None or outfile == "-":
+                outfile = "/dev/fd/1"
+            with open(outfile, "w") as fout:
+                fout.write(f"{headers}\n")
+                for item_id, (
+                    item_type,
+                    path,
+                    primary,
+                    offset,
+                    length,
+                ) in items.items():
+                    fout.write(
+                        f"{item_id},{path},{item_type},{primary},{offset},{length}\n"
+                    )
 
 
 if __name__ == "__main__":
