@@ -149,6 +149,7 @@ def process_items(media_file, outfile, input_item_id, debug):
     # 2.3. item locations from iloc box
     item_locations = {
         item["item_id"]: (
+            item.get("construction_method", 0),
             (0 if not item["base_offset"] else item["base_offset"])
             + item["extents"][0]["extent_offset"],
             item["extents"][0]["extent_length"],
@@ -161,17 +162,17 @@ def process_items(media_file, outfile, input_item_id, debug):
     for item_id in item_ids:
         item_type, path = item_types[item_id]
         primary = 1 if item_id == pitm_item_id else 0
-        offset, length = item_locations[item_id]
-        items[item_id] = (item_type, path, primary, offset, length)
+        construction_method, offset, length = item_locations[item_id]
+        items[item_id] = (item_type, path, primary, construction_method, offset, length)
     # 4. print the data
     if input_item_id is None:
         # list items
-        headers = "item_id,path,item_type,primary,offset,length"
+        headers = "item_id,path,item_type,primary,construction_method,offset,length"
         return headers, items
     else:
         # extract item
         assert input_item_id in item_ids, f"error: invalid item id: {input_item_id}"
-        _, _, construction_method, start_offset, size = items[input_item_id]
+        _, _, _, construction_method, start_offset, size = items[input_item_id]
         if construction_method == 0:  # file_offset
             extract_bytes(media_file.filename, start_offset, size, outfile, debug)
         elif construction_method == 1:  # idat_offset
@@ -344,11 +345,12 @@ def main(argv):
                     item_type,
                     path,
                     primary,
+                    construction_method,
                     offset,
                     length,
                 ) in items.items():
                     fout.write(
-                        f"{item_id},{path},{item_type},{primary},{offset},{length}\n"
+                        f"{item_id},{path},{item_type},{primary},{construction_method},{offset},{length}\n"
                     )
 
 
