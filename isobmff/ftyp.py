@@ -29,20 +29,20 @@ class GeneralTypeBox(Box):
 
 
 # ISO/IEC 14496-12:2022, Section 4.3.2
-class FileTypeBox(Box):
+class FileTypeBox(GeneralTypeBox):
     box_type = b"ftyp"
 
 
 # ISO/IEC 14496-12:2022, Section 8.3.5
-class TrackTypeBox(Box):
+class TrackTypeBox(GeneralTypeBox):
     box_type = b"ttyp"
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.15
-class BrandProperty(Box):
+class BrandProperty(GeneralTypeBox):
     box_type = b"brnd"
 
 
 # ISO/IEC 14496-12:2022, Section 8.16.2
-class SegmentTypeBox(FileTypeBox):
+class SegmentTypeBox(GeneralTypeBox):
     box_type = b"styp"
