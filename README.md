@@ -130,7 +130,7 @@ There are several use case:
 
 Parse an ISOBMFF file:
 ```
-$ ./scripts/isobmff-parse.py media/C001.heic
+$ ./scripts/isobmff-parse.py -i media/C001.heic
 path: /ftyp
   offset: 0x00000000
   box_type: b'ftyp'
@@ -187,7 +187,7 @@ path: /mdat
 We have thoroughly tested the parser by using the testdir mode in a directory containing all the video sources mentioned in the References Section. There is only 1 file where our parser chokes. None of the other tools can either (gpac's mp4dump or ffmpeg).
 
 ```
-$ ./scripts/isobmff-parse.py  --testdir ~/video/test
+$ ./scripts/isobmff-parse.py --testdir ~/video/test
 # BROKEN FILES
 -> video/test/videolan/samples/A-codecs/DVAudio/00_Testfilm_fha1.mov
 error: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)
@@ -197,7 +197,7 @@ error: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)
 
 Check the full list of boxes:
 ```
-$ ./scripts/isobmff-parse.py media/C001.heic  |grep -a path:
+$ ./scripts/isobmff-parse.py -i media/C001.heic | grep -a path:
   path: /ftyp
   path: /meta
     path: /meta/hdlr
@@ -241,7 +241,7 @@ Note that, when it detects 2+ boxes of the same type under the same container, i
 
 Extract a box from an ISOBMFF file:
 ```
-$ ./scripts/isobmff-parse.py --extract-box --path /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC -o C001.heic.hvcC media/C001.heic
+$ ./scripts/isobmff-parse.py --extract-box --path /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC -i media/C001.heic -o C001.heic.hvcC
 $ stat -c "%s" C001.heic.hvcC
 108
 $ xxd C001.heic.hvcC
@@ -258,7 +258,7 @@ Note that we have extracted the full box, including the size, type (fourcc), and
 
 Extract a box value (just the payload) from an ISOBMFF file:
 ```
-$ ./scripts/isobmff-parse.py --extract-value --path /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC -o C001.heic.hvcC media/C001.heic
+$ ./scripts/isobmff-parse.py --extract-value --path /moov/trak/mdia/minf/stbl/stsd/hvc1/hvcC -i media/C001.heic -o C001.heic.hvcC
 $ stat -c "%s" C001.heic.hvcC
 100
 $ xxd C001.heic.hvcC
@@ -275,16 +275,16 @@ $ xxd C001.heic.hvcC
 
 First, let's see which items are available in an ISOBMFF file.
 ```
-$ ./scripts/isobmff-parse.py --list-items media/C001.heic
+$ ./scripts/isobmff-parse.py --list-items -i media/C001.heic
 item_id,item_type,primary,offset,length
 20001,hvc1,1,0,111612
 ```
 
 Note the output is a CSV file containing items IDs, types, whether they are the primary item, the offset, and the length. In this case we only have 1 item, namely an "hvc1" one.
 
-Second, let's extract  specific items.
+Second, let's extract specific items.
 ```
-$ ./scripts/isobmff-parse.py --extract-item -o /tmp/C001.heic.20001.hvc1 --item-id 20001 media/C001.heic
+$ ./scripts/isobmff-parse.py --extract-item -o /tmp/C001.heic.20001.hvc1 --item-id 20001 -i media/C001.heic
 $ xxd /tmp/C001.heic.20001.hvc1
 00000000: 0001 b3be 2601 af13 8077 57cf 9d5d 2930  ....&....wW..])0
 00000010: e619 759f 1cd2 d841 0778 8d99 91b8 2065  ..u....A.x.... e
