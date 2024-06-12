@@ -81,6 +81,7 @@ def decode_posix_portable_filename(box_type):
 # ISO/IEC 14496-12:2022, Section 4.2.2
 class Box:
     box_type = None
+    MIN_BOX_SIZE = 12
 
     def __init__(
         self, offset, payload_offset, path, size, largesize, max_offset, debug
@@ -148,6 +149,11 @@ class Box:
     def read_box_list(self, file):
         box_list = []
         while file.tell() < self.max_offset:
+            # ensure enough space for a box
+            if self.max_offset - file.tell() < self.MIN_BOX_SIZE:
+                print(f"warning: not enough bytes ({self.max_offset - file.tell()}) for a box at file.tell(): 0x{file.tell():08x}")
+                file.seek(self.max_offset)
+                break
             box = self.read_box(file)
             if box is None:
                 break
