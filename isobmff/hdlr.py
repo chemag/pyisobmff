@@ -20,8 +20,6 @@ class HandlerReferenceBox(FullBox):
             self.reserved.append(read_uint(file, 4))
         max_len = self.max_offset - file.tell()
         self.name = read_utf8string(file, max_len)
-        # ensure we read all the way to the end of the box
-        self.bytes = self.read_as_bytes(file)
 
     def contents(self):
         tuples = super().contents()
