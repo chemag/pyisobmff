@@ -270,8 +270,9 @@ def read_utf8string(file, max_len):
         return ""
     bstr = file.read(1)
     nbytes = 1
-    while bstr[-1] != 0 and nbytes < max_len:
+    while nbytes < max_len:
         bstr += file.read(1)
+        nbytes += 1
     return bstr.decode("ascii", errors="ignore")
 
 
