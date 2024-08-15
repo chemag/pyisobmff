@@ -177,7 +177,9 @@ def process_items(media_file, outfile, input_item_id, debug):
             extract_bytes(media_file.filename, start_offset, size, outfile, debug)
         elif construction_method == 1:  # idat_offset
             idat_offset = media_file.find_subbox("/meta/idat").payload_offset
-            extract_bytes(media_file.filename, idat_offset, size, outfile, debug)
+            extract_bytes(
+                media_file.filename, idat_offset + start_offset, size, outfile, debug
+            )
         elif construction_method == 2:  # item_offset
             raise Exception("error: do not support construction_method 2 (item_offset)")
         return None, None
