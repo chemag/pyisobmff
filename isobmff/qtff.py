@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import Box
+from .iinf import ItemReferenceBox
 
 
 # QuickTime Tags
@@ -19,7 +20,25 @@ class QuickTimeSphericalVideo(Box):
     box_type = b"sv3d"
 
 
-# QuickTime TrackRef Tags
+# QuickTime ItemRef Tags
+# https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
+class AuxiliaryImageRef(ItemReferenceBox):
+    box_type = b"auxl"
+
+
+# QuickTime ItemRef Tags
+# https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
+class DerivedImageRef(ItemReferenceBox):
+    box_type = b"dimg"
+
+
+# QuickTime ItemRef Tags
+# https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
+class ThumbnailRef(ItemReferenceBox):
+    box_type = b"thmb"
+
+
+# QuickTime ItemRef/TrackRef Tags
 # https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
 class QuickTimeContentDescribes(Box):
     box_type = b"cdsc"
