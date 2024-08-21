@@ -151,7 +151,9 @@ class Box:
         while file.tell() < self.max_offset:
             # ensure enough space for a box
             if self.max_offset - file.tell() < self.MIN_BOX_SIZE:
-                print(f"warning: not enough bytes ({self.max_offset - file.tell()}) for a box at file.tell(): 0x{file.tell():08x}")
+                print(
+                    f"warning: not enough bytes ({self.max_offset - file.tell()}) for a box at file.tell(): 0x{file.tell():08x}"
+                )
                 file.seek(self.max_offset)
                 break
             box = self.read_box(file)
