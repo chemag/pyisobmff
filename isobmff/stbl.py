@@ -263,7 +263,7 @@ class URIMetaSampleEntry(MetaDataSampleEntry):
 
     def read(self, file):
         super().read(file)
-        self.the_label = URIBox(max_offset=self.max_offset)
+        self.uri_box = URIBox(max_offset=self.max_offset)
         self.uri_box.read(file)
         self.init = URIInitBox(max_offset=self.max_offset)
         self.init.read(file)
