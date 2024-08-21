@@ -126,6 +126,7 @@ class ItemDataBox(FullBox):
 
 # ISO/IEC 14496-12:2022, Section 8.11.11
 class SingleItemTypeReferenceBox(Box):
+
     def read(self, file):
         self.from_item_ID = read_uint(file, 2)
         reference_count = read_uint(file, 2)
@@ -134,15 +135,17 @@ class SingleItemTypeReferenceBox(Box):
             self.to_item_IDs.append(read_uint(file, 2))
 
     def contents(self):
+        # a Box class has a parent
         tuples = super().contents()
         tuples += (("from_item_ID", self.from_item_ID),)
-        for idx, val in enumerate(self.group_ids):
+        for idx, val in enumerate(self.to_item_IDs):
             tuples += ((f"to_item_ID[{idx}]", val),)
         return tuples
 
 
 # ISO/IEC 14496-12:2022, Section 8.11.11
 class SingleItemTypeReferenceBoxLarge(Box):
+
     def read(self, file):
         self.from_item_ID = read_uint(file, 4)
         reference_count = read_uint(file, 2)
@@ -151,9 +154,10 @@ class SingleItemTypeReferenceBoxLarge(Box):
             self.to_item_IDs.append(read_uint(file, 4))
 
     def contents(self):
+        # a Box class has a parent
         tuples = super().contents()
         tuples += (("from_item_ID", self.from_item_ID),)
-        for idx, val in enumerate(self.group_ids):
+        for idx, val in enumerate(self.to_item_IDs):
             tuples += ((f"to_item_ID[{idx}]", val),)
         return tuples
 
@@ -164,14 +168,15 @@ class ItemReferenceBox(FullBox):
 
     def read(self, file):
         if self.version == 0:
-            # TODO: must be SingleItemTypeReferenceBox[]
-            self.box_list = self.read_box_list(file)
+            box_class = SingleItemTypeReferenceBox
         elif self.version == 1:
-            # TODO: must be SingleItemTypeReferenceBoxLarge[]
-            self.box_list = self.read_box_list(file)
+            box_class = SingleItemTypeReferenceBoxLarge
+        self.reference_list = []
+        while file.tell() < self.max_offset:
+            self.reference_list.append(self.read_box(file, box_class=box_class))
 
     def contents(self):
         tuples = super().contents()
-        for idx, box in enumerate(self.box_list):
-            tuples += ((f"box[{idx}]", box.contents()),)
+        for idx, box in enumerate(self.reference_list):
+            tuples += ((f"reference[{idx}]", box.contents()),)
         return tuples
