@@ -84,7 +84,15 @@ class Box:
     MIN_BOX_SIZE = 12
 
     def __init__(
-        self, offset, payload_offset, path, size, largesize, max_offset, debug
+        self,
+        offset,
+        payload_offset,
+        path,
+        size,
+        largesize,
+        max_offset,
+        debug,
+        box_type=None,
     ):
         self.offset = offset
         self.payload_offset = payload_offset
@@ -96,6 +104,8 @@ class Box:
         if max_offset is not None:
             self.max_offset = min(self.max_offset, max_offset)
         self.debug = debug
+        if box_type is not None:
+            self.box_type = box_type
 
     def contents(self):
         # a non-Box class has no parent
@@ -163,8 +173,8 @@ class Box:
         return box_list
 
     # read a single box
-    def read_box(self, file):
-        return read_box(file, self.path, self.debug, self, self.max_offset)
+    def read_box(self, file, box_class=None):
+        return read_box(file, self.path, self.debug, self, self.max_offset, box_class)
 
     def write(self, file):
         """write box to file"""
@@ -186,9 +196,10 @@ class FullBox(Box):
         version,
         flags,
         debug,
+        box_type=None,
     ):
         super().__init__(
-            offset, payload_offset, path, size, largesize, max_offset, debug
+            offset, payload_offset, path, size, largesize, max_offset, debug, box_type
         )
         self.version = version
         self.flags = flags
@@ -326,7 +337,7 @@ def get_class_type(cls):
 
 
 # TODO(chema): move function to Box/BoxHeader/FullBox/FullBoxHeader
-def read_box(file, path, debug, parent=None, max_offset=None):
+def read_box(file, path, debug, parent=None, max_offset=None, box_class=None):
     # 1. read the BoxHeader fields
     offset = file.tell()
     if max_offset is not None and (max_offset - file.tell()) < 4:
@@ -374,20 +385,23 @@ def read_box(file, path, debug, parent=None, max_offset=None):
     # 2. calculate the full path
     new_path = Box.get_path(path, box_type, parent)
     # 3. find the right Box/FullBox (box_class and class_type)
-    box_classes = get_class_list(Box)
-    box = None
-    for box_class in box_classes:
-        if box_class.box_type == full_box_type:
-            class_type = get_class_type(box_class)
-            break
-    else:
-        # unimplemented box
-        box_class = None
-        class_type = "UnimplementedBox"
-        if debug > 0:
-            print(
-                f"warning: unimplemented box offset: 0x{offset:08x} type: {full_box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
-            )
+    if box_class is None:
+        box_classes = get_class_list(Box)
+        box = None
+        for box_class in box_classes:
+            if box_class.box_type == full_box_type:
+                class_type = get_class_type(box_class)
+                break
+        else:
+            # unimplemented box
+            box_class = None
+            class_type = "UnimplementedBox"
+            if debug > 0:
+                print(
+                    f"warning: unimplemented box offset: 0x{offset:08x} type: {full_box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
+                )
+    else:  # box_class is not None
+        class_type = get_class_type(box_class)
 
     # 4. create the new Box/FullBox
     if class_type == "Box":
@@ -399,6 +413,7 @@ def read_box(file, path, debug, parent=None, max_offset=None):
             largesize=largesize,
             max_offset=max_offset,
             debug=debug,
+            box_type=box_type,
         )
     elif class_type == "FullBox":
         if max_offset is not None and (max_offset - file.tell()) < 4:
@@ -418,6 +433,7 @@ def read_box(file, path, debug, parent=None, max_offset=None):
             flags=flags,
             max_offset=max_offset,
             debug=debug,
+            box_type=box_type,
         )
     elif class_type == "UnimplementedBox":
         box = UnimplementedBox(
