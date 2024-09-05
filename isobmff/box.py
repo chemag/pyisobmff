@@ -319,6 +319,8 @@ def get_class_type(cls):
             return "Box"
         elif cls.__name__ == "FullBox":
             return "FullBox"
+        elif cls.__name__ == "UnimplementedBox":
+            return "UnimplementedBox"
         cls = cls.__base__
     return "Unknown"
 
@@ -371,53 +373,53 @@ def read_box(file, path, debug, parent=None, max_offset=None):
     payload_offset = file.tell()
     # 2. calculate the full path
     new_path = Box.get_path(path, box_type, parent)
-    # 3. find the right Box/FullBox
+    # 3. find the right Box/FullBox (box_class and class_type)
     box_classes = get_class_list(Box)
     box = None
     for box_class in box_classes:
         if box_class.box_type == full_box_type:
             class_type = get_class_type(box_class)
-            if class_type == "Box":
-                box = box_class(
-                    offset=offset,
-                    payload_offset=payload_offset,
-                    path=new_path,
-                    size=size,
-                    largesize=largesize,
-                    max_offset=max_offset,
-                    debug=debug,
-                )
-            elif class_type == "FullBox":
-                if max_offset is not None and (max_offset - file.tell()) < 4:
-                    raise Exception(
-                        f"error: read_box() no space for version/flags field in Box Header max_offset: 0x{max_offset:08x} file.tell(): 0x{file.tell():08x}"
-                    )
-                    return None
-                version = read_uint(file, 1)
-                flags = read_uint(file, 3)
-                box = box_class(
-                    offset=offset,
-                    payload_offset=payload_offset,
-                    path=new_path,
-                    size=size,
-                    largesize=largesize,
-                    version=version,
-                    flags=flags,
-                    max_offset=max_offset,
-                    debug=debug,
-                )
-            else:
-                raise Exception(f"error: INVALID BOX TYPE (offset: 0x{offset:08x})")
-                break
-            # read the box
-            box.read(file)
             break
     else:
         # unimplemented box
+        box_class = None
+        class_type = "UnimplementedBox"
         if debug > 0:
             print(
                 f"warning: unimplemented box offset: 0x{offset:08x} type: {full_box_type} size: 0x{size:x} next: 0x{size+offset:08x}"
             )
+
+    # 4. create the new Box/FullBox
+    if class_type == "Box":
+        box = box_class(
+            offset=offset,
+            payload_offset=payload_offset,
+            path=new_path,
+            size=size,
+            largesize=largesize,
+            max_offset=max_offset,
+            debug=debug,
+        )
+    elif class_type == "FullBox":
+        if max_offset is not None and (max_offset - file.tell()) < 4:
+            raise Exception(
+                f"error: read_box() no space for version/flags field in Box Header max_offset: 0x{max_offset:08x} file.tell(): 0x{file.tell():08x}"
+            )
+            return None
+        version = read_uint(file, 1)
+        flags = read_uint(file, 3)
+        box = box_class(
+            offset=offset,
+            payload_offset=payload_offset,
+            path=new_path,
+            size=size,
+            largesize=largesize,
+            version=version,
+            flags=flags,
+            max_offset=max_offset,
+            debug=debug,
+        )
+    elif class_type == "UnimplementedBox":
         box = UnimplementedBox(
             offset,
             payload_offset,
@@ -428,5 +430,10 @@ def read_box(file, path, debug, parent=None, max_offset=None):
             max_offset,
             debug,
         )
-        box.read(file)
+    else:
+        raise Exception(f"error: INVALID BOX TYPE (offset: 0x{offset:08x})")
+
+    # 5. read the box
+    box.read(file)
+
     return box
