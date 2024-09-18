@@ -29,6 +29,7 @@ from . import ipro
 from . import iprp
 from . import item
 from . import item_grid
+from . import item_tmap
 from . import mdat
 from . import mdia
 from . import meta
