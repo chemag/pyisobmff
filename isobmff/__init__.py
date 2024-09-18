@@ -28,7 +28,6 @@ from . import iloc
 from . import ipro
 from . import iprp
 from . import item
-from . import item_grid
 from . import mdat
 from . import mdia
 from . import meta

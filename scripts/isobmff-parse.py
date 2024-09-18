@@ -8,6 +8,7 @@ import glob
 import os
 import pathlib
 import sys
+import tempfile
 
 dirname = os.path.dirname(sys.modules[__name__].__file__)
 this_dir = os.path.abspath(dirname)
@@ -23,7 +24,8 @@ FUNC_CHOICES = {
     "extract-box": "extract full box by name",
     "extract-value": "extract box payload by name",
     "list-items": "list item IDs and their types",
-    "extract-item": "extract contents of item with item ID",
+    "extract-item": "extract contents of item with item ID to file",
+    "parse-item": "parse contents of item with item ID",
 }
 
 default_values = {
@@ -182,7 +184,7 @@ def process_items(media_file, outfile, input_item_id, debug):
             )
         elif construction_method == 2:  # item_offset
             raise Exception("error: do not support construction_method 2 (item_offset)")
-        return None, None
+        return None, items
 
 
 def get_options(argv):
@@ -332,11 +334,33 @@ def main(argv):
             media_file, options.path, options.outfile, include_header, options.debug
         )
 
-    elif options.func in ["list-items", "extract-item"]:
+    elif options.func in ["list-items", "extract-item", "parse-item"]:
+        outfile = options.outfile
+        if options.func == "parse-item":
+            # use a tempfile to write the blob
+            outfile = tempfile.NamedTemporaryFile(
+                prefix="pyisobmff.", suffix=".bin"
+            ).name
         headers, items = process_items(
-            media_file, options.outfile, options.item_id, options.debug
+            media_file, outfile, options.item_id, options.debug
         )
-        if options.func == "list-items":
+        if options.func == "extract-item":
+            pass
+        elif options.func == "parse-item":
+            item_type = items[options.item_id][0]
+            # check whether the item type is defined
+            item_classes = isobmff.get_class_list(isobmff.Item, set())
+            for item_class in item_classes:
+                if item_class.item_type == item_type.encode():
+                    break
+            else:
+                # unimplemented item
+                item_class = isobmff.Item
+            # parse the item
+            with open(outfile, "rb") as fd:
+                item = item_class(options.item_id, item_type, fd)
+            print(item)
+        elif options.func == "list-items":
             # list items
             outfile = options.outfile
             if outfile is None or outfile == "-":
