@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from .box import Box
 from .box import FullBox
-from .box import read_uint
-from .box import read_bytes
-from .box import read_utf8string
+from .utils import read_uint
+from .utils import read_bytes
+from .utils import read_utf8string
 
 
 # ETSI TS 103 190-2 v1.2.1, Section E.4

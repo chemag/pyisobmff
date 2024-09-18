@@ -4,7 +4,11 @@ __init__
 """
 from __future__ import absolute_import
 from .media_file import MediaFile
+from .utils import get_class_list
 from .box import get_atom_list
+from .box import Box
+from .item import get_item_list
+from .item import Item
 from . import ac3
 from . import ac4
 from . import avc
@@ -23,6 +27,8 @@ from . import iinf
 from . import iloc
 from . import ipro
 from . import iprp
+from . import item
+from . import item_grid
 from . import mdat
 from . import mdia
 from . import meta

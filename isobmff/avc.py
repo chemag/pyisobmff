@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from .box import Box
-from .box import read_uint
-from .box import read_bytes
+from .utils import read_uint
+from .utils import read_bytes
 from .stbl import VisualSampleEntry
 
 

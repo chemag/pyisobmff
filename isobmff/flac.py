@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from .box import Box
-from .box import read_uint
-from .box import read_sint
-from .box import ntohl
-from .box import ntohs
+from .utils import read_uint
+from .utils import read_sint
+from .utils import ntohl
+from .utils import ntohs
 from .stbl import AudioSampleEntry
 
 

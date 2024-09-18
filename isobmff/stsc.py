@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
 from .box import Quantity
-from .box import read_uint
-from .box import read_bytes
+from .utils import read_uint
+from .utils import read_bytes
 
 
 # ISO/IEC 14496-12:2022, Section 8.7.4
