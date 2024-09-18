@@ -60,12 +60,12 @@ def decode_posix_portable_filename(in_str):
 
 
 # class management
-def get_class_list(cls, res=[]):
+def get_class_list(cls, res=set()):
     subclasses = getattr(cls, "__subclasses__")()
     for subclass in subclasses:
         get_class_list(subclass, res)
-    res.append(cls)
-    return res
+    res |= {cls}
+    return set(res)
 
 
 # binary i/o

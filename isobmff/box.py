@@ -206,11 +206,9 @@ class Quantity(Enum):
 
 
 def get_atom_list():
-    box_classes = get_class_list(Box)
+    box_classes = get_class_list(Box, set())
     return set(
-        box_class.box_type
-        for box_class in box_classes
-        if "box_type" in dir(box_class)
+        box_class.box_type for box_class in box_classes if "box_type" in dir(box_class)
     )
 
 
@@ -276,7 +274,7 @@ def read_box(file, path, debug, parent=None, max_offset=None, box_class=None):
     new_path = Box.get_path(path, box_type, parent)
     # 3. find the right Box/FullBox (box_class and class_type)
     if box_class is None:
-        box_classes = get_class_list(Box)
+        box_classes = get_class_list(Box, set())
         box = None
         for box_class in box_classes:
             if box_class.box_type == full_box_type:
