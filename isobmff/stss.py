@@ -15,3 +15,10 @@ class SyncSampleBox(FullBox):
             entry = {}
             entry["sample_number"] = read_uint(file, 4)
             self.entries.append(entry)
+
+    def contents(self):
+        tuples = super().contents()
+        if self.debug > 2:
+            for idx, entry in enumerate(self.entries):
+                tuples += ((f'entry[{idx}]["sample_number"]', entry["sample_number"]),)
+        return tuples
