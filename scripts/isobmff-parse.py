@@ -6,6 +6,7 @@ ISO/IEC 14496-12) parser."""
 import argparse
 import glob
 import os
+import pandas as pd
 import pathlib
 import sys
 import tempfile
@@ -39,6 +40,17 @@ default_values = {
     "infile": None,
     "outfile": None,
 }
+
+
+ITEM_LIST_HEADERS = (
+    "item_id",
+    "path",
+    "item_type",
+    "primary",
+    "construction_method",
+    "offset",
+    "length",
+)
 
 
 def parse_file(infile, debug):
@@ -114,6 +126,8 @@ def extract_bytes(infile, offset, size, outfile, debug):
         fin.seek(offset)
         data = fin.read(size)
     # write the bytes
+    if outfile is None or outfile == "-":
+        outfile = "/dev/fd/1"
     with open(outfile, "wb") as fout:
         fout.write(data)
 
@@ -132,7 +146,55 @@ def extract_box(media_file, path, outfile, include_headers, debug):
     extract_bytes(media_file.filename, start_offset, size, outfile, debug)
 
 
-def process_items(media_file, outfile, input_item_id, debug):
+def parse_item(media_file, item_id, debug):
+    # extract the item to a tempfile
+    outfile = tempfile.NamedTemporaryFile(prefix="pyisobmff.", suffix=".bin").name
+    item_dict = extract_item(media_file, outfile, item_id, debug)
+    # check whether the item type is defined
+    item_type = item_dict["item_type"]
+    item_classes = isobmff.get_class_list(isobmff.Item, set())
+    for item_class in item_classes:
+        if item_class.item_type == item_type.encode():
+            break
+    else:
+        # unimplemented item
+        item_class = isobmff.Item
+    with open(outfile, "rb") as fd:
+        item = item_class(item_id, item_type, fd)
+    return item
+
+
+def extract_item(media_file, outfile, item_id, debug):
+    # get the item list info
+    df = get_item_list(media_file, debug)
+    # ensure the item_id exists
+    assert (df["item_id"] == item_id).any(), f"error: item_id {item_id} does not exist"
+    # get item info as dictionary
+    item_dict = df[df["item_id"] == item_id].to_dict("records")[0]
+    # extract item into outfile
+    if item_dict["construction_method"] == 0:  # file_offset
+        extract_bytes(
+            media_file.filename,
+            item_dict["offset"],
+            item_dict["length"],
+            outfile,
+            debug,
+        )
+    elif item_dict["construction_method"] == 1:  # idat_offset
+        idat_offset = media_file.find_subbox("/meta/idat").payload_offset
+        extract_bytes(
+            media_file.filename,
+            idat_offset + item_dict["offset"],
+            item_dict["length"],
+            outfile,
+            debug,
+        )
+    elif item_dict["construction_method"] == 2:  # item_offset
+        raise Exception("error: do not support construction_method 2 (item_offset)")
+    return item_dict
+
+
+def get_item_list(media_file, debug):
     # 1. look for the item-related boxes
     iloc_box = media_file.find_subbox("/meta/iloc")
     assert iloc_box is not None, "error: cannot find /meta/iloc"
@@ -158,33 +220,23 @@ def process_items(media_file, outfile, input_item_id, debug):
         )
         for item in iloc_box.items
     }
-    # 3. merge the data
-    items = {}
+    # 3. merge the data into a pandas DataFrame
+    df = pd.DataFrame(columns=ITEM_LIST_HEADERS)
     item_ids = set(item_types.keys()) & set(item_locations.keys())
     for item_id in item_ids:
         item_type, path = item_types[item_id]
         primary = 1 if item_id == pitm_item_id else 0
         construction_method, offset, length = item_locations[item_id]
-        items[item_id] = (item_type, path, primary, construction_method, offset, length)
-    # 4. print the data
-    if input_item_id is None:
-        # list items
-        headers = "item_id,path,item_type,primary,construction_method,offset,length"
-        return headers, items
-    else:
-        # extract item
-        assert input_item_id in item_ids, f"error: invalid item id: {input_item_id}"
-        _, _, _, construction_method, start_offset, size = items[input_item_id]
-        if construction_method == 0:  # file_offset
-            extract_bytes(media_file.filename, start_offset, size, outfile, debug)
-        elif construction_method == 1:  # idat_offset
-            idat_offset = media_file.find_subbox("/meta/idat").payload_offset
-            extract_bytes(
-                media_file.filename, idat_offset + start_offset, size, outfile, debug
-            )
-        elif construction_method == 2:  # item_offset
-            raise Exception("error: do not support construction_method 2 (item_offset)")
-        return None, items
+        df.loc[df.size] = [
+            item_id,
+            path,
+            item_type,
+            primary,
+            construction_method,
+            offset,
+            length,
+        ]
+    return df
 
 
 def get_options(argv):
@@ -328,56 +380,39 @@ def main(argv):
     if options.func == "parse":
         print(media_file)
 
-    elif options.func in ["extract-box", "extract-value"]:
-        include_header = options.func == "extract-box"
+    elif options.func == "extract-box":
         extract_box(
-            media_file, options.path, options.outfile, include_header, options.debug
+            media_file,
+            options.path,
+            options.outfile,
+            include_header=True,
+            debug=options.debug,
         )
 
-    elif options.func in ["list-items", "extract-item", "parse-item"]:
-        outfile = options.outfile
-        if options.func == "parse-item":
-            # use a tempfile to write the blob
-            outfile = tempfile.NamedTemporaryFile(
-                prefix="pyisobmff.", suffix=".bin"
-            ).name
-        headers, items = process_items(
-            media_file, outfile, options.item_id, options.debug
+    elif options.func == "extract-value":
+        extract_box(
+            media_file,
+            options.path,
+            options.outfile,
+            include_header=False,
+            debug=options.debug,
         )
-        if options.func == "extract-item":
-            pass
-        elif options.func == "parse-item":
-            item_type = items[options.item_id][0]
-            # check whether the item type is defined
-            item_classes = isobmff.get_class_list(isobmff.Item, set())
-            for item_class in item_classes:
-                if item_class.item_type == item_type.encode():
-                    break
-            else:
-                # unimplemented item
-                item_class = isobmff.Item
-            # parse the item
-            with open(outfile, "rb") as fd:
-                item = item_class(options.item_id, item_type, fd)
-            print(item)
-        elif options.func == "list-items":
-            # list items
-            outfile = options.outfile
-            if outfile is None or outfile == "-":
-                outfile = "/dev/fd/1"
-            with open(outfile, "w") as fout:
-                fout.write(f"{headers}\n")
-                for item_id, (
-                    item_type,
-                    path,
-                    primary,
-                    construction_method,
-                    offset,
-                    length,
-                ) in items.items():
-                    fout.write(
-                        f"{item_id},{path},{item_type},{primary},{construction_method},{offset},{length}\n"
-                    )
+
+    elif options.func == "extract-item":
+        extract_item(media_file, options.outfile, options.item_id, options.debug)
+
+    elif options.func == "parse-item":
+        item = parse_item(media_file, options.item_id, options.debug)
+        if options.outfile is None or options.outfile == "-":
+            options.outfile = "/dev/fd/1"
+        with open(options.outfile, "wb") as fout:
+            fout.write(str(item).encode())
+
+    elif options.func == "list-items":
+        df = get_item_list(media_file, options.debug)
+        if options.outfile is None or options.outfile == "-":
+            options.outfile = "/dev/fd/1"
+        df.to_csv(options.outfile, index=False)
 
 
 if __name__ == "__main__":
