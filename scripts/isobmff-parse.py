@@ -25,6 +25,7 @@ FUNC_CHOICES = {
     "extract-box": "extract full box by name",
     "extract-value": "extract box payload by name",
     "list-items": "list item IDs and their types",
+    "get-item-sizes": "list sizes per item type",
     "extract-item": "extract contents of item with item ID to file",
     "parse-item": "parse contents of item with item ID",
 }
@@ -192,6 +193,24 @@ def extract_item(media_file, outfile, item_id, debug):
     elif item_dict["construction_method"] == 2:  # item_offset
         raise Exception("error: do not support construction_method 2 (item_offset)")
     return item_dict
+
+
+def get_item_sizes(media_file, debug):
+    # get the full item list
+    df = get_item_list(media_file, debug)
+    # get list of unique types
+    item_type_list = df.item_type.unique()
+    # join the rows based on item_type
+    df_new = pd.DataFrame(columns=("item_type", "num_rows", "length"))
+    for item_type in item_type_list:
+        num_rows = len(df[df["item_type"] == item_type])
+        length = sum(df[df["item_type"] == item_type].to_dict()["length"].values())
+        df_new.loc[df_new.size] = [
+            item_type,
+            num_rows,
+            length,
+        ]
+    return df_new
 
 
 def get_item_list(media_file, debug):
@@ -410,6 +429,12 @@ def main(argv):
 
     elif options.func == "list-items":
         df = get_item_list(media_file, options.debug)
+        if options.outfile is None or options.outfile == "-":
+            options.outfile = "/dev/fd/1"
+        df.to_csv(options.outfile, index=False)
+
+    elif options.func == "get-item-sizes":
+        df = get_item_sizes(media_file, options.debug)
         if options.outfile is None or options.outfile == "-":
             options.outfile = "/dev/fd/1"
         df.to_csv(options.outfile, index=False)
