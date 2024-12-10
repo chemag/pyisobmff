@@ -404,7 +404,7 @@ def main(argv):
             media_file,
             options.path,
             options.outfile,
-            include_header=True,
+            include_headers=True,
             debug=options.debug,
         )
 
@@ -413,7 +413,7 @@ def main(argv):
             media_file,
             options.path,
             options.outfile,
-            include_header=False,
+            include_headers=False,
             debug=options.debug,
         )
 
