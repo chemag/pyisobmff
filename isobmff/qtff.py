@@ -225,3 +225,24 @@ class QuickTimeSoftwareVersion(Box):
 # https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
 class QuickTimeGPSCoordinates2(Box):
     box_type = b"@xyz"
+
+
+# ISO Base Media File Format and Apple HEVC Stereo Video, version 0.9 (beta)
+
+
+# aligned(8) class VideoExtendedUsageBox extends Box('vexu') {
+#   RequiredBoxTypesBox(); // optional if no required boxes specified
+#   StereoViewBox(); // optional
+#   Box()[]; // other optional boxes with FreeSpaceBox() reserved for its expected use
+# }
+class VideoExtendedUsageBox(Box):
+    box_type = b"vexu"
+
+    def read(self, file):
+        self.box_list = self.read_box_list(file)
+
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
