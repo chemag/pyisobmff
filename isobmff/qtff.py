@@ -328,3 +328,16 @@ class HeroStereoEyeDescriptionBox(FullBox):
         # a non-Box class has no parent
         tuples = ()
         tuples += (("hero_eye_indicator", self.hero_eye_indicator),)
+
+
+# https://github.com/FFmpeg/FFmpeg/commit/8e7ca22b36e7727d0778d8604b29f81ca1202f19
+class HorizontalFieldOfViewBox(Box):
+    box_type = b"hfov"
+
+    def read(self, file):
+        self.horizontal_field_of_view = read_uint(file, 4)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("horizontal_field_of_view", self.horizontal_field_of_view),)
+        return tuples
