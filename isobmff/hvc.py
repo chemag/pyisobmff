@@ -3,6 +3,7 @@ from .box import Box
 from .box import Quantity
 from .box import read_uint
 from .stbl import VisualSampleEntry
+from .utils import read_utf8string
 
 
 # ISO/IEC 14496-15:2022, Section 8.4.1.1.2
@@ -39,7 +40,7 @@ class HEVCConfigurationBox(Box):
     box_type = b"hvcC"
 
     def read(self, file):
-        self.hevc_config = HEVCDecoderConfigurationRecord()
+        self.hevc_config = HEVCDecoderConfigurationRecord(max_offset=self.max_offset)
         self.hevc_config.read(file)
 
     def contents(self):
@@ -50,6 +51,9 @@ class HEVCConfigurationBox(Box):
 
 # ISO/IEC 14496-15:2022, Section 8.3.2.1.2
 class HEVCDecoderConfigurationRecord:
+    def __init__(self, max_offset):
+        self.max_offset = max_offset
+
     def read(self, file):
         self.configuration_version = read_uint(file, 1)
         #
@@ -96,6 +100,9 @@ class HEVCDecoderConfigurationRecord:
         self.array = []
         for _ in range(num_of_arrays):
             self.array.append(self.__read_item(file))
+        # finish the box
+        max_len = self.max_offset - file.tell()
+        _ = read_utf8string(file, max_len)
 
     def __read_item(self, file):
         item = {}
@@ -160,7 +167,7 @@ class LHEVCConfigurationBox(Box):
     box_type = b"lhvC"
 
     def read(self, file):
-        self.hevc_config = LHEVCDecoderConfigurationRecord()
+        self.hevc_config = LHEVCDecoderConfigurationRecord(max_offset=self.max_offset)
         self.hevc_config.read(file)
 
     def contents(self):
