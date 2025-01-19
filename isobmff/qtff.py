@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import Box
+from .box import ContainerBox
 from .box import FullBox
 from .iinf import ItemReferenceBox
 from .utils import read_sint
@@ -341,3 +342,8 @@ class HorizontalFieldOfViewBox(Box):
         tuples = super().contents()
         tuples += (("horizontal_field_of_view", self.horizontal_field_of_view),)
         return tuples
+
+
+# other stereo-related boxes
+class CAMSUnknown(ContainerBox):
+    box_type = b"cams"
