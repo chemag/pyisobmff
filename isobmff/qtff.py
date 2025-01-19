@@ -347,3 +347,7 @@ class HorizontalFieldOfViewBox(Box):
 # other stereo-related boxes
 class CAMSUnknown(ContainerBox):
     box_type = b"cams"
+
+
+class CMFYUnknown(ContainerBox):
+    box_type = b"cmfy"
