@@ -246,3 +246,22 @@ class VideoExtendedUsageBox(Box):
         for idx, box in enumerate(self.box_list):
             tuples += ((f"box[{idx}]", box.contents()),)
         return tuples
+
+
+# aligned(8) class StereoViewBox extends Box('eyes') {
+#   RequiredBoxTypesBox(); // as needed
+#   StereoViewInformationBox();
+#   HeroStereoEyeDescriptionBox(); // optional
+#   Box()[]; // other optional boxes
+# }
+class StereoViewBox(Box):
+    box_type = b"eyes"
+
+    def read(self, file):
+        self.box_list = self.read_box_list(file)
+
+    def contents(self):
+        tuples = super().contents()
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
