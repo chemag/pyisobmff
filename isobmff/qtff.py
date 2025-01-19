@@ -355,3 +355,15 @@ class CMFYUnknown(ContainerBox):
 
 class ProjUnknown(ContainerBox):
     box_type = b"proj"
+
+
+class BlinUnknown(FullBox):
+    box_type = b"blin"
+
+    def read(self, file):
+        self.stereo_baseline = read_uint(file, 4)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("stereo_baseline", self.stereo_baseline),)
+        return tuples
