@@ -367,3 +367,20 @@ class BlinUnknown(FullBox):
         tuples = super().contents()
         tuples += (("stereo_baseline", self.stereo_baseline),)
         return tuples
+
+
+class DadjUnknown(FullBox):
+    box_type = b"dadj"
+
+    def read(self, file):
+        self.stereo_horizontal_disparity_adjustment = read_uint(file, 4)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (
+            (
+                "stereo_horizontal_disparity_adjustment",
+                self.stereo_horizontal_disparity_adjustment,
+            ),
+        )
+        return tuples
