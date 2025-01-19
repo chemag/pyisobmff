@@ -3,6 +3,7 @@ from .box import Box
 from .box import FullBox
 from .iinf import ItemReferenceBox
 from .utils import read_sint
+from .utils import read_uint
 
 
 # QuickTime Tags
@@ -285,3 +286,30 @@ class RequiredBoxTypesBox(FullBox):
         for idx, val in enumerate(self.required_box_types):
             tuples += ((f"required_box_types[{idx}]", val),)
         return tuples
+
+
+# aligned(8) class StereoViewInformationBox extends FullBox('stri', 0, 0) {
+#   unsigned int(4) reserved; // reserved, set to 0
+#   unsigned int(1) eye_views_reversed;
+#   unsigned int(1) has_additional_views;
+#   unsigned int(1) has_right_eye_view; // video contains a right-eye view
+#   unsigned int(1) has_left_eye_view; // video contains a left-eye view
+# }
+class StereoViewInformationBox(FullBox):
+    box_type = b"stri"
+
+    def read(self, file):
+        byte = read_uint(file, 1)
+        self.reserved = (byte >> 4) & 0b1111
+        self.eye_views_reversed = (byte >> 3) & 0b1
+        self.has_additional_views = (byte >> 2) & 0b1
+        self.has_right_eye_view = (byte >> 1) & 0b1
+        self.has_left_eye_view = (byte >> 0) & 0b1
+
+    def contents(self):
+        # a non-Box class has no parent
+        tuples = ()
+        tuples += (("eye_views_reversed", self.eye_views_reversed),)
+        tuples += (("has_additional_views", self.has_additional_views),)
+        tuples += (("has_right_eye_view", self.has_right_eye_view),)
+        tuples += (("has_left_eye_view", self.has_left_eye_view),)
