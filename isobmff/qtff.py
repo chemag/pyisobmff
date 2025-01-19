@@ -313,3 +313,18 @@ class StereoViewInformationBox(FullBox):
         tuples += (("has_additional_views", self.has_additional_views),)
         tuples += (("has_right_eye_view", self.has_right_eye_view),)
         tuples += (("has_left_eye_view", self.has_left_eye_view),)
+
+
+# aligned(8) class HeroStereoEyeDescriptionBox extends FullBox('hero', 0, 0) {
+#   unsigned int(8) hero_eye_indicator; // 0 = none, 1 = left, 2 = right, >= 3 reserved
+# }
+class HeroStereoEyeDescriptionBox(FullBox):
+    box_type = b"hero"
+
+    def read(self, file):
+        self.hero_eye_indicator = read_uint(file, 1)
+
+    def contents(self):
+        # a non-Box class has no parent
+        tuples = ()
+        tuples += (("hero_eye_indicator", self.hero_eye_indicator),)
