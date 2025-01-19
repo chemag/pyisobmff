@@ -351,3 +351,7 @@ class CAMSUnknown(ContainerBox):
 
 class CMFYUnknown(ContainerBox):
     box_type = b"cmfy"
+
+
+class ProjUnknown(ContainerBox):
+    box_type = b"proj"
