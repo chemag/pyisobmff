@@ -153,3 +153,21 @@ class HEVCDecoderConfigurationRecord:
         for idx, val in enumerate(self.array):
             tuples += ((f"array[{idx}]", self.__contents_item(val)),)
         return tuples
+
+
+# ISO/IEC 14496-15:2022, Section 9.4.3
+class LHEVCConfigurationBox(Box):
+    box_type = b"lhvC"
+
+    def read(self, file):
+        self.hevc_config = LHEVCDecoderConfigurationRecord()
+        self.hevc_config.read(file)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("lhevc_config", self.hevc_config.contents()),)
+        return tuples
+
+
+class LHEVCDecoderConfigurationRecord(HEVCDecoderConfigurationRecord):
+    pass
