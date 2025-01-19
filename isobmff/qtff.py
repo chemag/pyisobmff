@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from .box import Box
+from .box import FullBox
 from .iinf import ItemReferenceBox
+from .utils import read_sint
 
 
 # QuickTime Tags
@@ -264,4 +266,22 @@ class StereoViewBox(Box):
         tuples = super().contents()
         for idx, box in enumerate(self.box_list):
             tuples += ((f"box[{idx}]", box.contents()),)
+        return tuples
+
+
+# aligned(8) class RequiredBoxTypesBox extends FullBox('must', 0, 0 ) {
+#   unsigned int(32) required_box_types[];
+# }
+class RequiredBoxTypesBox(FullBox):
+    box_type = b"must"
+
+    def read(self, file):
+        self.required_box_types = []
+        while file.tell() < self.max_offset:
+            self.required_box_types.append(read_sint(file, 4))
+
+    def contents(self):
+        tuples = super().contents()
+        for idx, val in enumerate(self.required_box_types):
+            tuples += ((f"required_box_types[{idx}]", val),)
         return tuples
