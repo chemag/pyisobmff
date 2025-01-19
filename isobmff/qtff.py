@@ -402,3 +402,26 @@ class PrjiUnknown(FullBox):
             ),
         )
         return tuples
+
+
+class KeysDescriptor(FullBox):
+    box_type = b"keys"
+
+    def read(self, file):
+        self.entry_count = read_uint(file, 4)
+        self.entries = []
+        for _ in range(self.entry_count):
+            entry = {}
+            entry["length"] = read_uint(file, 4)
+            entry["namespace"] = read_fixed_size_string(file, 4)
+            entry["value"] = read_fixed_size_string(file, entry["length"] - 8)
+            self.entries.append(entry)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("entry_count", self.entry_count),)
+        for idx, val in enumerate(self.entries):
+            tuples += ((f'entry[{idx}]["length"]', val["length"]),)
+            tuples += ((f'entry[{idx}]["namespace"]', val["namespace"]),)
+            tuples += ((f'entry[{idx}]["value"]', val["value"]),)
+        return tuples
