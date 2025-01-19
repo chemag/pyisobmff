@@ -3,6 +3,7 @@ from .box import Box
 from .box import ContainerBox
 from .box import FullBox
 from .iinf import ItemReferenceBox
+from .utils import read_fixed_size_string
 from .utils import read_sint
 from .utils import read_uint
 
@@ -381,6 +382,23 @@ class DadjUnknown(FullBox):
             (
                 "stereo_horizontal_disparity_adjustment",
                 self.stereo_horizontal_disparity_adjustment,
+            ),
+        )
+        return tuples
+
+
+class PrjiUnknown(FullBox):
+    box_type = b"prji"
+
+    def read(self, file):
+        self.spherical_mapping_projection = read_fixed_size_string(file, 4)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (
+            (
+                "spherical_mapping_projection",
+                self.spherical_mapping_projection,
             ),
         )
         return tuples
