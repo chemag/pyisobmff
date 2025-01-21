@@ -16,6 +16,11 @@ class SampleTableBox(ContainerBox):
 
 
 # ISO/IEC 14496-12:2022, Section 8.5.2.2
+# aligned(8) abstract class SampleEntry(unsigned int(32) format) extends Box(format) {
+#   const unsigned int(8)[6] reserved = 0;
+#   unsigned int(16) data_reference_index;
+# }
+
 class SampleEntry(Box):
     def read(self, file):
         self.reserved0 = []
@@ -114,6 +119,16 @@ class VisualSampleEntry(SampleEntry):
 
 # ISO/IEC 14496-12:2022, Section 12.2.3.2
 # ISO/IEC 14496-14:2020, Section 6.7.2
+# class AudioSampleEntry(codingname) extends SampleEntry (codingname) {
+#   const unsigned int(32)[2] reserved = 0;
+#   unsigned int(16) channelcount;
+#   template unsigned int(16) samplesize = 16;
+#   unsigned int(16) pre_defined = 0;
+#   const unsigned int(16) reserved = 0 ;
+#   template unsigned int(32) samplerate = { default samplerate of media } << 16;
+#   // optional boxes follow
+# ...
+# }
 class AudioSampleEntry(SampleEntry):
     def read(self, file):
         super().read(file)
