@@ -276,10 +276,8 @@ def get_options(argv):
     parser.add_argument(
         "-v",
         "--version",
-        action="store_true",
-        dest="version",
-        default=False,
-        help="Print version",
+        action="version",
+        version=__version__,
     )
     parser.add_argument(
         "-d",
@@ -367,8 +365,6 @@ def get_options(argv):
     )
     # do the parsing
     options = parser.parse_args(argv[1:])
-    if options.version:
-        return options
     # implement help
     if options.func == "help":
         parser.print_help()
@@ -379,9 +375,6 @@ def get_options(argv):
 def main(argv):
     # 0. parse options
     options = get_options(argv)
-    if options.version:
-        print("version: %s" % __version__)
-        sys.exit(0)
     if options.debug > 0:
         print(options)
 
