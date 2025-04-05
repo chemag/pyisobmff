@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import re
 import string
 import struct
@@ -252,7 +253,13 @@ def read_box(file, path, debug, parent=None, max_offset=None, box_class=None):
         print(f"read_box() offset: 0x{offset:08x} size: 0x{size:08x} type: {box_type}")
     largesize = None
     if size == 0:
-        raise Exception(f"error: UNIMPLEMENTED size=0 BoxHeader (Section 4.2.2 Page 8)")
+        # ISO/IEC 14496-12:2022(E) Section 4.2.2: "size [...] if size is 0,
+        # then this box shall be in a top-level container, and be the last
+        # box in that container (typically, a file or data object delivered
+        # over a protocol), and its payload extends to the end of that
+        # container (normally only used for a MediaDataBox)"
+        # get the file size
+        size = os.path.getsize(file.name)
     elif size == 1:
         if max_offset is not None and (max_offset - file.tell()) < 8:
             raise Exception(
