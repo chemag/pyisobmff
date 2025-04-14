@@ -4,8 +4,10 @@ from .box import ContainerBox
 from .box import FullBox
 from .iinf import ItemReferenceBox
 from .utils import read_fixed_size_string
+from .utils import read_fourcc
 from .utils import read_sint
 from .utils import read_uint
+from .utils import read_utf8string
 
 
 # QuickTime Tags
@@ -64,9 +66,55 @@ class QuickTimeTimeCode(Box):
     box_type = b"tmcd"
 
 
+# https://developer.apple.com/documentation/quicktime-file-format/metadata_item_list_atom/
 # https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
 class QuickTimeItemList(Box):
     box_type = b"ilst"
+
+    def read(self, file):
+        self.metadata_blocks = []
+        while file.tell() < self.max_offset:
+            # TODO(chema): reimplement using dependent atom/box reading
+            unknown = read_uint(file, 4)
+            key_index = read_uint(file, 4)
+            atom_length = read_uint(file, 4)
+            atom_type = read_fourcc(file)
+            metadata_block = [unknown, key_index, atom_length, atom_type]
+            if atom_type == b'data':
+                # https://developer.apple.com/documentation/quicktime-file-format/data_atom
+                data_type = read_uint(file, 4)
+                data_locale = read_uint(file, 4)
+                length = atom_length - 16
+                # https://developer.apple.com/documentation/quicktime-file-format/well-known_types
+                if data_type == 1:
+                    data_value = read_utf8string(file, length)
+                elif data_type == 21:
+                    data_value = read_sint(file, length)
+                elif data_type == 22:
+                    data_value = read_uint(file, length)
+                else:
+                    data_value = read_utf8string(file, length)
+                metadata_block += [data_type, data_locale, data_value]
+            else:
+                length = atom_length - 8
+                value = read_utf8string(file, length)
+                metadata_block.append(value)
+            self.metadata_blocks.append(metadata_block)
+
+
+    def contents(self):
+        tuples = super().contents()
+        for metadata_block in self.metadata_blocks:
+            tuples += (("unknown", metadata_block[0]),)
+            tuples += (("key_index", metadata_block[1]),)
+            tuples += (("atom_type", metadata_block[3]),)
+            if metadata_block[3] == b'data':
+                tuples += (("data_type", metadata_block[4]),)
+                tuples += (("data_locale", hex(metadata_block[5])),)
+                tuples += (("data_value", metadata_block[6]),)
+            else:
+                tuples += (("data_value", metadata_block[4]),)
+        return tuples
 
 
 # https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
