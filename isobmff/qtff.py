@@ -3,6 +3,7 @@ from .box import Box
 from .box import ContainerBox
 from .box import FullBox
 from .iinf import ItemReferenceBox
+from .utils import escape_value
 from .utils import read_fixed_size_string
 from .utils import read_fourcc
 from .utils import read_sint
@@ -106,7 +107,12 @@ class QuickTimeItemList(Box):
         tuples = super().contents()
         for metadata_block in self.metadata_blocks:
             tuples += (("unknown", metadata_block[0]),)
-            tuples += (("key_index", metadata_block[1]),)
+            key_index = metadata_block[1]
+            if key_index >> 24 == 0x00:
+                tuples += (("key_index", key_index),)
+            else:
+                key_index_str = "".join(chr((key_index >> i) & 0xff) for i in (24, 16, 8, 0))
+                tuples += (("key_index", escape_value(key_index_str)),)
             tuples += (("atom_type", metadata_block[3]),)
             if metadata_block[3] == b'data':
                 tuples += (("data_type", metadata_block[4]),)
