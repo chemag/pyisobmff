@@ -16,9 +16,8 @@ class MovieFragmentBox(Box):
 
     def contents(self):
         tuples = super().contents()
-        if self.debug > 2:
-            for idx, box in enumerate(self.box_list):
-                tuples += ((f"box[{idx}]", box.contents()),)
+        for idx, box in enumerate(self.box_list):
+            tuples += ((f"box[{idx}]", box.contents()),)
         return tuples
 
 
