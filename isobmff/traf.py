@@ -100,7 +100,7 @@ class TrackRunBox(FullBox):
         if (self.flags & self.FLAGS["data-offset-present"]) == self.FLAGS[
             "data-offset-present"
         ]:
-            self.data_offset = read_sint(file, 8)
+            self.data_offset = read_sint(file, 4)
         if (self.flags & self.FLAGS["first-sample-flags-present"]) == self.FLAGS[
             "first-sample-flags-present"
         ]:
