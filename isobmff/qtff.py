@@ -165,8 +165,19 @@ class QuickTimeGenMediaHeader(Box):
 
 
 # https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
+# https://developer.apple.com/library/archive/technotes/tn2162/_index.html#//apple_ref/doc/uid/DTS40013070-CH1-TNTAG10-THE__FIEL__IMAGEDESCRIPTION_EXTENSION__FIELD_FRAME_INFORMATION
 class QuickTimeVideoFieldOrder(Box):
     box_type = b"fiel"
+
+    def read(self, file):
+        self.fields = read_uint(file, 1)
+        self.details = read_uint(file, 1)
+
+    def contents(self):
+        tuples = super().contents()
+        tuples += (("fields", self.fields),)
+        tuples += (("details", self.details),)
+        return tuples
 
 
 # https://metacpan.org/dist/Image-ExifTool/view/lib/Image/ExifTool/TagNames.pod
