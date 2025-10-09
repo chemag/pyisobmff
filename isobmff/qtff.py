@@ -81,7 +81,7 @@ class QuickTimeItemList(Box):
             atom_length = read_uint(file, 4)
             atom_type = read_fourcc(file)
             metadata_block = [unknown, key_index, atom_length, atom_type]
-            if atom_type == b'data':
+            if atom_type == b"data":
                 # https://developer.apple.com/documentation/quicktime-file-format/data_atom
                 data_type = read_uint(file, 4)
                 data_locale = read_uint(file, 4)
@@ -102,7 +102,6 @@ class QuickTimeItemList(Box):
                 metadata_block.append(value)
             self.metadata_blocks.append(metadata_block)
 
-
     def contents(self):
         tuples = super().contents()
         for metadata_block in self.metadata_blocks:
@@ -111,10 +110,12 @@ class QuickTimeItemList(Box):
             if key_index >> 24 == 0x00:
                 tuples += (("key_index", key_index),)
             else:
-                key_index_str = "".join(chr((key_index >> i) & 0xff) for i in (24, 16, 8, 0))
+                key_index_str = "".join(
+                    chr((key_index >> i) & 0xFF) for i in (24, 16, 8, 0)
+                )
                 tuples += (("key_index", escape_value(key_index_str)),)
             tuples += (("atom_type", metadata_block[3]),)
-            if metadata_block[3] == b'data':
+            if metadata_block[3] == b"data":
                 tuples += (("data_type", metadata_block[4]),)
                 tuples += (("data_locale", hex(metadata_block[5])),)
                 tuples += (("data_value", metadata_block[6]),)

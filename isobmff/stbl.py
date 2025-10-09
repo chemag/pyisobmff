@@ -21,6 +21,7 @@ class SampleTableBox(ContainerBox):
 #   unsigned int(16) data_reference_index;
 # }
 
+
 class SampleEntry(Box):
     def read(self, file):
         self.reserved0 = []
