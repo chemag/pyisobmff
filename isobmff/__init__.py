@@ -55,3 +55,4 @@ from . import traf
 from . import trak
 from . import tref
 from . import udta
+from . import vpx
