@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .box import FullBox
+from .box import read_fourcc
 from .box import read_uint
 
 
@@ -8,7 +9,7 @@ class SampleToGroupBox(FullBox):
     box_type = b"sbgp"
 
     def read(self, file):
-        self.grouping_type = read_uint(file, 4)
+        self.grouping_type = read_fourcc(file)
         if self.version >= 1:
             self.grouping_type_parameter = read_uint(file, 4)
         entry_count = read_uint(file, 4)
@@ -73,7 +74,7 @@ class SampleGroupDescriptionBox(FullBox):
     box_type = b"sgpd"
 
     def read(self, file):
-        self.grouping_type = read_uint(file, 4)
+        self.grouping_type = read_fourcc(file)
         if self.version >= 1:
             self.default_length = read_uint(file, 4)
         if self.version >= 2:
