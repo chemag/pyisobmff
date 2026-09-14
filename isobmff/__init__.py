@@ -14,6 +14,7 @@ from . import ac4
 from . import avc
 from . import avs
 from . import box
+from . import colr
 from . import dinf
 from . import edts
 from . import etyp
