@@ -11,6 +11,7 @@ from .item import get_item_list
 from .item import Item
 from . import ac3
 from . import ac4
+from . import amve
 from . import avc
 from . import avs
 from . import box
