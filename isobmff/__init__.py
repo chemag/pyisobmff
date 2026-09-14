@@ -40,6 +40,7 @@ from . import moov
 from . import mp4
 from . import mvex
 from . import opus
+from . import pasp
 from . import pitm
 from . import qtff
 from . import sidx
