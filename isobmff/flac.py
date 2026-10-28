@@ -2,8 +2,6 @@
 from .box import Box
 from .utils import read_uint
 from .utils import read_sint
-from .utils import ntohl
-from .utils import ntohs
 from .stbl import AudioSampleEntry
 
 
