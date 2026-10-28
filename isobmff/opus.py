@@ -2,8 +2,6 @@
 from .box import Box
 from .utils import read_uint
 from .utils import read_sint
-from .utils import ntohl
-from .utils import ntohs
 from .stbl import AudioSampleEntry
 
 
@@ -32,8 +30,8 @@ class OpusSpecificBox(Box):
         tuples = super().contents()
         tuples += (("version", self.version),)
         tuples += (("output_channel_count", self.output_channel_count),)
-        tuples += (("preskip", ntohs(self.preskip)),)
-        tuples += (("input_sample_rate", f"{ntohl(self.input_sample_rate)}"),)
+        tuples += (("preskip", self.preskip),)
+        tuples += (("input_sample_rate", f"{self.input_sample_rate}"),)
         tuples += (("output_gain", self.output_gain),)
         tuples += (("channel_mapping_family", self.channel_mapping_family),)
         for idx, val in enumerate(self.channel_mappings):
