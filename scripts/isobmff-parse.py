@@ -18,7 +18,7 @@ sys.path.append(rootdir)
 
 import isobmff
 
-__version__ = "0.3"
+__version__ = "0.4"
 
 FUNC_CHOICES = {
     "parse": "parse isobmff input",
