@@ -21,6 +21,7 @@ from . import colr
 from . import dinf
 from . import edts
 from . import etyp
+from . import evc
 from . import flac
 from . import free
 from . import ftyp
