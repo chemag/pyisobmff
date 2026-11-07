@@ -13,6 +13,7 @@ from . import ac3
 from . import ac4
 from . import amve
 from . import av1
+from . import av2
 from . import avc
 from . import avs
 from . import box
